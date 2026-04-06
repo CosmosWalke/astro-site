@@ -1,0 +1,275 @@
+'use client'
+
+import { useEffect, useRef } from 'react'
+import Image from 'next/image'
+import { gsap } from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+
+gsap.registerPlugin(ScrollTrigger)
+
+export function ComicSection() {
+  const containerRef = useRef<HTMLDivElement>(null)
+  const mainContentRef = useRef<HTMLDivElement>(null)
+  const flairLeftRef = useRef<HTMLImageElement>(null)
+  const flairRightRef = useRef<HTMLImageElement>(null)
+
+  const panels = [
+    { title: 'Star Trek #1 (Gold Key)', img: 'https://d29xot63vimef3.cloudfront.net/image/star-trek/1-1.jpg', large: true },
+    { title: 'Action Comics #37', img: 'https://assets.codepen.io/2856/ACTION-37-Cooke-var.jpg', large: true },
+    { title: 'Superman vs. Spider-Man', img: 'https://assets.codepen.io/2856/spider-man_superman.jpg' },
+    { title: 'Wolverine: Jungle Adventure', img: 'https://assets.codepen.io/2856/jungle_adventure.jpg' },
+    { title: 'Daredevil #217', img: 'https://d29xot63vimef3.cloudfront.net/image/daredevil/217-1.jpg' },
+    { title: 'Batman #426', img: 'https://d29xot63vimef3.cloudfront.net/image/batman/426-1.jpg' },
+  ]
+
+  useEffect(() => {
+    if (!containerRef.current) return
+
+    const ctx = gsap.context(() => {
+      // Initial state - all starts hidden, flair off to sides
+      gsap.set(mainContentRef.current, { y: 50, opacity: 0 })
+      gsap.set(flairLeftRef.current, { x: -200, opacity: 0 })
+      gsap.set(flairRightRef.current, { x: 200, opacity: 0 })
+
+      // Single timeline for synchronized animation
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: containerRef.current,
+          start: 'top 80%',
+          end: 'top 20%',
+          scrub: 0.5,
+        }
+      })
+
+      // Everything animates together
+      tl.to(mainContentRef.current, {
+        y: 0,
+        opacity: 1,
+        duration: 1,
+        ease: 'power2.out'
+      }, 0)
+
+      tl.to(flairLeftRef.current, {
+        x: 0,
+        opacity: 1,
+        duration: 1,
+        ease: 'power2.out'
+      }, 0)
+
+      tl.to(flairRightRef.current, {
+        x: 0,
+        opacity: 1,
+        duration: 1,
+        ease: 'power2.out'
+      }, 0)
+
+    }, containerRef)
+
+    return () => ctx.revert()
+  }, [])
+
+  return (
+    <section 
+      ref={containerRef} 
+      className="relative py-20 min-h-screen overflow-hidden"
+    >
+      {/* Фоновое изображение через Next.js Image */}
+      <div className="absolute inset-0 -z-10">
+        <Image
+          src="/image/comicsback.webp"
+          alt="Comics background"
+          fill
+          className="object-cover"
+          priority
+          sizes="100vw"
+          quality={90}
+        />
+        {/* Затемнение поверх фона - регулируй opacity под свои нужды */}
+        <div className="absolute inset-0 bg-black/50" />
+        
+        {/* Дополнительный эффект винтажной зернистости (опционально) */}
+        <div 
+          className="absolute inset-0 opacity-20 mix-blend-overlay pointer-events-none"
+          style={{ 
+            backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noise\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.65\' numOctaves=\'3\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noise)\'/%3E%3C/svg%3E")',
+            backgroundSize: 'cover'
+          }}
+        />
+      </div>
+
+      {/* Decorative flair - Left - overlapping behind content */}
+      <img 
+        ref={flairLeftRef}
+        src="https://assets.codepen.io/2856/flair_left.webp" 
+        alt="" 
+        className="absolute top-0 w-[320px] object-contain object-top pointer-events-none hidden xl:block"
+        style={{ zIndex: 5, left: 'calc(50% - 610px)' }}
+      />
+      
+      {/* Decorative flair - Right - overlapping behind content */}
+      <img 
+        ref={flairRightRef}
+        src="https://assets.codepen.io/2856/flair_right.webp" 
+        alt="" 
+        className="absolute top-0 w-[320px] object-contain object-top pointer-events-none hidden xl:block"
+        style={{ zIndex: 5, right: 'calc(50% - 610px)' }}
+      />
+
+      {/* Main content - ABOVE the background */}
+      <main 
+        ref={mainContentRef}
+        className="relative max-w-[800px] mx-auto px-4"
+        style={{ zIndex: 10 }}
+      >
+        {/* Header */}
+        <header 
+          className="relative overflow-hidden rounded-t-lg"
+          style={{ 
+            backgroundColor: 'hsl(192, 43%, 46%)',
+            border: '3px solid hsl(188, 9%, 17%)'
+          }}
+        >
+          {/* Pattern overlay */}
+          <div 
+            className="absolute inset-0 opacity-25 z-[1] pointer-events-none"
+            style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3E%3Cg fill='%239C92AC' fill-opacity='0.4'%3E%3Cpath fill-rule='evenodd' d='M0 0h4v4H0V0zm4 4h4v4H4V4z'/%3E%3C/g%3E%3C/svg%3E")`
+            }}
+          />
+          
+          {/* Logo banner */}
+          <img 
+            src="https://assets.codepen.io/2856/We+Read+Comics+Bannerhead_4.webp" 
+            alt="We Read Comics" 
+            className="relative z-[2] block w-full max-w-[600px] h-auto mx-auto py-4"
+          />
+          
+          {/* Issue number */}
+          <div className="absolute right-4 top-4 z-[3]">
+            <div 
+              className="w-12 h-12 rounded-full flex items-center justify-center"
+              style={{ 
+                backgroundColor: 'hsl(345, 54%, 59%)',
+                border: '3px solid hsl(188, 9%, 17%)'
+              }}
+            >
+              <span 
+                style={{ 
+                  fontFamily: '"Bangers", cursive',
+                  fontSize: '1.5rem',
+                  color: 'white'
+                }}
+              >
+                #1
+              </span>
+            </div>
+          </div>
+        </header>
+
+        {/* Navigation */}
+        <nav 
+          className="flex"
+          style={{ 
+            backgroundColor: 'hsl(48, 70%, 57%)',
+            border: '3px solid hsl(188, 9%, 17%)',
+            borderTop: 'none',
+            fontFamily: '"Bangers", cursive',
+            fontSize: '1.1rem'
+          }}
+        >
+          <div 
+            className="relative flex items-center justify-center px-4 py-2"
+            style={{ backgroundColor: 'hsl(345, 54%, 59%)' }}
+          >
+            <span className="text-white">In this Issue...</span>
+            <div 
+              className="absolute right-[-12px] top-0 h-full w-6"
+              style={{
+                backgroundColor: 'hsl(345, 54%, 59%)',
+                clipPath: 'polygon(0 0, 100% 50%, 0 100%)'
+              }}
+            />
+          </div>
+          <div className="flex flex-1 items-center justify-around">
+            <span className="px-4 py-2 hover:underline cursor-pointer">Link 1</span>
+            <span className="px-4 py-2 hover:underline cursor-pointer">Link 2</span>
+            <span className="px-4 py-2 hover:underline cursor-pointer">Link 3</span>
+          </div>
+        </nav>
+
+        {/* Comic panels grid */}
+        <div 
+          className="grid gap-3 p-4"
+          style={{ 
+            gridTemplateColumns: 'repeat(2, 1fr)',
+            backgroundColor: 'hsl(48, 70%, 67%)',
+            border: '3px solid hsl(188, 9%, 17%)',
+            borderTop: 'none'
+          }}
+        >
+          {panels.map((panel, i) => (
+            <div 
+              key={i}
+              className="relative group cursor-pointer overflow-hidden"
+              style={{ 
+                border: '3px solid hsl(188, 9%, 17%)',
+                backgroundColor: 'white'
+              }}
+            >
+              {/* Panel title */}
+              <div 
+                className="absolute top-2 left-2 z-10 px-2 py-1"
+                style={{ 
+                  fontFamily: '"Patrick Hand SC", cursive',
+                  fontSize: '0.9rem',
+                  backgroundColor: i % 2 === 0 ? 'hsl(48, 70%, 57%)' : 'hsl(345, 54%, 59%)',
+                  border: '2px solid hsl(188, 9%, 17%)',
+                  boxShadow: '3px 3px 0 hsla(188, 9%, 17%, 0.5)',
+                  color: 'hsl(188, 9%, 17%)'
+                }}
+              >
+                <span className="font-bold">{panel.title}</span>
+                <span className="block text-[10px] italic">(Click to Read More)</span>
+              </div>
+              
+              {/* Panel image */}
+              <img 
+                src={panel.img} 
+                alt={panel.title}
+                className="w-full h-48 object-cover transition-all duration-300 group-hover:scale-105"
+                style={{ 
+                  objectPosition: '50% 20%',
+                  filter: 'grayscale(70%) sepia(20%)'
+                }}
+              />
+              
+              {/* Halftone overlay on hover */}
+              <div 
+                className="absolute inset-0 opacity-0 group-hover:opacity-30 transition-opacity duration-300 pointer-events-none"
+                style={{
+                  backgroundImage: 'radial-gradient(circle, hsl(188, 9%, 17%) 1px, transparent 1px)',
+                  backgroundSize: '4px 4px'
+                }}
+              />
+            </div>
+          ))}
+        </div>
+
+        {/* Footer */}
+        <div 
+          className="text-center py-4 rounded-b-lg"
+          style={{ 
+            backgroundColor: 'hsl(192, 43%, 46%)',
+            border: '3px solid hsl(188, 9%, 17%)',
+            borderTop: 'none',
+            fontFamily: '"Bangers", cursive',
+            color: 'white',
+            fontSize: '1.2rem'
+          }}
+        >
+          More Comics Coming Soon!
+        </div>
+      </main>
+    </section>
+  )
+}
