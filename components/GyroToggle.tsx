@@ -15,32 +15,18 @@ export function GyroToggle({ onOrientationChange, isActive, onToggle }: GyroTogg
     setIsIOS(/iPad|iPhone|iPod/.test(navigator.userAgent))
   }, [])
 
+  // Упрощённый обработчик без сглаживания
   useEffect(() => {
-    let latestGamma = 0
-    let smoothedGamma = 0
-    let rafId: number | null = null
-
     const handleOrientation = (event: DeviceOrientationEvent) => {
+      if (!isActive) return
       const gamma = event.gamma || 0
-      latestGamma = gamma
-    }
-
-    const smoothLoop = () => {
-      smoothedGamma = smoothedGamma * 0.92 + latestGamma * 0.08
-      
-      if (isActive) {
-        onOrientationChange(smoothedGamma)
-      }
-      
-      rafId = requestAnimationFrame(smoothLoop)
+      onOrientationChange(gamma)
     }
 
     window.addEventListener('deviceorientation', handleOrientation)
-    rafId = requestAnimationFrame(smoothLoop)
 
     return () => {
       window.removeEventListener('deviceorientation', handleOrientation)
-      if (rafId) cancelAnimationFrame(rafId)
     }
   }, [isActive, onOrientationChange])
 

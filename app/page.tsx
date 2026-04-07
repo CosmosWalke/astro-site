@@ -29,8 +29,7 @@ export default function PanoramaPage() {
   const [gyroActive, setGyroActive] = useState(false)
 
   // Для сохранения позиции при включении гироскопа
-  const gyroBaseGamma = useRef(0)
-  const isGyroInitialized = useRef(false)
+
   const gyroActiveRef = useRef(false)
 
   let ringAnimationFrame: number | null = null
@@ -83,33 +82,18 @@ export default function PanoramaPage() {
   }
 
   // ====================== GYRO HANDLER ======================
-  const handleGyroChange = (gamma: number) => {
-    if (!gyroActiveRef.current) return
-    
-    if (!isGyroInitialized.current) {
-      gyroBaseGamma.current = gamma
-      isGyroInitialized.current = true
-      return
-    }
-    
-    let delta = gamma - gyroBaseGamma.current
-    // Твой старый коэффициент -2.5 для правильного замедления
-    let newView = window.currentView + (delta * -2.5)
-    
-    const maxView = 75
-    const minView = -75
-    newView = Math.max(minView, Math.min(maxView, newView))
-    
-    window.currentView = newView
-  }
+const handleGyroChange = (gamma: number) => {
+  if (!gyroActiveRef.current) return
+  
+  // gamma: -30..30 → newView: -75..75 с инверсией
+  let newView = gamma * -2.5
+  
+  // Ограничиваем
+  newView = Math.max(-75, Math.min(75, newView))
+  
+  window.currentView = newView
+}
 
-  // Сброс инициализации гироскопа при выключении
-  useEffect(() => {
-    if (!gyroActive) {
-      isGyroInitialized.current = false
-      gyroBaseGamma.current = 0
-    }
-  }, [gyroActive])
 
   // ====================== LOADING ======================
   useEffect(() => {
