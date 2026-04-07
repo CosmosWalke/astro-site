@@ -180,44 +180,43 @@ body {
 }
 
 .panorama-wrapper {
-    position: absolute;
-    inset: 0;
+     position: relative;  /* ← КЛЮЧЕВОЙ МОМЕНТ! */
+    top: 0;
+    left: 0;
+    height: 100vh;
     will-change: transform;
-    z-index: 1;
     overflow: visible;
-    cursor: url('/images/A.png') 0 0, auto;
 }
 
 .panorama-img {
     position: absolute;
     top: 0;
     left: 0;
-    height: 100%;
+    height: 100vh;
     width: auto;
+    display: block;
+    /* Убираем любые transform отсюда */
 }
 
 .layer-interactive {
     position: absolute;
-    inset: 0;
-    z-index: 3;
-      top: 0; 
-  left: 0; 
-  width: 100%; 
-  height: 100%; 
-    pointer-events: all !important;
-    cursor: url('/images/A.png') 0 0, auto;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: all;
 }
 
 /* ========== HOTSPOTS ========== */
+
 .hotspot {
     position: absolute;
     pointer-events: all !important;
-    width: 140px;
-    height: 140px;
+    width: 100px;
+    height: 100px;
     transform: translate(-50%, -50%);
     z-index: 100;
-    cursor: url('/images/A.png') 0 0, pointer;
-    transition: opacity 0.2s ease;
+    cursor: pointer;
 }
 
 .hotspot-dot {

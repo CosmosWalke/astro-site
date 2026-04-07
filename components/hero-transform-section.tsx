@@ -112,7 +112,6 @@ const statusMessages = [
 const barcodeWidths = [2, 1, 2, 1, 1, 2, 1, 2, 2, 1, 1, 2, 1, 1, 2, 2, 1, 2, 1, 1, 2, 1, 2, 1, 1, 2, 2, 1, 1, 2]
 
 export function HeroStoryCombined() {
-  console.log('1. HeroStoryCombined MOUNTED')  // ← ДОБАВЬТЕ ЭТУ СТРОКУ
   const containerRef = useRef<HTMLDivElement>(null)
   const stickyRef = useRef<HTMLDivElement>(null)
   const [isMobile, setIsMobile] = useState(false)
@@ -918,59 +917,59 @@ useEffect(() => {
   const cardHeight = isMobile ? 480 : 520
 
   return (
-    <>{console.log('3. Рендер, isLoading =', isLoading)}  {/* ← ДОБАВЬТЕ ЭТУ СТРОКУ */}
-      {/* ЗАГРУЗОЧНЫЙ ЭКРАН */}
-
-
-      {isLoading && (
-        <div
-          ref={loadingContainerRef}
-          className="fixed inset-0 z-[9999] flex items-center justify-center bg-black overflow-hidden"
-        >
-          <video
-            src="/video/loading.webm"
-            autoPlay
-            loop
-            muted
-            playsInline
-            className="absolute inset-0 w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-black/50" />
-          
-          <div className="relative z-10 flex flex-col items-center gap-10">
-            <div className="font-mono text-sm md:text-base text-white/80 text-center min-h-[1.5em] tracking-wide">
-              {loadingText}
-            </div>
-            
-            <div className="w-72 flex flex-col gap-3">
-              <div className="flex justify-between text-xs font-mono uppercase tracking-[2px] text-white/70">
-                <span>LOADING</span>
-                <span>{Math.round(loadingProgress)}%</span>
-              </div>
-              <div className="h-px bg-white/20 relative overflow-hidden rounded">
-                <div
-                  className="h-full bg-white transition-all duration-75 ease-out"
-                  style={{ width: `${loadingProgress}%` }}
-                />
-              </div>
-            </div>
-            
-            <div className="flex gap-[2px] h-9 items-end">
-              {barcodeWidths.map((width, i) => (
-                <div
-                  key={i}
-                  className="bg-white transition-all duration-150"
-                  style={{
-                    width: `${width}px`,
-                    height: '100%',
-                    opacity: loadingProgress > i * 3.2 ? 1 : 0.25,
-                  }}
-                />
-              ))}
-            </div>
-          </div>
+    <>
+return (
+  <>
+    {/* УПРОЩЕННЫЙ ЗАГРУЗОЧНЫЙ ЭКРАН - для теста */}
+    {isLoading && (
+      <div
+        ref={loadingContainerRef}
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          zIndex: 9999,
+          backgroundColor: 'black',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          flexDirection: 'column',
+          gap: '20px'
+        }}
+      >
+        <div style={{ color: 'white', fontFamily: 'monospace' }}>
+          {loadingText}
         </div>
-      )}
+        <div style={{ width: '200px', height: '2px', backgroundColor: '#333' }}>
+          <div
+            style={{
+              width: `${loadingProgress}%`,
+              height: '100%',
+              backgroundColor: '#00d4ff',
+              transition: 'width 0.1s ease-out'
+            }}
+          />
+        </div>
+        <div style={{ color: 'white', fontFamily: 'monospace' }}>
+          {Math.round(loadingProgress)}%
+        </div>
+      </div>
+    )}
+    
+    {/* ОСНОВНОЙ КОНТЕНТ - ВСЕГДА РЕНДЕРИТСЯ, НО СКРЫТ */}
+    <div style={{ 
+      opacity: isLoading ? 0 : 1,
+      visibility: isLoading ? 'hidden' : 'visible'
+    }}>
+      {/* ВЕСЬ ТВОЙ СУЩЕСТВУЮЩИЙ КОНТЕНТ */}
+      <div ref={containerRef} className="relative bg-[#050508]" style={{ height: isMobile ? '450vh' : '1200vh' }}>
+        {/* ... весь остальной код ... */}
+      </div>
+    </div>
+  </>
+)
       
       {/* ОСНОВНОЙ КОНТЕНТ */}
       <div 

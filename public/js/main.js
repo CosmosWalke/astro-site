@@ -271,20 +271,18 @@ function finalizePanorama() {
     checkHotspots();
     showLocationName('BRIDGE');
     
-    const wrapper = document.querySelector('.location.active .panorama-wrapper');
-    if (wrapper) {
-        gsap.to(wrapper, {
-            scale: 1,
-            duration: 2,
-            delay: 0,
-            ease: 'sine.out',
-            onUpdate: () => {},
-            onComplete: () => {
-                isInitialZoom = false;
-                updateView();
-                positionHotspotsOnce();
-            }
-        });
+    const img = document.querySelector('.location.active .panorama-img');
+    if (img) {
+        // Плавно убираем scale с изображения
+        img.style.transition = 'transform 2s ease-out';
+        img.style.transform = 'scale(1)';
+        
+        setTimeout(() => {
+            img.style.transition = '';
+            isInitialZoom = false;
+            updateView();
+            positionHotspotsOnce();
+        }, 2000);
     }
 }
 
@@ -653,14 +651,13 @@ function updateView() {
     const activeLoc = document.querySelector('.location.active');
     if (!activeLoc) return;
     const wrapper = activeLoc.querySelector('.panorama-wrapper');
-    if (!wrapper) return;
+    const img = wrapper.querySelector('.panorama-img');
+    if (!wrapper || !img) return;
     
     const vw = window.innerWidth;
     const vh = window.innerHeight;
     
-    const img = wrapper.querySelector('.panorama-img');
     let ratio = 4032 / 1056;
-    
     if (img && img.complete && img.naturalWidth > 0) {
         ratio = img.naturalWidth / img.naturalHeight;
     }
@@ -672,9 +669,15 @@ function updateView() {
     let shift = normalized * halfRange;
     let translateX = centerOffset + shift;
     translateX = Math.max(vw - scaledWidth, Math.min(0, translateX));
+    
     let currentScale = isInitialZoom ? initialScale : 1;
-    wrapper.style.transform = `translateX(${translateX}px) scale(${currentScale})`;
-    wrapper.style.transformOrigin = 'center center';
+    
+    // Применяем scale ТОЛЬКО к изображению, не ко всему wrapper
+    img.style.transform = `scale(${currentScale})`;
+    img.style.transformOrigin = 'center center';
+    
+    // Wrapper двигает только translateX (без scale)
+    wrapper.style.transform = `translateX(${translateX}px)`;
 }
 
 function checkHotspots() {

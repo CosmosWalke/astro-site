@@ -11,12 +11,13 @@ import { FactionsSection } from '@/components/factions-section'
 import { GallerySection } from '@/components/gallery-section'
 import { Footer } from '@/components/footer'
 import { ScrollProgress } from '@/components/ScrollProgress'
-
+//import { ScrollToBottomButton } from '@/components/ScrollToBottomButton'
+//import { EdgeScroll } from '@/components/EdgeScroll'
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger)
 }
 
-export default function AboutPage() {
+export default function Home() {
   const mainRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -30,9 +31,9 @@ export default function AboutPage() {
   }, [])
 
   return (
-    <>
-      <ScrollProgress />
-      
+    
+    <><ScrollProgress />
+   
       {/* Main Content */}
       <div ref={mainRef} className="relative opacity-0">
         {/* Header */}

@@ -27,14 +27,12 @@ export default function PanoramaPage() {
 
   let ringAnimationFrame: number | null = null
 
-  // Вспомогательная функция для ожидания двух кадров рендера
   const afterLayout = (cb: () => void) => {
     requestAnimationFrame(() => {
       requestAnimationFrame(cb)
     })
   }
 
-  // Короткий лоадер — всего на 0.5 секунды
   useEffect(() => {
     let startTime = Date.now();
     let animationId: number;
@@ -62,196 +60,213 @@ export default function PanoramaPage() {
     if (isLoaded.current) return
     isLoaded.current = true
 
-    // ========== СТИЛИ ==========
-    const style = document.createElement('style')
-    style.textContent = `
-      .panorama-wrapper { 
-        position: absolute; 
-        top: 0; 
-        left: 0; 
-        height: 100vh; 
-        will-change: transform; 
-      }
-      .panorama-img { 
-        height: 100vh; 
-        width: auto; 
-        display: block; 
-      }
+const style = document.createElement('style')
+style.textContent = `
+  .panorama-wrapper { 
+    position: absolute;
+    top: 0; 
+    left: 0; 
+    height: 100vh; 
+    will-change: transform; 
+    overflow: visible;
+    transform: translateZ(0); /* КРИТИЧЕСКОЕ — создаёт слой */
+  }
+  .panorama-img { 
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100vh; 
+    width: auto; 
+    display: block; 
+  }
 
-      .location { 
-        position: absolute; 
-        top: 0; 
-        left: 0; 
-        width: 100%; 
-        height: 100%; 
-        opacity: 0; 
-        visibility: hidden; 
-        pointer-events: none; 
-      }
-      .location.active { 
-        opacity: 1; 
-        visibility: visible; 
-        pointer-events: all; 
-      }
+  .location { 
+    position: absolute; 
+    top: 0; 
+    left: 0; 
+    width: 100%; 
+    height: 100%; 
+    opacity: 0; 
+    visibility: hidden; 
+    pointer-events: none; 
+  }
+  .location.active { 
+    opacity: 1; 
+    visibility: visible; 
+    pointer-events: all; 
+  }
 
-      .layer-interactive { 
-        position: absolute; 
-        top: 0; 
-        left: 0; 
-        width: 100%; 
-        height: 100%; 
-        pointer-events: all; 
-      }
+  /* ВАЖНО: layer-interactive — только контейнер, не мешает событиям */
+  .layer-interactive { 
+    position: absolute; 
+    top: 0; 
+    left: 0; 
+    width: 100%; 
+    height: 100%; 
+    pointer-events: none; /* ПРОБРАСЫВАЕТ СОБЫТИЯ НИЖЕ */
+  }
 
-      #viewport { 
-        position: fixed; 
-        top: 0; 
-        left: 0; 
-        width: 100%; 
-        height: 100%; 
-        overflow: hidden; 
-      }
+  .layer-animated {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
 
-      #panorama { 
-        position: absolute; 
-        top: 0; 
-        left: 0; 
-        width: 100%; 
-        height: 100%; 
-      }
+  /* Хотспоты получают события */
+  .hotspot { 
+    position: absolute; 
+    pointer-events: auto !important; 
+    width: 100px; 
+    height: 100px; 
+    transform: translate(-50%, -50%); 
+    z-index: 100; 
+    cursor: pointer; 
+  }
+  
+  .hotspot-dot { 
+    position: absolute; 
+    top: 50%; 
+    left: 50%; 
+    width: 16px; 
+    height: 16px; 
+    background: #fff; 
+    border-radius: 50%; 
+    transform: translate(-50%, -50%); 
+    box-shadow: 0 0 20px #0ff, 0 0 40px #0ff; 
+    animation: dotPulse 2s infinite ease-in-out; 
+  }
+  
+  @keyframes dotPulse { 
+    0%,100% { transform: translate(-50%, -50%) scale(1); opacity: 1; } 
+    50% { transform: translate(-50%, -50%) scale(1.5); opacity: 0.8; } 
+  }
 
-      .hotspot { 
-        position: absolute; 
-        pointer-events: all !important; 
-        width: 140px; 
-        height: 140px; 
-        transform: translate(-50%, -50%); 
-        z-index: 100; 
-        cursor: pointer; 
-      }
-      .hotspot-dot { 
-        position: absolute; 
-        top: 50%; 
-        left: 50%; 
-        width: 16px; 
-        height: 16px; 
-        background: #fff; 
-        border-radius: 50%; 
-        transform: translate(-50%, -50%); 
-        box-shadow: 0 0 20px #0ff, 0 0 40px #0ff; 
-        animation: dotPulse 2s infinite ease-in-out; 
-      }
-      @keyframes dotPulse { 
-        0%,100% { transform: translate(-50%, -50%) scale(1); opacity: 1; } 
-        50% { transform: translate(-50%, -50%) scale(1.5); opacity: 0.8; } 
-      }
+  .cursor-follow-ring { 
+    position: fixed; 
+    width: 150px; 
+    height: 150px; 
+    border: 2px solid rgba(255,255,255,0.95); 
+    border-radius: 50%; 
+    pointer-events: none; 
+    opacity: 0; 
+    transform: translate(-50%, -50%) scale(0.5); 
+    box-shadow: 0 0 30px #0ff, 0 0 60px #0ff; 
+    transition: opacity 0.3s ease, transform 0.4s cubic-bezier(0.2,0.9,0.3,1.1); 
+    z-index: 9999; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    background: rgba(255,255,255,0.08); 
+    backdrop-filter: blur(2px); 
+  }
+  .cursor-follow-ring.visible { 
+    opacity: 1; 
+    transform: translate(-50%, -50%) scale(1); 
+  }
+  .cursor-follow-ring .click-text { 
+    color: #fff; 
+    font-size: 15px; 
+    font-weight: 700; 
+    letter-spacing: 2.5px; 
+    text-transform: uppercase; 
+    text-align: center; 
+    line-height: 1.4; 
+    text-shadow: 0 0 15px #0ff; 
+    width: 100%; 
+    font-family: 'CCUltimatum', monospace; 
+    opacity: 0; 
+    transform: translateY(20px); 
+    transition: opacity 0.2s ease, transform 0.3s ease; 
+  }
+  .cursor-follow-ring.visible .click-text { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+  .cursor-follow-ring .click-text span { 
+    display: block; 
+  }
 
-      .cursor-follow-ring { 
-        position: fixed; 
-        width: 150px; 
-        height: 150px; 
-        border: 2px solid rgba(255,255,255,0.95); 
-        border-radius: 50%; 
-        pointer-events: none; 
-        opacity: 0; 
-        transform: translate(-50%, -50%) scale(0.5); 
-        box-shadow: 0 0 30px #0ff, 0 0 60px #0ff; 
-        transition: opacity 0.3s ease, transform 0.4s cubic-bezier(0.2,0.9,0.3,1.1); 
-        z-index: 9999; 
-        display: flex; 
-        align-items: center; 
-        justify-content: center; 
-        background: rgba(255,255,255,0.08); 
-        backdrop-filter: blur(2px); 
-      }
-      .cursor-follow-ring.visible { 
-        opacity: 1; 
-        transform: translate(-50%, -50%) scale(1); 
-      }
-      .cursor-follow-ring .click-text { 
-        color: #fff; 
-        font-size: 15px; 
-        font-weight: 700; 
-        letter-spacing: 2.5px; 
-        text-transform: uppercase; 
-        text-align: center; 
-        line-height: 1.4; 
-        text-shadow: 0 0 15px #0ff; 
-        width: 100%; 
-        font-family: 'CCUltimatum', monospace; 
-        opacity: 0; 
-        transform: translateY(20px); 
-        transition: opacity 0.2s ease, transform 0.3s ease; 
-      }
-      .cursor-follow-ring.visible .click-text { 
-        opacity: 1; 
-        transform: translateY(0); 
-      }
-      .cursor-follow-ring .click-text span { 
-        display: block; 
-      }
+  .center-title { 
+    position: fixed; 
+    top: 50%; 
+    left: 50%; 
+    transform: translate(-50%, -50%); 
+    font-size: clamp(60px,10vw,180px); 
+    max-width: 85vw; 
+    font-weight: 900; 
+    color: #fff; 
+    text-transform: uppercase; 
+    letter-spacing: 0.02em; 
+    opacity: 0; 
+    pointer-events: none; 
+    z-index: 5; 
+    text-shadow: 0 0 30px rgba(0,255,255,0.5), 0 0 60px rgba(0,255,255,0.3); 
+    text-align: center; 
+    transition: opacity 0.4s ease; 
+    font-family: 'CCUltimatum', monospace; 
+  }
+  .center-title.active { opacity: 0.9; }
 
-      .center-title { 
-        position: fixed; 
-        top: 50%; 
-        left: 50%; 
-        transform: translate(-50%, -50%); 
-        font-size: clamp(60px,10vw,180px); 
-        max-width: 85vw; 
-        font-weight: 900; 
-        color: #fff; 
-        text-transform: uppercase; 
-        letter-spacing: 0.02em; 
-        opacity: 0; 
-        pointer-events: none; 
-        z-index: 5; 
-        text-shadow: 0 0 30px rgba(0,255,255,0.5), 0 0 60px rgba(0,255,255,0.3); 
-        text-align: center; 
-        transition: opacity 0.4s ease; 
-        font-family: 'CCUltimatum', monospace; 
-      }
-      .center-title.active { opacity: 0.9; }
+  #location-name { 
+    position: fixed; 
+    top: 20px; 
+    left: 50%; 
+    transform: translateX(-50%); 
+    color: #0ff; 
+    font-size: 24px; 
+    font-weight: bold; 
+    text-transform: uppercase; 
+    letter-spacing: 4px; 
+    opacity: 0; 
+    transition: opacity 0.6s; 
+    z-index: 10; 
+    pointer-events: none; 
+    font-family: 'CCUltimatum', monospace; 
+  }
+  #location-name.show { opacity: 1; }
 
-      #location-name { 
-        position: fixed; 
-        top: 20px; 
-        left: 50%; 
-        transform: translateX(-50%); 
-        color: #0ff; 
-        font-size: 24px; 
-        font-weight: bold; 
-        text-transform: uppercase; 
-        letter-spacing: 4px; 
-        opacity: 0; 
-        transition: opacity 0.6s; 
-        z-index: 10; 
-        pointer-events: none; 
-        font-family: 'CCUltimatum', monospace; 
-      }
-      #location-name.show { opacity: 1; }
+  .hotspot-door { 
+    position: absolute; 
+    pointer-events: all !important; 
+    width: 140px; 
+    height: 140px; 
+    transform: translate(-50%, -50%); 
+    z-index: 100; 
+    cursor: pointer; 
+  }
+  .hotspot-door .hotspot-dot { 
+    position: absolute; 
+    top: 50%; 
+    left: 50%; 
+    width: 16px; 
+    height: 16px; 
+    background: #fff; 
+    border-radius: 50%; 
+    transform: translate(-50%, -50%); 
+    box-shadow: 0 0 20px #0ff, 0 0 40px #0ff; 
+    animation: dotPulse 2s infinite ease-in-out; 
+  }
+  
+  #viewport { 
+    position: fixed; 
+    top: 0; 
+    left: 0; 
+    width: 100%; 
+    height: 100%; 
+    overflow: hidden; 
+  }
 
-      .hotspot-door { 
-        position: absolute; 
-        pointer-events: all !important; 
-        width: 140px; 
-        height: 140px; 
-        transform: translate(-50%, -50%); 
-        z-index: 100; 
-        cursor: pointer; 
-      }
-      .hotspot-door .hotspot-dot { 
-        position: absolute; 
-        top: 50%; 
-        left: 50%; 
-        width: 16px; 
-        height: 16px; 
-        background: #fff; 
-        border-radius: 50%; 
-        transform: translate(-50%, -50%); 
-        box-shadow: 0 0 20px #0ff, 0 0 40px #0ff; 
-        animation: dotPulse 2s infinite ease-in-out; 
-      }
-    `
+  #panorama { 
+    position: absolute; 
+    top: 0; 
+    left: 0; 
+    width: 100%; 
+    height: 100%; 
+  }
+`
     document.head.appendChild(style)
 
     const link = document.createElement('link')
@@ -263,14 +278,12 @@ export default function PanoramaPage() {
     document.body.style.margin = '0'
     document.body.style.padding = '0'
 
-    // ========== ПЕРЕМЕННЫЕ ==========
     let ringVisible = false
     let ringTargetX = 0
     let ringTargetY = 0
     let ringCurrentX = 0
     let ringCurrentY = 0
 
-    // ========== ФУНКЦИИ ПАНОРАМЫ ==========
     const fixPanoramaScale = () => {
       const activeLoc = document.querySelector('.location.active')
       if (!activeLoc) return
@@ -322,11 +335,9 @@ export default function PanoramaPage() {
         wrapper.style.transform = `translateX(0px)`
       }
       
-      // Принудительный reflow
       wrapper.getBoundingClientRect()
     }
 
-    // ========== ФУНКЦИИ ХОТСПОТОВ И КОЛЬЦА ==========
     const showRing = (x: number, y: number) => {
       const ring = document.querySelector('.cursor-follow-ring') as HTMLElement
       if (!ring) return
@@ -400,13 +411,12 @@ export default function PanoramaPage() {
 
       hotspots.forEach((hotspot) => {
         const el = hotspot as HTMLElement
-        const percentX = parseFloat(el.dataset.percentX || '0')
-        const percentY = parseFloat(el.dataset.percentY || '0')
+        const percentX = el.dataset.percentX || '0'
+        const percentY = el.dataset.percentY || '0'
 
         el.style.left = `${percentX}%`
         el.style.top = `${percentY}%`
 
-        // Удаляем старые обработчики и добавляем новые
         el.removeEventListener('mouseenter', handleHotspotMouseEnter)
         el.removeEventListener('mouseleave', handleHotspotMouseLeave)
         el.removeEventListener('mousemove', handleHotspotMouseMove)
@@ -416,7 +426,6 @@ export default function PanoramaPage() {
         el.addEventListener('mousemove', handleHotspotMouseMove)
       })
 
-      // Создаём кольцо, если его ещё нет
       if (!document.querySelector('.cursor-follow-ring')) {
         const followRing = document.createElement('div')
         followRing.className = 'cursor-follow-ring'
@@ -425,7 +434,6 @@ export default function PanoramaPage() {
       }
     }
 
-    // ========== ГЛОБАЛЬНЫЕ ФУНКЦИИ ==========
     window.enterLocation = (targetLocId: string, locationName: string) => {
       const currentActive = document.querySelector('.location.active')
       if (currentActive) currentActive.classList.remove('active')
@@ -488,7 +496,6 @@ export default function PanoramaPage() {
     window.currentView = 0
     window.panoramaReady = false
 
-    // ========== ИНИЦИАЛИЗАЦИЯ ПОСЛЕ ВИДЕО ==========
     const setupPanorama = () => {
       fixPanoramaScale()
       
@@ -549,7 +556,6 @@ export default function PanoramaPage() {
 
     waitForVideo()
 
-    // ========== ПРОВЕРКА ХОТСПОТА ДВЕРИ ==========
     const checkDoorHotspot = () => {
         const doorHotspot = document.querySelector('.hotspot-door');
         if (!doorHotspot) {
@@ -562,15 +568,11 @@ export default function PanoramaPage() {
 
     setTimeout(checkDoorHotspot, 500);
 
-    // ========== ОБРАБОТЧИКИ РЕСАЙЗА ==========
     const handleResize = () => {
       if (window.panoramaReady) {
         fixPanoramaScale()
         afterLayout(() => {
           updatePanoramaView()
-          afterLayout(() => {
-            initHotspots()
-          })
         })
       }
     }
@@ -578,7 +580,6 @@ export default function PanoramaPage() {
     window.addEventListener('resize', handleResize)
     window.addEventListener('orientationchange', handleResize)
 
-    // ========== ДВИЖЕНИЕ МЫШИ ДЛЯ КОЛЬЦА ==========
     const handleMouseMove = (e: MouseEvent) => {
       if (ringVisible) {
         updateRingPosition(e.clientX, e.clientY)
@@ -586,7 +587,6 @@ export default function PanoramaPage() {
     }
     window.addEventListener('mousemove', handleMouseMove)
 
-    // ========== ОЧИСТКА ==========
     return () => {
       const oldLink = document.querySelector('link[href="/css/style.css"]')
       if (oldLink) oldLink.remove()
@@ -606,12 +606,10 @@ export default function PanoramaPage() {
 
   return (
     <>
-      {/* Загрузочный экран - показывается только 0.5 секунды */}
       <LoadingScreen progress={loadingProgress} isVisible={showLoading} />
       
       <Script src="/js/main.js" strategy="afterInteractive" />
 
-      {/* Первое видео - autoPlay включён */}
       <div id="intro-video-1" className="intro-video">
         <img id="static-bg-1" src="/images/space-bg.jpg" alt="Static door scene" className="static-bg" />
         <video autoPlay muted playsInline id="intro-video-player-1">
@@ -622,7 +620,6 @@ export default function PanoramaPage() {
         </audio>
       </div>
 
-      {/* Второе видео */}
       <div id="intro-video-2" className="intro-video" style={{ opacity: 0, pointerEvents: 'none' }}>
         <img id="static-bg-2" src="/images/panorama-1-center.jpg" alt="Static bridge scene" className="static-bg" />
         <video muted playsInline id="intro-video-player-2">
@@ -633,7 +630,6 @@ export default function PanoramaPage() {
         </audio>
       </div>
 
-      {/* Экран с дверью */}
       <div id="intro-screen" className="intro-screen" style={{ opacity: 0, pointerEvents: 'none' }}>
         <div className="scene-background"></div>
         <div className="door-container">
@@ -656,7 +652,6 @@ export default function PanoramaPage() {
         </div>
       </div>
 
-      {/* Основная сцена */}
       <div id="main-content" style={{ display: 'none' }}>
         <div id="hud">
           <div className="scanline"></div>
@@ -684,26 +679,24 @@ export default function PanoramaPage() {
             <div className="location active" id="loc-1">
               <div className="panorama-wrapper">
                 <img src="/images/panorama-bridge.jpg" className="panorama-img" alt="Bridge" />
+                <div className="layer-interactive">
+                  <div className="hotspot" data-percent-x="10.77" data-percent-y="51.80" data-label="COMMUNITY" onClick={() => window.enterLocation?.('loc-2', 'COMMUNITY')}>
+                    <div className="hotspot-dot"></div>
+                  </div>
+                  <div className="hotspot" data-percent-x="50.09" data-percent-y="43.09" data-label="ABOUT" onClick={() => router.push('/about')}>
+                    <div className="hotspot-dot"></div>
+                  </div>
+                  <div className="hotspot" data-percent-x="26.34" data-percent-y="58.00" data-label="LIFT" onClick={() => console.log('LIFT')}>
+                    <div className="hotspot-dot"></div>
+                  </div>
+                  <div className="hotspot" data-percent-x="77.58" data-percent-y="58.43" data-label="CARGO BAY" onClick={() => window.openSection?.('cargo')}>
+                    <div className="hotspot-dot"></div>
+                  </div>
+                  <div className="hotspot" data-percent-x="91.79" data-percent-y="54.95" data-label="JOIN THE CLUB" onClick={() => console.log('JOIN THE CLUB')}>
+                    <div className="hotspot-dot"></div>
+                  </div>
+                </div>
               </div>
-
-              <div className="layer-interactive">
-                <div className="hotspot" data-percent-x="10.77" data-percent-y="51.80" data-label="COMMUNITY" onClick={() => window.enterLocation?.('loc-2', 'COMMUNITY')}>
-                  <div className="hotspot-dot"></div>
-                </div>
-                <div className="hotspot" data-percent-x="50.09" data-percent-y="43.09" data-label="ABOUT" onClick={() => router.push('/about')}>
-                  <div className="hotspot-dot"></div>
-                </div>
-                <div className="hotspot" data-percent-x="26.34" data-percent-y="58.00" data-label="LIFT" onClick={() => console.log('LIFT')}>
-                  <div className="hotspot-dot"></div>
-                </div>
-                <div className="hotspot" data-percent-x="77.58" data-percent-y="58.43" data-label="CARGO BAY" onClick={() => window.openSection?.('cargo')}>
-                  <div className="hotspot-dot"></div>
-                </div>
-                <div className="hotspot" data-percent-x="91.79" data-percent-y="54.95" data-label="JOIN THE CLUB" onClick={() => console.log('JOIN THE CLUB')}>
-                  <div className="hotspot-dot"></div>
-                </div>
-              </div>
-
               <div className="layer-animated">
                 <div className="animated-object robot" style={{ left: '20%', top: '55%' }} id="robot-1"></div>
                 <div className="animated-object person" style={{ left: '50%', top: '52%' }} id="person-1"></div>
@@ -715,23 +708,21 @@ export default function PanoramaPage() {
             <div className="location" id="loc-2">
               <div className="panorama-wrapper">
                 <img src="/images/panorama-bridge.jpg" className="panorama-img" alt="Community" />
+                <div className="layer-interactive">
+                  <div className="hotspot" data-percent-x="10" data-percent-y="55" data-label="BRIDGE" onClick={() => window.enterLocation?.('loc-1', 'BRIDGE')}>
+                    <div className="hotspot-dot"></div>
+                  </div>
+                  <div className="hotspot" data-percent-x="90" data-percent-y="55" data-label="QUARTERS" onClick={() => window.enterLocation?.('loc-3', 'QUARTERS')}>
+                    <div className="hotspot-dot"></div>
+                  </div>
+                  <div className="hotspot" data-percent-x="35" data-percent-y="50" data-label="BAR" onClick={() => window.openSection?.('bar')}>
+                    <div className="hotspot-dot"></div>
+                  </div>
+                  <div className="hotspot" data-percent-x="65" data-percent-y="60" data-label="LOUNGE" onClick={() => window.openSection?.('lounge')}>
+                    <div className="hotspot-dot"></div>
+                  </div>
+                </div>
               </div>
-
-              <div className="layer-interactive">
-                <div className="hotspot" data-percent-x="10" data-percent-y="55" data-label="BRIDGE" onClick={() => window.enterLocation?.('loc-1', 'BRIDGE')}>
-                  <div className="hotspot-dot"></div>
-                </div>
-                <div className="hotspot" data-percent-x="90" data-percent-y="55" data-label="QUARTERS" onClick={() => window.enterLocation?.('loc-3', 'QUARTERS')}>
-                  <div className="hotspot-dot"></div>
-                </div>
-                <div className="hotspot" data-percent-x="35" data-percent-y="50" data-label="BAR" onClick={() => window.openSection?.('bar')}>
-                  <div className="hotspot-dot"></div>
-                </div>
-                <div className="hotspot" data-percent-x="65" data-percent-y="60" data-label="LOUNGE" onClick={() => window.openSection?.('lounge')}>
-                  <div className="hotspot-dot"></div>
-                </div>
-              </div>
-
               <div className="layer-animated">
                 <div className="animated-object person" style={{ left: '15%', top: '55%' }} id="person-2"></div>
                 <div className="animated-object person" style={{ left: '45%', top: '53%' }} id="person-3"></div>
@@ -743,20 +734,18 @@ export default function PanoramaPage() {
             <div className="location" id="loc-3">
               <div className="panorama-wrapper">
                 <img src="/images/panorama-bridge.jpg" className="panorama-img" alt="Quarters" />
+                <div className="layer-interactive">
+                  <div className="hotspot" data-percent-x="10" data-percent-y="55" data-label="COMMUNITY" onClick={() => window.enterLocation?.('loc-2', 'COMMUNITY')}>
+                    <div className="hotspot-dot"></div>
+                  </div>
+                  <div className="hotspot" data-percent-x="40" data-percent-y="50" data-label="QUARTERS 1" onClick={() => window.openSection?.('quarters1')}>
+                    <div className="hotspot-dot"></div>
+                  </div>
+                  <div className="hotspot" data-percent-x="70" data-percent-y="60" data-label="STORAGE" onClick={() => window.openSection?.('storage')}>
+                    <div className="hotspot-dot"></div>
+                  </div>
+                </div>
               </div>
-
-              <div className="layer-interactive">
-                <div className="hotspot" data-percent-x="10" data-percent-y="55" data-label="COMMUNITY" onClick={() => window.enterLocation?.('loc-2', 'COMMUNITY')}>
-                  <div className="hotspot-dot"></div>
-                </div>
-                <div className="hotspot" data-percent-x="40" data-percent-y="50" data-label="QUARTERS 1" onClick={() => window.openSection?.('quarters1')}>
-                  <div className="hotspot-dot"></div>
-                </div>
-                <div className="hotspot" data-percent-x="70" data-percent-y="60" data-label="STORAGE" onClick={() => window.openSection?.('storage')}>
-                  <div className="hotspot-dot"></div>
-                </div>
-              </div>
-
               <div className="layer-animated">
                 <div className="animated-object person" style={{ left: '30%', top: '60%' }} id="person-5"></div>
                 <div className="animated-object person" style={{ left: '70%', top: '55%' }} id="person-6"></div>
@@ -765,7 +754,6 @@ export default function PanoramaPage() {
           </div>
         </div>
 
-        {/* Модальные окна */}
         <div className="section-modal" id="modal-cargo">
           <div className="section-content">
             <div className="close-btn" onClick={() => window.closeSection?.('cargo')}>×</div>

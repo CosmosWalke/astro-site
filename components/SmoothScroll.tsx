@@ -24,7 +24,7 @@ export function SmoothScrollProvider({
   useEffect(() => {
     if (!isClient) return;
 
-    //document.documentElement.classList.add("lenis");
+    document.documentElement.classList.add("lenis");
 
     const lenis = new Lenis({
       duration: 1.2,
