@@ -612,3 +612,43 @@ body {
     display: none !important;
   }
 }
+/* ==================== INTRO DOOR LABEL (только мобильные) ==================== */
+.intro-door-label {
+  position: absolute;
+  top: -45px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #ffffff;
+  font-size: 42px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  white-space: nowrap;
+  font-family: 'CCUltimatum', monospace;
+  pointer-events: none;
+  opacity: 0.95;
+  text-shadow: 
+    0 0 15px #0ff,
+    0 0 30px #0ff,
+    0 0 50px rgba(0, 255, 255, 0.8),
+    0 0 80px rgba(0, 255, 255, 0.5);
+  z-index: 120;
+  text-align: center;
+  line-height: 1;
+}
+
+/* Адаптация под маленькие экраны */
+@media (max-width: 480px) {
+  .intro-door-label {
+    font-size: 36px;
+    top: -38px;
+    letter-spacing: 3px;
+  }
+}
+
+/* Скрываем на десктопе */
+@media (min-width: 769px) {
+  .intro-door-label {
+    display: none !important;
+  }
+}
