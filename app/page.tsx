@@ -36,7 +36,7 @@ export default function PanoramaPage() {
     requestAnimationFrame(() => requestAnimationFrame(cb))
   }
 
-// ====================== UPDATE PANORAMA ======================
+  // ====================== UPDATE PANORAMA ======================
   const updatePanoramaView = () => {
     const activeLoc = document.querySelector('.location.active') as HTMLElement | null
     if (!activeLoc) return
@@ -106,33 +106,34 @@ export default function PanoramaPage() {
     return () => cancelAnimationFrame(animationId)
   }, [])
 
-  // ====================== MAIN USEEFFECT ======================
+  // ====================== MAIN INIT ======================
   useEffect(() => {
     if (isLoaded.current) return
     isLoaded.current = true
 
     const style = document.createElement('style')
     style.textContent = `
-      .panorama-wrapper { 
-        position: absolute;
-        top: 0; 
-        left: 0; 
-        height: 100vh; 
-        will-change: transform; 
-        overflow: visible;
-        transform: translate3d(var(--translate-x, 0px), 0, 0);
-        transform-style: preserve-3d;
-        -webkit-transform-style: preserve-3d;
+      body, #viewport, #panorama, .panorama-wrapper {
+        -webkit-perspective: 3000px;
+        perspective: 3000px;
         -webkit-backface-visibility: hidden;
         backface-visibility: hidden;
       }
+
+      .panorama-wrapper { 
+        position: absolute;
+        top: 0; left: 0; height: 100vh;
+        will-change: transform;
+        transform-style: preserve-3d;
+        -webkit-transform-style: preserve-3d;
+      }
       .panorama-img { 
         position: absolute;
-        top: 0;
-        left: 0;
+        top: 0; left: 0;
         height: 100vh; 
         width: auto; 
-        display: block; 
+        display: block;
+        -webkit-transform: translate3d(0,0,0);
         transform: translate3d(0,0,0);
       }
 
@@ -177,10 +178,6 @@ export default function PanoramaPage() {
         width: 100%; 
         height: 100%; 
         overflow: hidden; 
-        -webkit-perspective: 2000px;
-        perspective: 2000px;
-        -webkit-backface-visibility: hidden;
-        backface-visibility: hidden;
       }
 
       #panorama { 
@@ -201,7 +198,7 @@ export default function PanoramaPage() {
         cursor: pointer; 
       }
       .hotspot-dot { 
-        position: absolute;
+        position: absolute; 
         top: 50%; 
         left: 50%; 
         width: 16px; 
@@ -218,26 +215,26 @@ export default function PanoramaPage() {
       }
 
       .cursor-follow-ring { 
-        position: fixed;
-        width: 150px;
-        height: 150px;
-        border: 2px solid rgba(255,255,255,0.95);
-        border-radius: 50%;
-        pointer-events: none;
-        opacity: 0;
-        transform: translate(-50%, -50%) scale(0.5);
-        box-shadow: 0 0 30px #0ff, 0 0 60px #0ff;
-        transition: opacity 0.3s ease, transform 0.4s cubic-bezier(0.2,0.9,0.3,1.1);
-        z-index: 9999;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: rgba(255,255,255,0.08);
-        backdrop-filter: blur(2px);
+        position: fixed; 
+        width: 150px; 
+        height: 150px; 
+        border: 2px solid rgba(255,255,255,0.95); 
+        border-radius: 50%; 
+        pointer-events: none; 
+        opacity: 0; 
+        transform: translate(-50%, -50%) scale(0.5); 
+        box-shadow: 0 0 30px #0ff, 0 0 60px #0ff; 
+        transition: opacity 0.3s ease, transform 0.4s cubic-bezier(0.2,0.9,0.3,1.1); 
+        z-index: 9999; 
+        display: flex; 
+        align-items: center; 
+        justify-content: center; 
+        background: rgba(255,255,255,0.08); 
+        backdrop-filter: blur(2px); 
       }
       .cursor-follow-ring.visible { 
-        opacity: 1;
-        transform: translate(-50%, -50%) scale(1);
+        opacity: 1; 
+        transform: translate(-50%, -50%) scale(1); 
       }
       .cursor-follow-ring .click-text { 
         color: #fff; 
@@ -255,11 +252,11 @@ export default function PanoramaPage() {
         transition: opacity 0.2s ease, transform 0.3s ease; 
       }
       .cursor-follow-ring.visible .click-text { 
-        opacity: 1;
-        transform: translateY(0);
+        opacity: 1; 
+        transform: translateY(0); 
       }
       .cursor-follow-ring .click-text span { 
-        display: block;
+        display: block; 
       }
 
       .center-title { 
@@ -302,25 +299,25 @@ export default function PanoramaPage() {
       #location-name.show { opacity: 1; }
 
       .hotspot-door { 
-        position: absolute;
-        pointer-events: all !important;
-        width: 140px;
-        height: 140px;
-        transform: translate(-50%, -50%);
-        z-index: 100;
-        cursor: pointer;
+        position: absolute; 
+        pointer-events: all !important; 
+        width: 140px; 
+        height: 140px; 
+        transform: translate(-50%, -50%); 
+        z-index: 100; 
+        cursor: pointer; 
       }
       .hotspot-door .hotspot-dot { 
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 16px;
-        height: 16px;
-        background: #fff;
-        border-radius: 50%;
-        transform: translate(-50%, -50%);
-        box-shadow: 0 0 20px #0ff, 0 0 40px #0ff;
-        animation: dotPulse 2s infinite ease-in-out;
+        position: absolute; 
+        top: 50%; 
+        left: 50%; 
+        width: 16px; 
+        height: 16px; 
+        background: #fff; 
+        border-radius: 50%; 
+        transform: translate(-50%, -50%); 
+        box-shadow: 0 0 20px #0ff, 0 0 40px #0ff; 
+        animation: dotPulse 2s infinite ease-in-out; 
       }
     `
     document.head.appendChild(style)
