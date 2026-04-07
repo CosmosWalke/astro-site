@@ -61,19 +61,20 @@ export default function PanoramaPage() {
   // Обработчик гироскопа
 const handleGyroChange = (gamma: number) => {
   if (!gyroActive) return
-  
-  console.log('🎯 Gyro gamma:', gamma)
-  
-  // Усиливаем коэффициент (было 0.8, теперь 4)
+
   const maxView = 75
   const minView = -75
-  const newView = Math.max(minView, Math.min(maxView, gamma * 4))
-  
+  const newView = Math.max(minView, Math.min(maxView, gamma * 4))  // твой коэффициент 4
+
   window.currentView = newView
-  
-  // Только updateView — без ручного transform
+
+  // Самое важное — форсируем обновление через requestAnimationFrame
   if (window.updateView) {
-    window.updateView()
+    requestAnimationFrame(() => {
+      window.updateView()
+      // Дополнительно — ещё один кадр, иногда помогает на iOS
+      requestAnimationFrame(window.updateView)
+    })
   }
 }
 
