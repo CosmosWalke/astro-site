@@ -532,3 +532,29 @@ body {
     background-position: center;
     transform-origin: bottom center;
 }
+#viewport, #panorama, .panorama-wrapper {
+  -webkit-perspective: 1200px;
+  perspective: 1200px;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+.panorama-wrapper {
+  position: absolute;
+  top: 0; 
+  left: 0; 
+  height: 100vh; 
+  will-change: transform;
+  transform-style: preserve-3d; /* добавь */
+  -webkit-transform-style: preserve-3d;
+}
+.panorama-img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100vh; 
+  width: auto; 
+  display: block;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+}

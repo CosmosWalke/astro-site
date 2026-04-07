@@ -58,28 +58,25 @@ export default function PanoramaPage() {
     return () => cancelAnimationFrame(animationId);
   }, []);
 
-  // Обработчик гироскопа
-let lastUpdateTime = 0
-const GYRO_THROTTLE = 16 // ~60fps
+let lastGyroUpdate = 0
 
 const handleGyroChange = (gamma: number) => {
   if (!gyroActive) return
 
-  const now = Date.now()
-  if (now - lastUpdateTime < GYRO_THROTTLE) return   // предотвращаем слишком частые вызовы
+  const now = performance.now()
+  if (now - lastGyroUpdate < 16) return // ~60 FPS throttle
+  lastGyroUpdate = now
 
-  lastUpdateTime = now
-
-  const maxView = 75
-  const minView = -75
-  const newView = Math.max(minView, Math.min(maxView, gamma * 4.5)) // чуть увеличил коэффициент
+  const newView = Math.max(-75, Math.min(75, gamma * 5)) // коэффициент можно подкрутить (4.5–6)
 
   window.currentView = newView
 
-  // Двойной RAF — очень помогает на iOS
+  // Тройной RAF — часто спасает на iOS
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
-      if (window.updateView) window.updateView()
+      requestAnimationFrame(() => {
+        if (window.updateView) window.updateView()
+      })
     })
   })
 }
@@ -354,25 +351,40 @@ const fixPanoramaScale = () => {
 }
 
 const updatePanoramaView = () => {
-  const activeLoc = document.querySelector('.location.active')
+  const activeLoc = document.querySelector('.location.active') as HTMLElement | null
   if (!activeLoc) return
 
-  const wrapper = activeLoc.querySelector('.panorama-wrapper') as HTMLElement
-  const img = activeLoc.querySelector('.panorama-img') as HTMLImageElement
+  // Force reflow — критично для Safari iOS
+  void (activeLoc.offsetHeight)
+  void (activeLoc.offsetWidth)
+
+  const wrapper = activeLoc.querySelector('.panorama-wrapper') as HTMLElement | null
+  const img = activeLoc.querySelector('.panorama-img') as HTMLImageElement | null
+
   if (!wrapper || !img) return
 
   const vw = window.innerWidth
-  const imgWidth = img.clientWidth
+  let imgWidth = img.clientWidth
 
-  if (imgWidth > vw) {
-    const maxShift = imgWidth - vw
-    const currentView = window.currentView || 0
-    const normalized = (currentView + 75) / 150
-    const translateX = -normalized * maxShift
-    wrapper.style.transform = `translateX(${translateX}px)`
-  } else {
-    wrapper.style.transform = `translateX(0px)`
+  // Защита от неправильного расчёта ширины
+  if (imgWidth <= vw + 10) {
+    requestAnimationFrame(() => updatePanoramaView())
+    return
   }
+
+  const maxShift = imgWidth - vw
+  const currentView = Math.max(-75, Math.min(75, window.currentView || 0))
+  const normalized = (currentView + 75) / 150
+  const translateX = -normalized * maxShift
+
+  // Лучший вариант для iOS Safari
+  wrapper.style.willChange = 'transform'
+  wrapper.style.transform = `translate3d(${translateX}px, 0px, 0px)`
+
+  // Сбрасываем will-change, чтобы Safari не тормозил
+  setTimeout(() => {
+    if (wrapper) wrapper.style.willChange = 'auto'
+  }, 120)
 }
 
     const showRing = (x: number, y: number) => {
