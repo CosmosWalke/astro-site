@@ -59,23 +59,29 @@ export default function PanoramaPage() {
   }, []);
 
   // Обработчик гироскопа
+let lastUpdateTime = 0
+const GYRO_THROTTLE = 16 // ~60fps
+
 const handleGyroChange = (gamma: number) => {
   if (!gyroActive) return
 
+  const now = Date.now()
+  if (now - lastUpdateTime < GYRO_THROTTLE) return   // предотвращаем слишком частые вызовы
+
+  lastUpdateTime = now
+
   const maxView = 75
   const minView = -75
-  const newView = Math.max(minView, Math.min(maxView, gamma * 4))  // твой коэффициент 4
+  const newView = Math.max(minView, Math.min(maxView, gamma * 4.5)) // чуть увеличил коэффициент
 
   window.currentView = newView
 
-  // Самое важное — форсируем обновление через requestAnimationFrame
-  if (window.updateView) {
+  // Двойной RAF — очень помогает на iOS
+  requestAnimationFrame(() => {
     requestAnimationFrame(() => {
-      window.updateView()
-      // Дополнительно — ещё один кадр, иногда помогает на iOS
-      requestAnimationFrame(window.updateView)
+      if (window.updateView) window.updateView()
     })
-  }
+  })
 }
 
   useEffect(() => {
