@@ -58,47 +58,21 @@ export default function PanoramaPage() {
     return () => cancelAnimationFrame(animationId);
   }, []);
 
-const handleGyroChange = (gamma: number) => {
-  console.log('Handle gyro change:', gamma)
-  
-  const maxView = 75
-  const minView = -75
-  const newView = Math.max(minView, Math.min(maxView, gamma * 0.8))
-  
-  window.currentView = newView
-  
-  // Обновляем панораму напрямую
-  const activeLoc = document.querySelector('.location.active')
-  if (activeLoc) {
-    const wrapper = activeLoc.querySelector('.panorama-wrapper') as HTMLElement
-    const img = activeLoc.querySelector('.panorama-img') as HTMLImageElement
+  // Обработчик гироскопа
+  const handleGyroChange = (gamma: number) => {
+    if (!gyroActive) return
     
-    if (wrapper && img) {
-      const vw = window.innerWidth
-      const imgWidth = img.clientWidth
-      
-      if (imgWidth > vw) {
-        const maxShift = imgWidth - vw
-        const normalized = (newView + 75) / 150
-        const translateX = -normalized * maxShift
-        wrapper.style.transform = `translateX(${translateX}px)`
-        console.log('Panorama moved to:', translateX)
-      }
+    const maxView = 75
+    const minView = -75
+    const newView = Math.max(minView, Math.min(maxView, gamma * 0.8))
+    
+    window.currentView = newView
+    
+    if (window.updateView) {
+      window.updateView()
     }
   }
-  
-  // Обновляем хотспоты
-  setTimeout(() => {
-    const hotspots = document.querySelectorAll('.location.active .hotspot')
-    hotspots.forEach((hotspot) => {
-      const el = hotspot as HTMLElement
-      const percentX = parseFloat(el.dataset.percentX || '0')
-      const percentY = parseFloat(el.dataset.percentY || '0')
-      el.style.left = `${percentX}%`
-      el.style.top = `${percentY}%`
-    })
-  }, 50)
-}
+
   useEffect(() => {
     if (isLoaded.current) return
     isLoaded.current = true
@@ -306,8 +280,6 @@ const handleGyroChange = (gamma: number) => {
         animation: dotPulse 2s infinite ease-in-out; 
       }
     `
-
-    
     document.head.appendChild(style)
 
     const link = document.createElement('link')
@@ -644,92 +616,7 @@ const handleGyroChange = (gamma: number) => {
       if (ringAnimationFrame) cancelAnimationFrame(ringAnimationFrame)
     }
   }, [router])
-// ========== ПРОСТОЙ ТЕСТ ГИРОСКОПА ==========
-useEffect(() => {
-  console.log('🔵 Setting up simple gyro test');
-  
-  // Создаём индикатор на экране
-  const indicator = document.createElement('div');
-  indicator.id = 'simple-gyro-test';
-  indicator.style.cssText = `
-    position: fixed;
-    bottom: 180px;
-    left: 20px;
-    z-index: 99999;
-    background: black;
-    color: lime;
-    padding: 10px;
-    border-radius: 10px;
-    font-family: monospace;
-    font-size: 14px;
-    border: 1px solid lime;
-  `;
-  indicator.innerHTML = 'GYRO: <span id="gyro-val">---</span>';
-  document.body.appendChild(indicator);
-  
-  // Обработчик
-  const onGyro = (e: DeviceOrientationEvent) => {
-    const gamma = e.gamma || 0;
-    const span = document.getElementById('gyro-val');
-    if (span) span.textContent = gamma.toFixed(2);
-    console.log('GYRO gamma:', gamma);
-    
-    // Если активен гироскоп — управляем панорамой
-    if (gyroActive) {
-      const maxView = 75;
-      const minView = -75;
-      const newView = Math.max(minView, Math.min(maxView, gamma * 0.8));
-      window.currentView = newView;
-      window.updateView?.();
-    }
-  };
-  
-  // Запрос разрешения или сразу подписка
-  if (typeof DeviceOrientationEvent !== 'undefined') {
-    if (typeof (DeviceOrientationEvent as any).requestPermission === 'function') {
-      // iOS — показываем кнопку
-      const btn = document.createElement('button');
-      btn.textContent = '🔘 ENABLE GYRO';
-      btn.style.cssText = `
-        position: fixed;
-        bottom: 100px;
-        left: 20px;
-        z-index: 99999;
-        background: #00d4ff;
-        color: black;
-        padding: 12px 20px;
-        border: none;
-        border-radius: 30px;
-        font-family: monospace;
-        font-weight: bold;
-        cursor: pointer;
-      `;
-      btn.onclick = async () => {
-        const permission = await (DeviceOrientationEvent as any).requestPermission();
-        if (permission === 'granted') {
-          window.addEventListener('deviceorientation', onGyro);
-          btn.remove();
-          indicator.style.borderColor = '#00ff00';
-          alert('Gyro enabled! Turn your phone');
-        }
-      };
-      document.body.appendChild(btn);
-    } else {
-      // Android
-      window.addEventListener('deviceorientation', onGyro);
-      indicator.style.borderColor = '#00ff00';
-      console.log('Gyro listener added for Android');
-    }
-  }
-  
-  return () => {
-    window.removeEventListener('deviceorientation', onGyro);
-    const btn = document.querySelector('#simple-gyro-test');
-    if (btn) btn.remove();
-    const ind = document.getElementById('simple-gyro-test');
-    if (ind) ind.remove();
-  };
-}, [gyroActive]);
+
   return (
     <>
       <LoadingScreen progress={loadingProgress} isVisible={showLoading} />
@@ -873,7 +760,7 @@ useEffect(() => {
                 </div>
               </div>
               <div className="layer-animated">
-                <div className="animated-object person" style={{ left: '30', top: '60%' }} id="person-5"></div>
+                <div className="animated-object person" style={{ left: '30%', top: '60%' }} id="person-5"></div>
                 <div className="animated-object person" style={{ left: '70%', top: '55%' }} id="person-6"></div>
               </div>
             </div>
@@ -930,6 +817,13 @@ useEffect(() => {
         isActive={gyroActive}
         onToggle={() => setGyroActive(!gyroActive)}
       />
+
+      {/* Индикатор гироскопа для отладки */}
+      {gyroActive && (
+        <div className="fixed bottom-40 left-6 z-50 bg-black/80 text-[#00d4ff] text-xs px-2 py-1 rounded font-mono">
+          GYRO: {(window.currentView || 0).toFixed(0)}
+        </div>
+      )}
     </>
   )
 }
