@@ -44,12 +44,6 @@ export default function PanoramaPage() {
     const wrapper = activeLoc.querySelector('.panorama-wrapper') as HTMLElement | null
     if (!wrapper) return
 
-    // Многослойный force reflow — очень важно для Safari
-    void document.body.offsetHeight
-    void activeLoc.offsetHeight
-    void wrapper.offsetWidth
-    void wrapper.offsetLeft
-
     const vw = window.innerWidth
     const img = activeLoc.querySelector('.panorama-img') as HTMLImageElement | null
     const imgWidth = img ? (img.clientWidth || img.naturalWidth || vw * 2) : vw * 2
@@ -63,7 +57,6 @@ export default function PanoramaPage() {
     const normalized = (currentTargetView + 75) / 150
     const translateX = Math.round(-normalized * maxShift)
 
-    wrapper.style.transition = 'none'
     wrapper.style.transform = `translate3d(${translateX}px, 0px, 0px)`
   }
 
@@ -113,28 +106,21 @@ export default function PanoramaPage() {
 
     const style = document.createElement('style')
     style.textContent = `
-      body, #viewport, #panorama, .panorama-wrapper {
-        -webkit-perspective: 3000px;
-        perspective: 3000px;
-        -webkit-backface-visibility: hidden;
-        backface-visibility: hidden;
-      }
-
       .panorama-wrapper { 
         position: absolute;
-        top: 0; left: 0; height: 100vh;
-        will-change: transform;
-        transform-style: preserve-3d;
-        -webkit-transform-style: preserve-3d;
+        top: 0; 
+        left: 0; 
+        height: 100vh; 
+        will-change: transform; 
+        overflow: visible;
       }
       .panorama-img { 
         position: absolute;
-        top: 0; left: 0;
+        top: 0;
+        left: 0;
         height: 100vh; 
         width: auto; 
-        display: block;
-        -webkit-transform: translate3d(0,0,0);
-        transform: translate3d(0,0,0);
+        display: block; 
       }
 
       .location { 
