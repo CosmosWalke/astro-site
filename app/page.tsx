@@ -72,11 +72,19 @@ export default function PanoramaPage() {
     viewLoopId = requestAnimationFrame(loop)
   }
 
-  const handleGyroChange = (gamma: number) => {
-    if (!gyroActive) return
-    const newView = Math.max(-75, Math.min(75, gamma * 6))
-    window.currentView = newView
-  }
+const handleGyroChange = (gamma: number) => {
+  if (!gyroActive) return
+  
+  // Инвертируем и замедляем
+  // gamma обычно от -30 до 30, умножаем на 0.5 для очень медленного движения
+  const maxView = 75
+  const minView = -75
+  let newView = gamma * -0.5  // ← очень медленно, инвертировано
+  
+  newView = Math.max(minView, Math.min(maxView, newView))
+  
+  window.currentView = newView
+}
 
   // ====================== LOADING ======================
   useEffect(() => {
