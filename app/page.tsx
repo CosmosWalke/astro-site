@@ -23,86 +23,76 @@ export default function PanoramaPage() {
   const isLoaded = useRef(false)
   const router = useRouter()
   const panoramaInitialized = useRef(false)
+
   const [loadingProgress, setLoadingProgress] = useState(0)
   const [showLoading, setShowLoading] = useState(true)
   const [gyroActive, setGyroActive] = useState(false)
 
   let ringAnimationFrame: number | null = null
-  let animationFrameId: number | null = null
+  let viewLoopId: number | null = null
   let currentTargetView = 0
 
   const afterLayout = (cb: () => void) => {
-    requestAnimationFrame(() => {
-      requestAnimationFrame(cb)
-    })
+    requestAnimationFrame(() => requestAnimationFrame(cb))
   }
 
-  // ====================== GYROSCOPE & PANORAMA ======================
-
+  // ====================== PANORAMA UPDATE ======================
   const updatePanoramaView = () => {
     const activeLoc = document.querySelector('.location.active') as HTMLElement | null
     if (!activeLoc) return
 
     const wrapper = activeLoc.querySelector('.panorama-wrapper') as HTMLElement | null
-    const img = activeLoc.querySelector('.panorama-img') as HTMLImageElement | null
-    if (!wrapper || !img) return
+    if (!wrapper) return
 
     void activeLoc.offsetHeight
-    void activeLoc.offsetWidth
+    void wrapper.offsetWidth
 
     const vw = window.innerWidth
-    const imgWidth = img.clientWidth || img.naturalWidth
+    const img = activeLoc.querySelector('.panorama-img') as HTMLImageElement | null
+    const imgWidth = img ? (img.clientWidth || img.naturalWidth || vw * 2) : vw * 2
 
-    if (imgWidth <= vw + 20) {
-      wrapper.style.transform = 'translate3d(0px, 0px, 0px)'
+    if (imgWidth <= vw + 30) {
+      wrapper.style.setProperty('--translate-x', '0px')
       return
     }
 
     const maxShift = imgWidth - vw
     const normalized = (currentTargetView + 75) / 150
-    const translateX = -normalized * maxShift
+    const translateX = Math.round(-normalized * maxShift)
 
-    wrapper.style.transition = 'none'
-    wrapper.style.transform = `translate3d(${translateX}px, 0px, 0px)`
+    wrapper.style.setProperty('--translate-x', `${translateX}px`)
   }
 
-  const startViewUpdateLoop = () => {
+  const startViewLoop = () => {
     const loop = () => {
       const currentView = window.currentView || 0
-      if (Math.abs(currentView - currentTargetView) > 0.5) {
+      if (Math.abs(currentView - currentTargetView) > 0.4) {
         currentTargetView = currentView
         updatePanoramaView()
       }
-      animationFrameId = requestAnimationFrame(loop)
+      viewLoopId = requestAnimationFrame(loop)
     }
-    if (!animationFrameId) {
-      animationFrameId = requestAnimationFrame(loop)
-    }
+    if (!viewLoopId) viewLoopId = requestAnimationFrame(loop)
   }
 
   const handleGyroChange = (gamma: number) => {
     if (!gyroActive) return
-
-    const newView = Math.max(-75, Math.min(75, gamma * 5.5))
+    const newView = Math.max(-75, Math.min(75, gamma * 6))
     window.currentView = newView
   }
 
   // ====================== LOADING ======================
-
   useEffect(() => {
     let startTime = Date.now()
     let animationId: number
 
     const updateProgress = () => {
       const elapsed = Date.now() - startTime
-      let newProgress = Math.min(100, (elapsed / 500) * 100)
+      const newProgress = Math.min(100, (elapsed / 500) * 100)
       setLoadingProgress(Math.floor(newProgress))
 
       if (newProgress >= 100) {
-        setLoadingProgress(100)
-        setTimeout(() => {
-          setShowLoading(false)
-        }, 100)
+        setTimeout(() => setShowLoading(false), 120)
       } else {
         animationId = requestAnimationFrame(updateProgress)
       }
@@ -113,7 +103,6 @@ export default function PanoramaPage() {
   }, [])
 
   // ====================== MAIN USEEFFECT ======================
-
   useEffect(() => {
     if (isLoaded.current) return
     isLoaded.current = true
@@ -127,7 +116,7 @@ export default function PanoramaPage() {
         height: 100vh; 
         will-change: transform; 
         overflow: visible;
-        transform: translateZ(0);
+        transform: translate3d(var(--translate-x, 0px), 0, 0);
         transform-style: preserve-3d;
         -webkit-transform-style: preserve-3d;
         -webkit-backface-visibility: hidden;
@@ -139,8 +128,7 @@ export default function PanoramaPage() {
         left: 0;
         height: 100vh; 
         width: auto; 
-        display: block;
-        -webkit-transform: translate3d(0,0,0);
+        display: block; 
         transform: translate3d(0,0,0);
       }
 
@@ -248,19 +236,19 @@ export default function PanoramaPage() {
         transform: translate(-50%, -50%) scale(1);
       }
       .cursor-follow-ring .click-text { 
-        color: #fff;
-        font-size: 15px;
-        font-weight: 700;
-        letter-spacing: 2.5px;
-        text-transform: uppercase;
-        text-align: center;
-        line-height: 1.4;
-        text-shadow: 0 0 15px #0ff;
-        width: 100%;
-        font-family: 'CCUltimatum', monospace;
-        opacity: 0;
-        transform: translateY(20px);
-        transition: opacity 0.2s ease, transform 0.3s ease;
+        color: #fff; 
+        font-size: 15px; 
+        font-weight: 700; 
+        letter-spacing: 2.5px; 
+        text-transform: uppercase; 
+        text-align: center; 
+        line-height: 1.4; 
+        text-shadow: 0 0 15px #0ff; 
+        width: 100%; 
+        font-family: 'CCUltimatum', monospace; 
+        opacity: 0; 
+        transform: translateY(20px); 
+        transition: opacity 0.2s ease, transform 0.3s ease; 
       }
       .cursor-follow-ring.visible .click-text { 
         opacity: 1;
@@ -376,18 +364,7 @@ export default function PanoramaPage() {
         wrapper.style.height = `${vh}px`
       } else {
         img.addEventListener('load', () => {
-          const ratio = img.naturalWidth / img.naturalHeight
-          let scaledWidth = ratio * vh
-          
-          const minWidth = vw * 1.3
-          if (scaledWidth < minWidth) {
-            scaledWidth = minWidth
-          }
-          
-          img.style.width = `${scaledWidth}px`
-          wrapper.style.width = `${scaledWidth}px`
-          wrapper.style.height = `${vh}px`
-          updatePanoramaView()
+          fixPanoramaScale()
         })
       }
     }
@@ -501,7 +478,6 @@ export default function PanoramaPage() {
 
       const run = () => {
         fixPanoramaScale()
-        
         afterLayout(() => {
           updatePanoramaView()
           afterLayout(() => {
@@ -559,7 +535,7 @@ export default function PanoramaPage() {
           initHotspots()
           window.panoramaReady = true
           console.log('Panorama ready, hotspots positioned')
-          startViewUpdateLoop()
+          startViewLoop()
         })
       })
     }
@@ -611,18 +587,6 @@ export default function PanoramaPage() {
 
     waitForVideo()
 
-    const checkDoorHotspot = () => {
-      const doorHotspot = document.querySelector('.hotspot-door')
-      if (!doorHotspot) {
-        console.log('Door hotspot missing, checking again...')
-        setTimeout(checkDoorHotspot, 100)
-      } else {
-        console.log('Door hotspot present in DOM')
-      }
-    }
-
-    setTimeout(checkDoorHotspot, 500)
-
     const handleResize = () => {
       if (window.panoramaReady) {
         fixPanoramaScale()
@@ -656,7 +620,7 @@ export default function PanoramaPage() {
       window.removeEventListener('mousemove', handleMouseMove)
 
       if (ringAnimationFrame) cancelAnimationFrame(ringAnimationFrame)
-      if (animationFrameId) cancelAnimationFrame(animationFrameId)
+      if (viewLoopId) cancelAnimationFrame(viewLoopId)
     }
   }, [router])
 
@@ -810,6 +774,7 @@ export default function PanoramaPage() {
           </div>
         </div>
 
+        {/* ==================== MODALS ==================== */}
         <div className="section-modal" id="modal-cargo">
           <div className="section-content">
             <div className="close-btn" onClick={() => window.closeSection?.('cargo')}>×</div>

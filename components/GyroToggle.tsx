@@ -11,48 +11,46 @@ interface GyroToggleProps {
 export function GyroToggle({ onOrientationChange, isActive, onToggle }: GyroToggleProps) {
   const [isIOS, setIsIOS] = useState(false)
   const [currentGamma, setCurrentGamma] = useState(0)
-  const intervalRef = useRef<NodeJS.Timeout | null>(null)
+  const rafRef = useRef<number | null>(null)
 
   useEffect(() => {
-    const isIOSDevice = /iPad|iPhone|iPod/.test(navigator.userAgent)
-    setIsIOS(isIOSDevice)
+    setIsIOS(/iPad|iPhone|iPod/.test(navigator.userAgent))
   }, [])
 
-  // Постоянно читаем последнее значение gamma
   useEffect(() => {
     let latestGamma = 0
-    
+
     const handleOrientation = (event: DeviceOrientationEvent) => {
       latestGamma = event.gamma || 0
       setCurrentGamma(latestGamma)
-      
+
       if (isActive) {
         onOrientationChange(latestGamma)
       }
     }
 
-    // Добавляем слушатель один раз при монтировании
     window.addEventListener('deviceorientation', handleOrientation)
 
     return () => {
       window.removeEventListener('deviceorientation', handleOrientation)
+      if (rafRef.current) cancelAnimationFrame(rafRef.current)
     }
   }, [isActive, onOrientationChange])
 
   const requestPermission = async () => {
-    console.log('Requesting permission...')
+    console.log('Requesting DeviceOrientation permission...')
+
     if (typeof (DeviceOrientationEvent as any).requestPermission === 'function') {
       try {
         const permission = await (DeviceOrientationEvent as any).requestPermission()
+        console.log('Permission result:', permission)
         if (permission === 'granted') {
-          console.log('Permission granted')
           onToggle()
         }
       } catch (error) {
-        console.error('Permission denied:', error)
+        console.error('Permission error:', error)
       }
     } else {
-      console.log('No permission needed, toggling')
       onToggle()
     }
   }
@@ -80,17 +78,16 @@ export function GyroToggle({ onOrientationChange, isActive, onToggle }: GyroTogg
             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 4c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm0 13c-2.33 0-4.31-1.46-5.11-3.5h10.22c-.8 2.04-2.78 3.5-5.11 3.5z"/>
           </svg>
         ) : (
-          <svg className="w-5 h-5 text-white group-hover:text-[#00d4ff] transition-colors" fill="currentColor" viewBox="0 0 24 24">
+          <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
             <path d="M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z"/>
             <circle cx="12" cy="16" r="1.5"/>
             <path d="M15 8h-6v2h6V8z"/>
           </svg>
         )}
       </button>
-      
-      {/* Индикатор текущего значения */}
+
       <div className="fixed bottom-40 left-6 z-50 bg-black/80 text-[#00d4ff] text-xs px-2 py-1 rounded font-mono">
-        G: {currentGamma.toFixed(0)} | {isActive ? 'ON' : 'OFF'}
+        G: {currentGamma.toFixed(0)}° | {isActive ? 'ON' : 'OFF'}
       </div>
     </>
   )
