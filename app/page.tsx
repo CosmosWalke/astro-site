@@ -79,7 +79,7 @@ const handleGyroChange = (gamma: number) => {
   // gamma обычно от -30 до 30, умножаем на 0.5 для очень медленного движения
   const maxView = 75
   const minView = -75
-  let newView = gamma * -0.5  // ← очень медленно, инвертировано
+  let newView = gamma * -2.5  // ← очень медленно, инвертировано
   
   newView = Math.max(minView, Math.min(maxView, newView))
   
