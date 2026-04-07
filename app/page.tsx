@@ -58,14 +58,46 @@ export default function PanoramaPage() {
     return () => cancelAnimationFrame(animationId);
   }, []);
 
-// Обработчик гироскопа — принимает только gamma
 const handleGyroChange = (gamma: number) => {
   console.log('Handle gyro change:', gamma)
+  
   const maxView = 75
   const minView = -75
   const newView = Math.max(minView, Math.min(maxView, gamma * 0.8))
+  
   window.currentView = newView
-  window.updateView?.()
+  
+  // Обновляем панораму напрямую
+  const activeLoc = document.querySelector('.location.active')
+  if (activeLoc) {
+    const wrapper = activeLoc.querySelector('.panorama-wrapper') as HTMLElement
+    const img = activeLoc.querySelector('.panorama-img') as HTMLImageElement
+    
+    if (wrapper && img) {
+      const vw = window.innerWidth
+      const imgWidth = img.clientWidth
+      
+      if (imgWidth > vw) {
+        const maxShift = imgWidth - vw
+        const normalized = (newView + 75) / 150
+        const translateX = -normalized * maxShift
+        wrapper.style.transform = `translateX(${translateX}px)`
+        console.log('Panorama moved to:', translateX)
+      }
+    }
+  }
+  
+  // Обновляем хотспоты
+  setTimeout(() => {
+    const hotspots = document.querySelectorAll('.location.active .hotspot')
+    hotspots.forEach((hotspot) => {
+      const el = hotspot as HTMLElement
+      const percentX = parseFloat(el.dataset.percentX || '0')
+      const percentY = parseFloat(el.dataset.percentY || '0')
+      el.style.left = `${percentX}%`
+      el.style.top = `${percentY}%`
+    })
+  }, 50)
 }
   useEffect(() => {
     if (isLoaded.current) return
