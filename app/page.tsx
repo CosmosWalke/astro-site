@@ -734,7 +734,7 @@ const setupMobileLabels = () => {
       <div id="intro-video-1" className="intro-video">
         <img id="static-bg-1" src="/images/space-bg.jpg" alt="Static door scene" className="static-bg" />
         <video autoPlay muted playsInline id="intro-video-player-1">
-          <source src="/videos/intro-fly.mp4" type="video/mp4" />
+          <source src="/videos/intro-fly.webm" type="video/webm" />
         </video>
         <audio id="audio-intro-1" preload="auto">
           <source src="/sounds/intro-fly-audio.mp3" type="audio/mpeg" />
@@ -744,7 +744,7 @@ const setupMobileLabels = () => {
       <div id="intro-video-2" className="intro-video" style={{ opacity: 0, pointerEvents: 'none' }}>
         <img id="static-bg-2" src="/images/panorama-1-center.jpg" alt="Static bridge scene" className="static-bg" />
         <video muted playsInline id="intro-video-player-2">
-          <source src="/videos/intro-enter.mp4" type="video/mp4" />
+          <source src="/videos/intro-enter.webm" type="video/webm" />
         </video>
         <audio id="audio-intro-2" preload="auto">
           <source src="/sounds/intro-enter-audio.mp3" type="audio/mpeg" />
