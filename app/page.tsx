@@ -62,35 +62,16 @@ export default function PanoramaPage() {
 const handleGyroChange = (gamma: number) => {
   if (!gyroActive) return
   
-  console.log('🎯 Gyro change:', gamma)
+  console.log('🎯 Gyro gamma:', gamma)
   
+  // Усиливаем коэффициент (было 0.8, теперь 4)
   const maxView = 75
   const minView = -75
-  const newView = Math.max(minView, Math.min(maxView, gamma * 0.8))
+  const newView = Math.max(minView, Math.min(maxView, gamma * 4))
   
   window.currentView = newView
   
-  // Прямое обновление панорамы
-  const activeLoc = document.querySelector('.location.active')
-  if (activeLoc) {
-    const wrapper = activeLoc.querySelector('.panorama-wrapper') as HTMLElement
-    const img = activeLoc.querySelector('.panorama-img') as HTMLImageElement
-    
-    if (wrapper && img) {
-      const vw = window.innerWidth
-      const imgWidth = img.clientWidth
-      
-      if (imgWidth > vw) {
-        const maxShift = imgWidth - vw
-        const normalized = (newView + 75) / 150
-        const translateX = -normalized * maxShift
-        wrapper.style.transform = `translateX(${translateX}px)`
-        console.log('🎯 Panorama moved to:', translateX)
-      }
-    }
-  }
-  
-  // Также вызываем updateView на всякий случай
+  // Только updateView — без ручного transform
   if (window.updateView) {
     window.updateView()
   }
@@ -320,59 +301,72 @@ const handleGyroChange = (gamma: number) => {
     let ringCurrentX = 0
     let ringCurrentY = 0
 
-    const fixPanoramaScale = () => {
-      const activeLoc = document.querySelector('.location.active')
-      if (!activeLoc) return
+const fixPanoramaScale = () => {
+  const activeLoc = document.querySelector('.location.active')
+  if (!activeLoc) return
 
-      const wrapper = activeLoc.querySelector('.panorama-wrapper') as HTMLElement
-      const img = activeLoc.querySelector('.panorama-img') as HTMLImageElement
-      if (!wrapper || !img) return
+  const wrapper = activeLoc.querySelector('.panorama-wrapper') as HTMLElement
+  const img = activeLoc.querySelector('.panorama-img') as HTMLImageElement
+  if (!wrapper || !img) return
 
-      const vh = window.innerHeight
-      img.style.height = `${vh}px`
-      img.style.width = 'auto'
+  const vh = window.innerHeight
+  const vw = window.innerWidth
+  
+  img.style.height = `${vh}px`
+  img.style.width = 'auto'
 
-      if (img.complete && img.naturalWidth) {
-        const ratio = img.naturalWidth / img.naturalHeight
-        const scaledWidth = ratio * vh
-        img.style.width = `${scaledWidth}px`
-        wrapper.style.width = `${scaledWidth}px`
-        wrapper.style.height = `${vh}px`
-      } else {
-        img.addEventListener('load', () => {
-          const ratio = img.naturalWidth / img.naturalHeight
-          const scaledWidth = ratio * vh
-          img.style.width = `${scaledWidth}px`
-          wrapper.style.width = `${scaledWidth}px`
-          wrapper.style.height = `${vh}px`
-          updatePanoramaView()
-        })
-      }
+  if (img.complete && img.naturalWidth) {
+    const ratio = img.naturalWidth / img.naturalHeight
+    let scaledWidth = ratio * vh
+    
+    // Гарантируем, что изображение шире экрана минимум на 30%
+    const minWidth = vw * 1.3
+    if (scaledWidth < minWidth) {
+      scaledWidth = minWidth
     }
-
-    const updatePanoramaView = () => {
-      const activeLoc = document.querySelector('.location.active')
-      if (!activeLoc) return
-
-      const wrapper = activeLoc.querySelector('.panorama-wrapper') as HTMLElement
-      const img = activeLoc.querySelector('.panorama-img') as HTMLImageElement
-      if (!wrapper || !img) return
-
-      const vw = window.innerWidth
-      const imgWidth = img.clientWidth
-
-      if (imgWidth > vw) {
-        const maxShift = imgWidth - vw
-        const currentView = window.currentView || 0
-        const normalized = (currentView + 75) / 150
-        const translateX = -normalized * maxShift
-        wrapper.style.transform = `translateX(${translateX}px)`
-      } else {
-        wrapper.style.transform = `translateX(0px)`
+    
+    img.style.width = `${scaledWidth}px`
+    wrapper.style.width = `${scaledWidth}px`
+    wrapper.style.height = `${vh}px`
+  } else {
+    img.addEventListener('load', () => {
+      const ratio = img.naturalWidth / img.naturalHeight
+      let scaledWidth = ratio * vh
+      
+      const minWidth = vw * 1.3
+      if (scaledWidth < minWidth) {
+        scaledWidth = minWidth
       }
       
-      wrapper.getBoundingClientRect()
-    }
+      img.style.width = `${scaledWidth}px`
+      wrapper.style.width = `${scaledWidth}px`
+      wrapper.style.height = `${vh}px`
+      updatePanoramaView()
+    })
+  }
+}
+
+const updatePanoramaView = () => {
+  const activeLoc = document.querySelector('.location.active')
+  if (!activeLoc) return
+
+  const wrapper = activeLoc.querySelector('.panorama-wrapper') as HTMLElement
+  const img = activeLoc.querySelector('.panorama-img') as HTMLImageElement
+  if (!wrapper || !img) return
+
+  const vw = window.innerWidth
+  const imgWidth = img.clientWidth
+
+  if (imgWidth > vw) {
+    const maxShift = imgWidth - vw
+    const currentView = window.currentView || 0
+    const normalized = (currentView + 75) / 150
+    const translateX = -normalized * maxShift
+    wrapper.style.transform = `translateX(${translateX}px)`
+  } else {
+    wrapper.style.transform = `translateX(0px)`
+  }
+}
 
     const showRing = (x: number, y: number) => {
       const ring = document.querySelector('.cursor-follow-ring') as HTMLElement
