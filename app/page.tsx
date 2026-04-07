@@ -31,6 +31,7 @@ export default function PanoramaPage() {
   let ringAnimationFrame: number | null = null
   let viewLoopId: number | null = null
   let currentTargetView = 0
+  let mobileObserver: IntersectionObserver | null = null
 
   const afterLayout = (cb: () => void) => {
     requestAnimationFrame(() => requestAnimationFrame(cb))
@@ -72,18 +73,66 @@ export default function PanoramaPage() {
     viewLoopId = requestAnimationFrame(loop)
   }
 
-const handleGyroChange = (gamma: number) => {
-  if (!gyroActive) return
-  
-  // Инвертируем и замедляем
-  // gamma обычно от -30 до 30, умножаем на 0.5 для очень медленного движения
-  const maxView = 75
-  const minView = -75
-  let newView = gamma * -2.5  // ← очень медленно, инвертировано
-  
-  newView = Math.max(minView, Math.min(maxView, newView))
-  
-  window.currentView = newView
+  const handleGyroChange = (gamma: number) => {
+    if (!gyroActive) return
+    
+    // Инвертируем и замедляем
+    // gamma обычно от -30 до 30, умножаем на 0.5 для очень медленного движения
+    const maxView = 75
+    const minView = -75
+    let newView = gamma * -2.5  // ← очень медленно, инвертировано
+    
+    newView = Math.max(minView, Math.min(maxView, newView))
+    
+    window.currentView = newView
+  }
+
+const setupMobileLabels = () => {
+  if (mobileObserver) {
+    mobileObserver.disconnect()
+    mobileObserver = null
+  }
+
+  const activeLoc = document.querySelector('.location.active')
+  if (!activeLoc) return
+
+  const hotspots = activeLoc.querySelectorAll('.hotspot') as NodeListOf<HTMLElement>
+
+  hotspots.forEach((hotspot) => {
+    let labelEl = hotspot.querySelector('.hotspot-label') as HTMLElement | null
+
+    if (!labelEl) {
+      const labelText = hotspot.dataset.label || ''
+      if (!labelText) return
+
+      labelEl = document.createElement('div')
+      labelEl.className = 'hotspot-label'
+      labelEl.textContent = labelText
+      hotspot.appendChild(labelEl)
+    }
+  })
+
+  mobileObserver = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        const hotspot = entry.target as HTMLElement
+        const label = hotspot.querySelector('.hotspot-label') as HTMLElement | null
+        if (!label) return
+
+        if (entry.isIntersecting && entry.intersectionRatio >= 0.25) {
+          label.classList.add('show')
+        } else {
+          label.classList.remove('show')
+        }
+      })
+    },
+    {
+      threshold: [0, 0.25, 0.5],
+      rootMargin: '-40px 0px -100px 0px'   // подстроено под большие надписи
+    }
+  )
+
+  hotspots.forEach((hotspot) => mobileObserver!.observe(hotspot))
 }
 
   // ====================== LOADING ======================
@@ -313,6 +362,55 @@ const handleGyroChange = (gamma: number) => {
         box-shadow: 0 0 20px #0ff, 0 0 40px #0ff; 
         animation: dotPulse 2s infinite ease-in-out; 
       }
+
+      /* ==================== MOBILE HOTSPOT LABELS ==================== */
+      .hotspot-label {
+        position: absolute;
+        top: -68px;
+        left: 50%;
+        transform: translateX(-50%) translateY(30px);
+        background: rgba(0, 0, 0, 0.85);
+        color: #0ff;
+        padding: 6px 16px;
+        border-radius: 6px;
+        font-size: 15px;
+        font-weight: 700;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        white-space: nowrap;
+        font-family: 'CCUltimatum', monospace;
+        pointer-events: none;
+        opacity: 0;
+        visibility: hidden;
+        box-shadow: 0 0 20px #0ff, 0 0 40px rgba(0, 255, 255, 0.4);
+        transition: opacity 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.1),
+                    transform 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.1);
+        z-index: 110;
+        text-align: center;
+        line-height: 1.2;
+      }
+
+      .hotspot-label.show {
+        opacity: 1;
+        visibility: visible;
+        transform: translateX(-50%) translateY(0);
+      }
+
+      /* Скрываем на десктопе */
+      @media (min-width: 769px) {
+        .hotspot-label {
+          display: none !important;
+        }
+      }
+
+      /* На мобильных хотспоты уже увеличены — подгоняем отступ */
+      @media (max-width: 768px) {
+        .hotspot-label {
+          top: -78px;
+          font-size: 16px;
+          padding: 8px 18px;
+        }
+      }
     `
     document.head.appendChild(style)
 
@@ -461,6 +559,11 @@ const handleGyroChange = (gamma: number) => {
     }
 
     window.enterLocation = (targetLocId: string, locationName: string) => {
+      // Скрываем все предыдущие лейблы
+      document.querySelectorAll('.hotspot-label.show').forEach((label) => {
+        (label as HTMLElement).classList.remove('show')
+      })
+
       const currentActive = document.querySelector('.location.active')
       if (currentActive) currentActive.classList.remove('active')
 
@@ -477,6 +580,7 @@ const handleGyroChange = (gamma: number) => {
           updatePanoramaView()
           afterLayout(() => {
             initHotspots()
+            setupMobileLabels()
           })
         })
       }
@@ -528,6 +632,7 @@ const handleGyroChange = (gamma: number) => {
         updatePanoramaView()
         afterLayout(() => {
           initHotspots()
+          setupMobileLabels()
           window.panoramaReady = true
           console.log('Panorama ready, hotspots positioned')
           startViewLoop()
@@ -616,6 +721,7 @@ const handleGyroChange = (gamma: number) => {
 
       if (ringAnimationFrame) cancelAnimationFrame(ringAnimationFrame)
       if (viewLoopId) cancelAnimationFrame(viewLoopId)
+      if (mobileObserver) mobileObserver.disconnect()
     }
   }, [router])
 
