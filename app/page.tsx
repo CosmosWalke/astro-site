@@ -58,40 +58,14 @@ export default function PanoramaPage() {
     return () => cancelAnimationFrame(animationId);
   }, []);
 
-// Обработчик изменения ориентации для гироскопа
-// Обработчик изменения ориентации для гироскопа
-const handleOrientationChange = (alpha: number, beta: number, gamma: number) => {
-  if (!gyroActive) return
-  
-  // gamma — наклон влево/вправо (-90 до 90)
-  // Преобразуем в диапазон от -75 до 75
+// Обработчик гироскопа — принимает только gamma
+const handleGyroChange = (gamma: number) => {
+  console.log('Handle gyro change:', gamma)
   const maxView = 75
   const minView = -75
-  let newView = gamma * 0.8
-  
-  // Ограничиваем значения
-  newView = Math.max(minView, Math.min(maxView, newView))
-  
-  console.log('Gyro gamma:', gamma, '→ newView:', newView)
-  
+  const newView = Math.max(minView, Math.min(maxView, gamma * 0.8))
   window.currentView = newView
-  
-  // Принудительно обновляем панораму
-  if (window.updateView) {
-    window.updateView()
-  }
-  
-  // Обновляем хотспоты
-  setTimeout(() => {
-    const hotspots = document.querySelectorAll('.location.active .hotspot')
-    hotspots.forEach((hotspot) => {
-      const el = hotspot as HTMLElement
-      const percentX = parseFloat(el.dataset.percentX || '0')
-      const percentY = parseFloat(el.dataset.percentY || '0')
-      el.style.left = `${percentX}%`
-      el.style.top = `${percentY}%`
-    })
-  }, 50)
+  window.updateView?.()
 }
   useEffect(() => {
     if (isLoaded.current) return
@@ -920,7 +894,7 @@ useEffect(() => {
 
       {/* Кнопка гироскопа для мобильных */}
       <GyroToggle 
-        onOrientationChange={handleOrientationChange}
+        onOrientationChange={handleGyroChange}
         isActive={gyroActive}
         onToggle={() => setGyroActive(!gyroActive)}
       />
