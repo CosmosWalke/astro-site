@@ -59,19 +59,42 @@ export default function PanoramaPage() {
   }, []);
 
   // Обработчик гироскопа
-  const handleGyroChange = (gamma: number) => {
-    if (!gyroActive) return
+const handleGyroChange = (gamma: number) => {
+  if (!gyroActive) return
+  
+  console.log('🎯 Gyro change:', gamma)
+  
+  const maxView = 75
+  const minView = -75
+  const newView = Math.max(minView, Math.min(maxView, gamma * 0.8))
+  
+  window.currentView = newView
+  
+  // Прямое обновление панорамы
+  const activeLoc = document.querySelector('.location.active')
+  if (activeLoc) {
+    const wrapper = activeLoc.querySelector('.panorama-wrapper') as HTMLElement
+    const img = activeLoc.querySelector('.panorama-img') as HTMLImageElement
     
-    const maxView = 75
-    const minView = -75
-    const newView = Math.max(minView, Math.min(maxView, gamma * 0.8))
-    
-    window.currentView = newView
-    
-    if (window.updateView) {
-      window.updateView()
+    if (wrapper && img) {
+      const vw = window.innerWidth
+      const imgWidth = img.clientWidth
+      
+      if (imgWidth > vw) {
+        const maxShift = imgWidth - vw
+        const normalized = (newView + 75) / 150
+        const translateX = -normalized * maxShift
+        wrapper.style.transform = `translateX(${translateX}px)`
+        console.log('🎯 Panorama moved to:', translateX)
+      }
     }
   }
+  
+  // Также вызываем updateView на всякий случай
+  if (window.updateView) {
+    window.updateView()
+  }
+}
 
   useEffect(() => {
     if (isLoaded.current) return
