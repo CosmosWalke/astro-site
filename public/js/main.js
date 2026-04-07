@@ -22,7 +22,8 @@ let ringTargetX = 0, ringTargetY = 0;
 let ringCurrentX = 0, ringCurrentY = 0;
 let ringVisible = false;
 const RING_SMOOTHING = 0.08;
-
+let finalViewOffset = 0;        // ← новое
+// Например: -12 = сдвиг влево, +12 = сдвиг вправо
 // Хранилище позиций хотспотов
 let hotspotPositions = {};
 let isHotspotsPositioned = false;
@@ -240,7 +241,9 @@ function preparePanoramaDuringVideo() {
     if (doorTitleElement) {
         doorTitleElement.style.opacity = '0';
     }
-    
+    setTimeout(() => {
+        updateView();
+    }, 10);
     const panoramaImg = document.querySelector('.location.active .panorama-img');
     
     if (panoramaImg) {
@@ -265,25 +268,32 @@ function setupPanorama() {
 
 function finalizePanorama() {
     const mainContent = document.getElementById('main-content');
+    mainContent.style.display = 'block';
     mainContent.style.opacity = '1';
-    
-    updateView();
-    checkHotspots();
-    showLocationName('BRIDGE');
-    
+
     const img = document.querySelector('.location.active .panorama-img');
-    if (img) {
-        // Плавно убираем scale с изображения
-        img.style.transition = 'transform 2s ease-out';
-        img.style.transform = 'scale(1)';
+    if (!img) return;
+
+    // Плавный zoom-out
+    img.style.transition = 'transform 2.2s cubic-bezier(0.23, 1, 0.32, 1)';
+
+    img.style.transform = 'scale(1)';
+
+    setTimeout(() => {
+        isInitialZoom = false;
         
+        // ← Вот здесь задаём желаемое смещение после зумаута
+        currentView = finalViewOffset+0.2;     // например -15 или -8
+
+        updateView();
+        checkHotspots();
+        showLocationName('BRIDGE');
+
         setTimeout(() => {
-            img.style.transition = '';
-            isInitialZoom = false;
-            updateView();
+            if (img) img.style.transition = '';
             positionHotspotsOnce();
-        }, 2000);
-    }
+        }, 2300);
+    }, 50);
 }
 
 function positionHotspotsOnce() {
@@ -650,33 +660,36 @@ if (window.innerWidth > 768) {
 function updateView() {
     const activeLoc = document.querySelector('.location.active');
     if (!activeLoc) return;
+
     const wrapper = activeLoc.querySelector('.panorama-wrapper');
-    const img = wrapper.querySelector('.panorama-img');
+    const img = wrapper ? wrapper.querySelector('.panorama-img') : null;
     if (!wrapper || !img) return;
-    
+
     const vw = window.innerWidth;
     const vh = window.innerHeight;
-    
+
     let ratio = 4032 / 1056;
-    if (img && img.complete && img.naturalWidth > 0) {
+    if (img.complete && img.naturalWidth > 0) {
         ratio = img.naturalWidth / img.naturalHeight;
     }
-    
-    const scaledWidth = ratio * vh;
-    const halfRange = (scaledWidth - vw) / 2;
-    const centerOffset = (vw - scaledWidth) / 2;
+
+    const baseWidth = ratio * vh;                    // ширина при scale=1
+    const currentScale = isInitialZoom ? initialScale : 1.0;
+    const displayedWidth = baseWidth * currentScale; // важный момент
+
+    const halfRange = (displayedWidth - vw) / 2;
+    const centerOffset = (vw - displayedWidth) / 2;
+
     const normalized = currentView / 75;
     let shift = normalized * halfRange;
+
     let translateX = centerOffset + shift;
-    translateX = Math.max(vw - scaledWidth, Math.min(0, translateX));
-    
-    let currentScale = isInitialZoom ? initialScale : 1;
-    
-    // Применяем scale ТОЛЬКО к изображению, не ко всему wrapper
-    img.style.transform = `scale(${currentScale})`;
+    translateX = Math.max(vw - displayedWidth, Math.min(0, translateX));
+
+    // Применяем трансформации
     img.style.transformOrigin = 'center center';
-    
-    // Wrapper двигает только translateX (без scale)
+    img.style.transform = `scale(${currentScale})`;
+
     wrapper.style.transform = `translateX(${translateX}px)`;
 }
 
