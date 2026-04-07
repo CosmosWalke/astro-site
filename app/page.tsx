@@ -675,24 +675,7 @@ const setupMobileLabels = () => {
         observer.observe(document.body, { childList: true, subtree: true })
       }
     }
-// ====================== INTRO DOOR LABEL (мобильная) ======================
-const hideIntroDoorLabel = () => {
-  const label = document.getElementById('intro-door-label') as HTMLElement | null;
-  if (label) {
-    label.style.transition = 'opacity 0.4s ease';
-    label.style.opacity = '0';
-    setTimeout(() => {
-      if (label) label.style.display = 'none';
-    }, 400);
-  }
-};
 
-// Переопределяем функцию открытия двери, чтобы скрыть надпись
-const originalOpenDoor = window.openDoorWithVideo;
-window.openDoorWithVideo = () => {
-  hideIntroDoorLabel();
-  if (originalOpenDoor) originalOpenDoor();
-};
     const waitForVideo = () => {
       const video = document.getElementById('intro-video-player-2') as HTMLVideoElement
       if (video) {
@@ -770,25 +753,27 @@ window.openDoorWithVideo = () => {
         </audio>
       </div>
 
-<div
-  className="hotspot-door"
-  style={{
-    left: '75.28%',
-    top: '65.39%',
-    width: '160px',
-    height: '160px',
-    cursor: 'pointer',
-    zIndex: 100,
-  }}
-  onClick={() => window.openDoorWithVideo?.()}
->
-  <div className="hotspot-dot"></div>
-  
-  {/* Постоянная надпись только на мобильных */}
-  <div className="intro-door-label" id="intro-door-label">
-    ENTER THE SHIP
-  </div>
-</div>
+      <div id="intro-screen" className="intro-screen" style={{ opacity: 0, pointerEvents: 'none' }}>
+        <div className="scene-background"></div>
+        <div className="door-container">
+          <div className="door door-left"></div>
+          <div className="door door-right"></div>
+          <div
+            className="hotspot-door"
+            style={{
+              left: '75.28%',
+              top: '65.39%',
+              width: '140px',
+              height: '140px',
+              cursor: 'pointer',
+              zIndex: 100,
+            }}
+            onClick={() => window.openDoorWithVideo?.()}
+          >
+            <div className="hotspot-dot"></div>
+          </div>
+        </div>
+      </div>
 
       <div id="main-content" style={{ display: 'none' }}>
         <div id="hud">
