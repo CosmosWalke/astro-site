@@ -31,20 +31,20 @@ export default function PanoramaPage() {
   // Для сохранения позиции при включении гироскопа
   const gyroBaseGamma = useRef(0)
   const isGyroInitialized = useRef(false)
-  const gyroActiveRef = useRef(false)  // ← добавляем ref для актуального значения
+  const gyroActiveRef = useRef(false)
 
   let ringAnimationFrame: number | null = null
   let viewLoopId: number | null = null
   let currentTargetView = 0
 
-  const afterLayout = (cb: () => void) => {
-    requestAnimationFrame(() => requestAnimationFrame(cb))
-  }
-
   // Синхронизируем ref с состоянием
   useEffect(() => {
     gyroActiveRef.current = gyroActive
   }, [gyroActive])
+
+  const afterLayout = (cb: () => void) => {
+    requestAnimationFrame(() => requestAnimationFrame(cb))
+  }
 
   // ====================== UPDATE PANORAMA ======================
   const updatePanoramaView = () => {
@@ -84,7 +84,7 @@ export default function PanoramaPage() {
 
   // ====================== GYRO HANDLER ======================
   const handleGyroChange = (gamma: number) => {
-    if (!gyroActiveRef.current) return  // ← используем ref
+    if (!gyroActiveRef.current) return
     
     if (!isGyroInitialized.current) {
       gyroBaseGamma.current = gamma
@@ -93,6 +93,7 @@ export default function PanoramaPage() {
     }
     
     let delta = gamma - gyroBaseGamma.current
+    // Твой старый коэффициент -2.5 для правильного замедления
     let newView = window.currentView + (delta * -2.5)
     
     const maxView = 75
@@ -714,7 +715,7 @@ export default function PanoramaPage() {
       if (ringAnimationFrame) cancelAnimationFrame(ringAnimationFrame)
       if (viewLoopId) cancelAnimationFrame(viewLoopId)
     }
-  }, [router])  // ← ТОЛЬКО router, без gyroActive
+  }, [router])
 
   return (
     <>
