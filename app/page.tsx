@@ -31,6 +31,7 @@ export default function PanoramaPage() {
   // Для сохранения позиции при включении гироскопа
   const gyroBaseGamma = useRef(0)
   const isGyroInitialized = useRef(false)
+  const gyroActiveRef = useRef(false)  // ← добавляем ref для актуального значения
 
   let ringAnimationFrame: number | null = null
   let viewLoopId: number | null = null
@@ -39,6 +40,11 @@ export default function PanoramaPage() {
   const afterLayout = (cb: () => void) => {
     requestAnimationFrame(() => requestAnimationFrame(cb))
   }
+
+  // Синхронизируем ref с состоянием
+  useEffect(() => {
+    gyroActiveRef.current = gyroActive
+  }, [gyroActive])
 
   // ====================== UPDATE PANORAMA ======================
   const updatePanoramaView = () => {
@@ -77,24 +83,24 @@ export default function PanoramaPage() {
   }
 
   // ====================== GYRO HANDLER ======================
-const handleGyroChange = (gamma: number) => {
-  if (!gyroActive) return
-  
-  if (!isGyroInitialized.current) {
-    gyroBaseGamma.current = gamma
-    isGyroInitialized.current = true
-    return
+  const handleGyroChange = (gamma: number) => {
+    if (!gyroActiveRef.current) return  // ← используем ref
+    
+    if (!isGyroInitialized.current) {
+      gyroBaseGamma.current = gamma
+      isGyroInitialized.current = true
+      return
+    }
+    
+    let delta = gamma - gyroBaseGamma.current
+    let newView = window.currentView + (delta * -2.5)
+    
+    const maxView = 75
+    const minView = -75
+    newView = Math.max(minView, Math.min(maxView, newView))
+    
+    window.currentView = newView
   }
-  
-  let delta = gamma - gyroBaseGamma.current
-  let newView = window.currentView + (delta * -2.5)
-  
-  const maxView = 75
-  const minView = -75
-  newView = Math.max(minView, Math.min(maxView, newView))
-  
-  window.currentView = newView
-}
 
   // Сброс инициализации гироскопа при выключении
   useEffect(() => {
@@ -623,7 +629,7 @@ const handleGyroChange = (gamma: number) => {
     const viewport = document.getElementById('viewport')
     
     const handleMouseDown = (e: MouseEvent) => {
-      if (gyroActive) return  // Блокируем при активном гироскопе
+      if (gyroActiveRef.current) return
       if (isTransitioning || autoScrollActive) return
       isDragging = true
       startX = e.clientX
@@ -632,7 +638,7 @@ const handleGyroChange = (gamma: number) => {
     }
 
     const handleMouseMove = (e: MouseEvent) => {
-      if (gyroActive) return  // Блокируем при активном гироскопе
+      if (gyroActiveRef.current) return
       if (!isDragging || isTransitioning) return
       e.preventDefault()
       const delta = e.clientX - startX
@@ -649,7 +655,7 @@ const handleGyroChange = (gamma: number) => {
     }
 
     const handleTouchStart = (e: TouchEvent) => {
-      if (gyroActive) return  // Блокируем при активном гироскопе
+      if (gyroActiveRef.current) return
       if (isTransitioning || autoScrollActive) return
       isDragging = true
       startX = e.touches[0].clientX
@@ -657,7 +663,7 @@ const handleGyroChange = (gamma: number) => {
     }
 
     const handleTouchMove = (e: TouchEvent) => {
-      if (gyroActive) return  // Блокируем при активном гироскопе
+      if (gyroActiveRef.current) return
       if (!isDragging || isTransitioning) return
       e.preventDefault()
       const delta = e.touches[0].clientX - startX
@@ -708,7 +714,7 @@ const handleGyroChange = (gamma: number) => {
       if (ringAnimationFrame) cancelAnimationFrame(ringAnimationFrame)
       if (viewLoopId) cancelAnimationFrame(viewLoopId)
     }
-  }, [router, gyroActive])
+  }, [router])  // ← ТОЛЬКО router, без gyroActive
 
   return (
     <>
