@@ -28,6 +28,8 @@ export default function PanoramaPage() {
   const [gyroActive, setGyroActive] = useState(false)
 
   let ringAnimationFrame: number | null = null
+  let animationFrameId: number | null = null
+  let currentTargetView = 0
 
   const afterLayout = (cb: () => void) => {
     requestAnimationFrame(() => {
@@ -35,51 +37,82 @@ export default function PanoramaPage() {
     })
   }
 
+  // ====================== GYROSCOPE & PANORAMA ======================
+
+  const updatePanoramaView = () => {
+    const activeLoc = document.querySelector('.location.active') as HTMLElement | null
+    if (!activeLoc) return
+
+    const wrapper = activeLoc.querySelector('.panorama-wrapper') as HTMLElement | null
+    const img = activeLoc.querySelector('.panorama-img') as HTMLImageElement | null
+    if (!wrapper || !img) return
+
+    void activeLoc.offsetHeight
+    void activeLoc.offsetWidth
+
+    const vw = window.innerWidth
+    const imgWidth = img.clientWidth || img.naturalWidth
+
+    if (imgWidth <= vw + 20) {
+      wrapper.style.transform = 'translate3d(0px, 0px, 0px)'
+      return
+    }
+
+    const maxShift = imgWidth - vw
+    const normalized = (currentTargetView + 75) / 150
+    const translateX = -normalized * maxShift
+
+    wrapper.style.transition = 'none'
+    wrapper.style.transform = `translate3d(${translateX}px, 0px, 0px)`
+  }
+
+  const startViewUpdateLoop = () => {
+    const loop = () => {
+      const currentView = window.currentView || 0
+      if (Math.abs(currentView - currentTargetView) > 0.5) {
+        currentTargetView = currentView
+        updatePanoramaView()
+      }
+      animationFrameId = requestAnimationFrame(loop)
+    }
+    if (!animationFrameId) {
+      animationFrameId = requestAnimationFrame(loop)
+    }
+  }
+
+  const handleGyroChange = (gamma: number) => {
+    if (!gyroActive) return
+
+    const newView = Math.max(-75, Math.min(75, gamma * 5.5))
+    window.currentView = newView
+  }
+
+  // ====================== LOADING ======================
+
   useEffect(() => {
-    let startTime = Date.now();
-    let animationId: number;
+    let startTime = Date.now()
+    let animationId: number
 
     const updateProgress = () => {
-      const elapsed = Date.now() - startTime;
-      let newProgress = Math.min(100, (elapsed / 500) * 100);
-      setLoadingProgress(Math.floor(newProgress));
+      const elapsed = Date.now() - startTime
+      let newProgress = Math.min(100, (elapsed / 500) * 100)
+      setLoadingProgress(Math.floor(newProgress))
 
       if (newProgress >= 100) {
-        setLoadingProgress(100);
+        setLoadingProgress(100)
         setTimeout(() => {
-          setShowLoading(false);
-        }, 100);
+          setShowLoading(false)
+        }, 100)
       } else {
-        animationId = requestAnimationFrame(updateProgress);
+        animationId = requestAnimationFrame(updateProgress)
       }
-    };
+    }
 
-    animationId = requestAnimationFrame(updateProgress);
-    return () => cancelAnimationFrame(animationId);
-  }, []);
+    animationId = requestAnimationFrame(updateProgress)
+    return () => cancelAnimationFrame(animationId)
+  }, [])
 
-let lastGyroUpdate = 0
-
-const handleGyroChange = (gamma: number) => {
-  if (!gyroActive) return
-
-  const now = performance.now()
-  if (now - lastGyroUpdate < 16) return // ~60 FPS throttle
-  lastGyroUpdate = now
-
-  const newView = Math.max(-75, Math.min(75, gamma * 5)) // коэффициент можно подкрутить (4.5–6)
-
-  window.currentView = newView
-
-  // Тройной RAF — часто спасает на iOS
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        if (window.updateView) window.updateView()
-      })
-    })
-  })
-}
+  // ====================== MAIN USEEFFECT ======================
 
   useEffect(() => {
     if (isLoaded.current) return
@@ -95,6 +128,10 @@ const handleGyroChange = (gamma: number) => {
         will-change: transform; 
         overflow: visible;
         transform: translateZ(0);
+        transform-style: preserve-3d;
+        -webkit-transform-style: preserve-3d;
+        -webkit-backface-visibility: hidden;
+        backface-visibility: hidden;
       }
       .panorama-img { 
         position: absolute;
@@ -102,7 +139,9 @@ const handleGyroChange = (gamma: number) => {
         left: 0;
         height: 100vh; 
         width: auto; 
-        display: block; 
+        display: block;
+        -webkit-transform: translate3d(0,0,0);
+        transform: translate3d(0,0,0);
       }
 
       .location { 
@@ -146,6 +185,10 @@ const handleGyroChange = (gamma: number) => {
         width: 100%; 
         height: 100%; 
         overflow: hidden; 
+        -webkit-perspective: 2000px;
+        perspective: 2000px;
+        -webkit-backface-visibility: hidden;
+        backface-visibility: hidden;
       }
 
       #panorama { 
@@ -166,7 +209,7 @@ const handleGyroChange = (gamma: number) => {
         cursor: pointer; 
       }
       .hotspot-dot { 
-        position: absolute; 
+        position: absolute;
         top: 50%; 
         left: 50%; 
         width: 16px; 
@@ -183,48 +226,48 @@ const handleGyroChange = (gamma: number) => {
       }
 
       .cursor-follow-ring { 
-        position: fixed; 
-        width: 150px; 
-        height: 150px; 
-        border: 2px solid rgba(255,255,255,0.95); 
-        border-radius: 50%; 
-        pointer-events: none; 
-        opacity: 0; 
-        transform: translate(-50%, -50%) scale(0.5); 
-        box-shadow: 0 0 30px #0ff, 0 0 60px #0ff; 
-        transition: opacity 0.3s ease, transform 0.4s cubic-bezier(0.2,0.9,0.3,1.1); 
-        z-index: 9999; 
-        display: flex; 
-        align-items: center; 
-        justify-content: center; 
-        background: rgba(255,255,255,0.08); 
-        backdrop-filter: blur(2px); 
+        position: fixed;
+        width: 150px;
+        height: 150px;
+        border: 2px solid rgba(255,255,255,0.95);
+        border-radius: 50%;
+        pointer-events: none;
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.5);
+        box-shadow: 0 0 30px #0ff, 0 0 60px #0ff;
+        transition: opacity 0.3s ease, transform 0.4s cubic-bezier(0.2,0.9,0.3,1.1);
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255,255,255,0.08);
+        backdrop-filter: blur(2px);
       }
       .cursor-follow-ring.visible { 
-        opacity: 1; 
-        transform: translate(-50%, -50%) scale(1); 
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
       }
       .cursor-follow-ring .click-text { 
-        color: #fff; 
-        font-size: 15px; 
-        font-weight: 700; 
-        letter-spacing: 2.5px; 
-        text-transform: uppercase; 
-        text-align: center; 
-        line-height: 1.4; 
-        text-shadow: 0 0 15px #0ff; 
-        width: 100%; 
-        font-family: 'CCUltimatum', monospace; 
-        opacity: 0; 
-        transform: translateY(20px); 
-        transition: opacity 0.2s ease, transform 0.3s ease; 
+        color: #fff;
+        font-size: 15px;
+        font-weight: 700;
+        letter-spacing: 2.5px;
+        text-transform: uppercase;
+        text-align: center;
+        line-height: 1.4;
+        text-shadow: 0 0 15px #0ff;
+        width: 100%;
+        font-family: 'CCUltimatum', monospace;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.2s ease, transform 0.3s ease;
       }
       .cursor-follow-ring.visible .click-text { 
-        opacity: 1; 
-        transform: translateY(0); 
+        opacity: 1;
+        transform: translateY(0);
       }
       .cursor-follow-ring .click-text span { 
-        display: block; 
+        display: block;
       }
 
       .center-title { 
@@ -267,25 +310,25 @@ const handleGyroChange = (gamma: number) => {
       #location-name.show { opacity: 1; }
 
       .hotspot-door { 
-        position: absolute; 
-        pointer-events: all !important; 
-        width: 140px; 
-        height: 140px; 
-        transform: translate(-50%, -50%); 
-        z-index: 100; 
-        cursor: pointer; 
+        position: absolute;
+        pointer-events: all !important;
+        width: 140px;
+        height: 140px;
+        transform: translate(-50%, -50%);
+        z-index: 100;
+        cursor: pointer;
       }
       .hotspot-door .hotspot-dot { 
-        position: absolute; 
-        top: 50%; 
-        left: 50%; 
-        width: 16px; 
-        height: 16px; 
-        background: #fff; 
-        border-radius: 50%; 
-        transform: translate(-50%, -50%); 
-        box-shadow: 0 0 20px #0ff, 0 0 40px #0ff; 
-        animation: dotPulse 2s infinite ease-in-out; 
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 16px;
+        height: 16px;
+        background: #fff;
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        box-shadow: 0 0 20px #0ff, 0 0 40px #0ff;
+        animation: dotPulse 2s infinite ease-in-out;
       }
     `
     document.head.appendChild(style)
@@ -305,87 +348,49 @@ const handleGyroChange = (gamma: number) => {
     let ringCurrentX = 0
     let ringCurrentY = 0
 
-const fixPanoramaScale = () => {
-  const activeLoc = document.querySelector('.location.active')
-  if (!activeLoc) return
+    const fixPanoramaScale = () => {
+      const activeLoc = document.querySelector('.location.active')
+      if (!activeLoc) return
 
-  const wrapper = activeLoc.querySelector('.panorama-wrapper') as HTMLElement
-  const img = activeLoc.querySelector('.panorama-img') as HTMLImageElement
-  if (!wrapper || !img) return
+      const wrapper = activeLoc.querySelector('.panorama-wrapper') as HTMLElement
+      const img = activeLoc.querySelector('.panorama-img') as HTMLImageElement
+      if (!wrapper || !img) return
 
-  const vh = window.innerHeight
-  const vw = window.innerWidth
-  
-  img.style.height = `${vh}px`
-  img.style.width = 'auto'
-
-  if (img.complete && img.naturalWidth) {
-    const ratio = img.naturalWidth / img.naturalHeight
-    let scaledWidth = ratio * vh
-    
-    // Гарантируем, что изображение шире экрана минимум на 30%
-    const minWidth = vw * 1.3
-    if (scaledWidth < minWidth) {
-      scaledWidth = minWidth
-    }
-    
-    img.style.width = `${scaledWidth}px`
-    wrapper.style.width = `${scaledWidth}px`
-    wrapper.style.height = `${vh}px`
-  } else {
-    img.addEventListener('load', () => {
-      const ratio = img.naturalWidth / img.naturalHeight
-      let scaledWidth = ratio * vh
+      const vh = window.innerHeight
+      const vw = window.innerWidth
       
-      const minWidth = vw * 1.3
-      if (scaledWidth < minWidth) {
-        scaledWidth = minWidth
+      img.style.height = `${vh}px`
+      img.style.width = 'auto'
+
+      if (img.complete && img.naturalWidth) {
+        const ratio = img.naturalWidth / img.naturalHeight
+        let scaledWidth = ratio * vh
+        
+        const minWidth = vw * 1.3
+        if (scaledWidth < minWidth) {
+          scaledWidth = minWidth
+        }
+        
+        img.style.width = `${scaledWidth}px`
+        wrapper.style.width = `${scaledWidth}px`
+        wrapper.style.height = `${vh}px`
+      } else {
+        img.addEventListener('load', () => {
+          const ratio = img.naturalWidth / img.naturalHeight
+          let scaledWidth = ratio * vh
+          
+          const minWidth = vw * 1.3
+          if (scaledWidth < minWidth) {
+            scaledWidth = minWidth
+          }
+          
+          img.style.width = `${scaledWidth}px`
+          wrapper.style.width = `${scaledWidth}px`
+          wrapper.style.height = `${vh}px`
+          updatePanoramaView()
+        })
       }
-      
-      img.style.width = `${scaledWidth}px`
-      wrapper.style.width = `${scaledWidth}px`
-      wrapper.style.height = `${vh}px`
-      updatePanoramaView()
-    })
-  }
-}
-
-const updatePanoramaView = () => {
-  const activeLoc = document.querySelector('.location.active') as HTMLElement | null
-  if (!activeLoc) return
-
-  // Force reflow — критично для Safari iOS
-  void (activeLoc.offsetHeight)
-  void (activeLoc.offsetWidth)
-
-  const wrapper = activeLoc.querySelector('.panorama-wrapper') as HTMLElement | null
-  const img = activeLoc.querySelector('.panorama-img') as HTMLImageElement | null
-
-  if (!wrapper || !img) return
-
-  const vw = window.innerWidth
-  let imgWidth = img.clientWidth
-
-  // Защита от неправильного расчёта ширины
-  if (imgWidth <= vw + 10) {
-    requestAnimationFrame(() => updatePanoramaView())
-    return
-  }
-
-  const maxShift = imgWidth - vw
-  const currentView = Math.max(-75, Math.min(75, window.currentView || 0))
-  const normalized = (currentView + 75) / 150
-  const translateX = -normalized * maxShift
-
-  // Лучший вариант для iOS Safari
-  wrapper.style.willChange = 'transform'
-  wrapper.style.transform = `translate3d(${translateX}px, 0px, 0px)`
-
-  // Сбрасываем will-change, чтобы Safari не тормозил
-  setTimeout(() => {
-    if (wrapper) wrapper.style.willChange = 'auto'
-  }, 120)
-}
+    }
 
     const showRing = (x: number, y: number) => {
       const ring = document.querySelector('.cursor-follow-ring') as HTMLElement
@@ -554,6 +559,7 @@ const updatePanoramaView = () => {
           initHotspots()
           window.panoramaReady = true
           console.log('Panorama ready, hotspots positioned')
+          startViewUpdateLoop()
         })
       })
     }
@@ -606,16 +612,16 @@ const updatePanoramaView = () => {
     waitForVideo()
 
     const checkDoorHotspot = () => {
-        const doorHotspot = document.querySelector('.hotspot-door');
-        if (!doorHotspot) {
-            console.log('Door hotspot missing, checking again...');
-            setTimeout(checkDoorHotspot, 100);
-        } else {
-            console.log('Door hotspot present in DOM');
-        }
-    };
+      const doorHotspot = document.querySelector('.hotspot-door')
+      if (!doorHotspot) {
+        console.log('Door hotspot missing, checking again...')
+        setTimeout(checkDoorHotspot, 100)
+      } else {
+        console.log('Door hotspot present in DOM')
+      }
+    }
 
-    setTimeout(checkDoorHotspot, 500);
+    setTimeout(checkDoorHotspot, 500)
 
     const handleResize = () => {
       if (window.panoramaReady) {
@@ -650,6 +656,7 @@ const updatePanoramaView = () => {
       window.removeEventListener('mousemove', handleMouseMove)
 
       if (ringAnimationFrame) cancelAnimationFrame(ringAnimationFrame)
+      if (animationFrameId) cancelAnimationFrame(animationFrameId)
     }
   }, [router])
 
@@ -847,14 +854,12 @@ const updatePanoramaView = () => {
         </div>
       </div>
 
-      {/* Кнопка гироскопа для мобильных */}
       <GyroToggle 
         onOrientationChange={handleGyroChange}
         isActive={gyroActive}
         onToggle={() => setGyroActive(!gyroActive)}
       />
 
-      {/* Индикатор гироскопа для отладки */}
       {gyroActive && (
         <div className="fixed bottom-40 left-6 z-50 bg-black/80 text-[#00d4ff] text-xs px-2 py-1 rounded font-mono">
           GYRO: {(window.currentView || 0).toFixed(0)}
