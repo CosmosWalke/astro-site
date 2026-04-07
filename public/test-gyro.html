@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Gyro Test 2 - devicemotion</title>
+    <style>
+        body { 
+            font-family: monospace; 
+            padding: 20px; 
+            background: black; 
+            color: #0f0;
+        }
+        .data { font-size: 24px; margin: 10px 0; }
+        button { padding: 15px 30px; background: #00d4ff; border: none; border-radius: 10px; cursor: pointer; }
+        .status { margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h1>🔵 devicemotion Test</h1>
+    <button id="requestBtn" style="display: none;">Request Permission</button>
+    
+    <div class="data">Acceleration X: <span id="x">-</span></div>
+    <div class="data">Acceleration Y: <span id="y">-</span></div>
+    <div class="data">Acceleration Z: <span id="z">-</span></div>
+    <div class="data">Gamma (calculated): <span id="gamma">-</span></div>
+    
+    <div class="status">Status: <span id="status">Waiting...</span></div>
+
+    <script>
+        const xSpan = document.getElementById('x');
+        const ySpan = document.getElementById('y');
+        const zSpan = document.getElementById('z');
+        const gammaSpan = document.getElementById('gamma');
+        const statusSpan = document.getElementById('status');
+        const requestBtn = document.getElementById('requestBtn');
+
+        function handleMotion(event) {
+            const acc = event.accelerationIncludingGravity;
+            if (acc) {
+                statusSpan.textContent = '✅ WORKING!';
+                xSpan.textContent = (acc.x || 0).toFixed(2);
+                ySpan.textContent = (acc.y || 0).toFixed(2);
+                zSpan.textContent = (acc.z || 0).toFixed(2);
+                // Примерное вычисление наклона из ускорения
+                const gamma = Math.atan2(acc.x, acc.z) * 180 / Math.PI;
+                gammaSpan.textContent = gamma.toFixed(2);
+                console.log('Motion:', acc.x, acc.y, acc.z);
+            }
+        }
+
+        function startGyro() {
+            window.addEventListener('devicemotion', handleMotion);
+            statusSpan.textContent = '✅ Listening...';
+        }
+
+        if (window.DeviceMotionEvent) {
+            if (typeof DeviceMotionEvent.requestPermission === 'function') {
+                requestBtn.style.display = 'block';
+                statusSpan.textContent = '⚠️ Click button to enable';
+                requestBtn.onclick = async () => {
+                    const permission = await DeviceMotionEvent.requestPermission();
+                    if (permission === 'granted') {
+                        startGyro();
+                        requestBtn.style.display = 'none';
+                    }
+                };
+            } else {
+                startGyro();
+                requestBtn.style.display = 'none';
+            }
+        } else {
+            statusSpan.textContent = '❌ DeviceMotionEvent NOT supported';
+        }
+    </script>
+</body>
+</html>

@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import Script from 'next/script'
 import { useRouter } from 'next/navigation'
 import { LoadingScreen } from '@/components/LoadingScreen'
+import { GyroToggle } from '@/components/GyroToggle'
 
 declare global {
   interface Window {
@@ -24,6 +25,7 @@ export default function PanoramaPage() {
   const panoramaInitialized = useRef(false)
   const [loadingProgress, setLoadingProgress] = useState(0)
   const [showLoading, setShowLoading] = useState(true)
+  const [gyroActive, setGyroActive] = useState(false)
 
   let ringAnimationFrame: number | null = null
 
@@ -56,217 +58,227 @@ export default function PanoramaPage() {
     return () => cancelAnimationFrame(animationId);
   }, []);
 
+// Обработчик изменения ориентации для гироскопа
+const handleOrientationChange = (alpha: number, beta: number, gamma: number) => {
+  if (!gyroActive) return
+  
+  // gamma — наклон влево/вправо (-90 до 90)
+  const maxView = 75
+  const minView = -75
+  const newView = Math.max(minView, Math.min(maxView, gamma * 0.8))
+  
+  window.currentView = newView
+  window.updateView?.()
+}
   useEffect(() => {
     if (isLoaded.current) return
     isLoaded.current = true
 
-const style = document.createElement('style')
-style.textContent = `
-  .panorama-wrapper { 
-    position: absolute;
-    top: 0; 
-    left: 0; 
-    height: 100vh; 
-    will-change: transform; 
-    overflow: visible;
-    transform: translateZ(0); /* КРИТИЧЕСКОЕ — создаёт слой */
-  }
-  .panorama-img { 
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100vh; 
-    width: auto; 
-    display: block; 
-  }
+    const style = document.createElement('style')
+    style.textContent = `
+      .panorama-wrapper { 
+        position: absolute;
+        top: 0; 
+        left: 0; 
+        height: 100vh; 
+        will-change: transform; 
+        overflow: visible;
+        transform: translateZ(0);
+      }
+      .panorama-img { 
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100vh; 
+        width: auto; 
+        display: block; 
+      }
 
-  .location { 
-    position: absolute; 
-    top: 0; 
-    left: 0; 
-    width: 100%; 
-    height: 100%; 
-    opacity: 0; 
-    visibility: hidden; 
-    pointer-events: none; 
-  }
-  .location.active { 
-    opacity: 1; 
-    visibility: visible; 
-    pointer-events: all; 
-  }
+      .location { 
+        position: absolute; 
+        top: 0; 
+        left: 0; 
+        width: 100%; 
+        height: 100%; 
+        opacity: 0; 
+        visibility: hidden; 
+        pointer-events: none; 
+      }
+      .location.active { 
+        opacity: 1; 
+        visibility: visible; 
+        pointer-events: all; 
+      }
 
-  /* ВАЖНО: layer-interactive — только контейнер, не мешает событиям */
-  .layer-interactive { 
-    position: absolute; 
-    top: 0; 
-    left: 0; 
-    width: 100%; 
-    height: 100%; 
-    pointer-events: none; /* ПРОБРАСЫВАЕТ СОБЫТИЯ НИЖЕ */
-  }
+      .layer-interactive { 
+        position: absolute; 
+        top: 0; 
+        left: 0; 
+        width: 100%; 
+        height: 100%; 
+        pointer-events: none;
+      }
 
-  .layer-animated {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-  }
+      .layer-animated {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+      }
 
-  /* Хотспоты получают события */
-  .hotspot { 
-    position: absolute; 
-    pointer-events: auto !important; 
-    width: 100px; 
-    height: 100px; 
-    transform: translate(-50%, -50%); 
-    z-index: 100; 
-    cursor: pointer; 
-  }
-  
-  .hotspot-dot { 
-    position: absolute; 
-    top: 50%; 
-    left: 50%; 
-    width: 16px; 
-    height: 16px; 
-    background: #fff; 
-    border-radius: 50%; 
-    transform: translate(-50%, -50%); 
-    box-shadow: 0 0 20px #0ff, 0 0 40px #0ff; 
-    animation: dotPulse 2s infinite ease-in-out; 
-  }
-  
-  @keyframes dotPulse { 
-    0%,100% { transform: translate(-50%, -50%) scale(1); opacity: 1; } 
-    50% { transform: translate(-50%, -50%) scale(1.5); opacity: 0.8; } 
-  }
+      #viewport { 
+        position: fixed; 
+        top: 0; 
+        left: 0; 
+        width: 100%; 
+        height: 100%; 
+        overflow: hidden; 
+      }
 
-  .cursor-follow-ring { 
-    position: fixed; 
-    width: 150px; 
-    height: 150px; 
-    border: 2px solid rgba(255,255,255,0.95); 
-    border-radius: 50%; 
-    pointer-events: none; 
-    opacity: 0; 
-    transform: translate(-50%, -50%) scale(0.5); 
-    box-shadow: 0 0 30px #0ff, 0 0 60px #0ff; 
-    transition: opacity 0.3s ease, transform 0.4s cubic-bezier(0.2,0.9,0.3,1.1); 
-    z-index: 9999; 
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    background: rgba(255,255,255,0.08); 
-    backdrop-filter: blur(2px); 
-  }
-  .cursor-follow-ring.visible { 
-    opacity: 1; 
-    transform: translate(-50%, -50%) scale(1); 
-  }
-  .cursor-follow-ring .click-text { 
-    color: #fff; 
-    font-size: 15px; 
-    font-weight: 700; 
-    letter-spacing: 2.5px; 
-    text-transform: uppercase; 
-    text-align: center; 
-    line-height: 1.4; 
-    text-shadow: 0 0 15px #0ff; 
-    width: 100%; 
-    font-family: 'CCUltimatum', monospace; 
-    opacity: 0; 
-    transform: translateY(20px); 
-    transition: opacity 0.2s ease, transform 0.3s ease; 
-  }
-  .cursor-follow-ring.visible .click-text { 
-    opacity: 1; 
-    transform: translateY(0); 
-  }
-  .cursor-follow-ring .click-text span { 
-    display: block; 
-  }
+      #panorama { 
+        position: absolute; 
+        top: 0; 
+        left: 0; 
+        width: 100%; 
+        height: 100%; 
+      }
 
-  .center-title { 
-    position: fixed; 
-    top: 50%; 
-    left: 50%; 
-    transform: translate(-50%, -50%); 
-    font-size: clamp(60px,10vw,180px); 
-    max-width: 85vw; 
-    font-weight: 900; 
-    color: #fff; 
-    text-transform: uppercase; 
-    letter-spacing: 0.02em; 
-    opacity: 0; 
-    pointer-events: none; 
-    z-index: 5; 
-    text-shadow: 0 0 30px rgba(0,255,255,0.5), 0 0 60px rgba(0,255,255,0.3); 
-    text-align: center; 
-    transition: opacity 0.4s ease; 
-    font-family: 'CCUltimatum', monospace; 
-  }
-  .center-title.active { opacity: 0.9; }
+      .hotspot { 
+        position: absolute; 
+        pointer-events: auto !important; 
+        width: 100px; 
+        height: 100px; 
+        transform: translate(-50%, -50%); 
+        z-index: 100; 
+        cursor: pointer; 
+      }
+      .hotspot-dot { 
+        position: absolute; 
+        top: 50%; 
+        left: 50%; 
+        width: 16px; 
+        height: 16px; 
+        background: #fff; 
+        border-radius: 50%; 
+        transform: translate(-50%, -50%); 
+        box-shadow: 0 0 20px #0ff, 0 0 40px #0ff; 
+        animation: dotPulse 2s infinite ease-in-out; 
+      }
+      @keyframes dotPulse { 
+        0%,100% { transform: translate(-50%, -50%) scale(1); opacity: 1; } 
+        50% { transform: translate(-50%, -50%) scale(1.5); opacity: 0.8; } 
+      }
 
-  #location-name { 
-    position: fixed; 
-    top: 20px; 
-    left: 50%; 
-    transform: translateX(-50%); 
-    color: #0ff; 
-    font-size: 24px; 
-    font-weight: bold; 
-    text-transform: uppercase; 
-    letter-spacing: 4px; 
-    opacity: 0; 
-    transition: opacity 0.6s; 
-    z-index: 10; 
-    pointer-events: none; 
-    font-family: 'CCUltimatum', monospace; 
-  }
-  #location-name.show { opacity: 1; }
+      .cursor-follow-ring { 
+        position: fixed; 
+        width: 150px; 
+        height: 150px; 
+        border: 2px solid rgba(255,255,255,0.95); 
+        border-radius: 50%; 
+        pointer-events: none; 
+        opacity: 0; 
+        transform: translate(-50%, -50%) scale(0.5); 
+        box-shadow: 0 0 30px #0ff, 0 0 60px #0ff; 
+        transition: opacity 0.3s ease, transform 0.4s cubic-bezier(0.2,0.9,0.3,1.1); 
+        z-index: 9999; 
+        display: flex; 
+        align-items: center; 
+        justify-content: center; 
+        background: rgba(255,255,255,0.08); 
+        backdrop-filter: blur(2px); 
+      }
+      .cursor-follow-ring.visible { 
+        opacity: 1; 
+        transform: translate(-50%, -50%) scale(1); 
+      }
+      .cursor-follow-ring .click-text { 
+        color: #fff; 
+        font-size: 15px; 
+        font-weight: 700; 
+        letter-spacing: 2.5px; 
+        text-transform: uppercase; 
+        text-align: center; 
+        line-height: 1.4; 
+        text-shadow: 0 0 15px #0ff; 
+        width: 100%; 
+        font-family: 'CCUltimatum', monospace; 
+        opacity: 0; 
+        transform: translateY(20px); 
+        transition: opacity 0.2s ease, transform 0.3s ease; 
+      }
+      .cursor-follow-ring.visible .click-text { 
+        opacity: 1; 
+        transform: translateY(0); 
+      }
+      .cursor-follow-ring .click-text span { 
+        display: block; 
+      }
 
-  .hotspot-door { 
-    position: absolute; 
-    pointer-events: all !important; 
-    width: 140px; 
-    height: 140px; 
-    transform: translate(-50%, -50%); 
-    z-index: 100; 
-    cursor: pointer; 
-  }
-  .hotspot-door .hotspot-dot { 
-    position: absolute; 
-    top: 50%; 
-    left: 50%; 
-    width: 16px; 
-    height: 16px; 
-    background: #fff; 
-    border-radius: 50%; 
-    transform: translate(-50%, -50%); 
-    box-shadow: 0 0 20px #0ff, 0 0 40px #0ff; 
-    animation: dotPulse 2s infinite ease-in-out; 
-  }
-  
-  #viewport { 
-    position: fixed; 
-    top: 0; 
-    left: 0; 
-    width: 100%; 
-    height: 100%; 
-    overflow: hidden; 
-  }
+      .center-title { 
+        position: fixed; 
+        top: 50%; 
+        left: 50%; 
+        transform: translate(-50%, -50%); 
+        font-size: clamp(60px,10vw,180px); 
+        max-width: 85vw; 
+        font-weight: 900; 
+        color: #fff; 
+        text-transform: uppercase; 
+        letter-spacing: 0.02em; 
+        opacity: 0; 
+        pointer-events: none; 
+        z-index: 5; 
+        text-shadow: 0 0 30px rgba(0,255,255,0.5), 0 0 60px rgba(0,255,255,0.3); 
+        text-align: center; 
+        transition: opacity 0.4s ease; 
+        font-family: 'CCUltimatum', monospace; 
+      }
+      .center-title.active { opacity: 0.9; }
 
-  #panorama { 
-    position: absolute; 
-    top: 0; 
-    left: 0; 
-    width: 100%; 
-    height: 100%; 
-  }
-`
+      #location-name { 
+        position: fixed; 
+        top: 20px; 
+        left: 50%; 
+        transform: translateX(-50%); 
+        color: #0ff; 
+        font-size: 24px; 
+        font-weight: bold; 
+        text-transform: uppercase; 
+        letter-spacing: 4px; 
+        opacity: 0; 
+        transition: opacity 0.6s; 
+        z-index: 10; 
+        pointer-events: none; 
+        font-family: 'CCUltimatum', monospace; 
+      }
+      #location-name.show { opacity: 1; }
+
+      .hotspot-door { 
+        position: absolute; 
+        pointer-events: all !important; 
+        width: 140px; 
+        height: 140px; 
+        transform: translate(-50%, -50%); 
+        z-index: 100; 
+        cursor: pointer; 
+      }
+      .hotspot-door .hotspot-dot { 
+        position: absolute; 
+        top: 50%; 
+        left: 50%; 
+        width: 16px; 
+        height: 16px; 
+        background: #fff; 
+        border-radius: 50%; 
+        transform: translate(-50%, -50%); 
+        box-shadow: 0 0 20px #0ff, 0 0 40px #0ff; 
+        animation: dotPulse 2s infinite ease-in-out; 
+      }
+    `
+
+    
     document.head.appendChild(style)
 
     const link = document.createElement('link')
@@ -603,7 +615,92 @@ style.textContent = `
       if (ringAnimationFrame) cancelAnimationFrame(ringAnimationFrame)
     }
   }, [router])
-
+// ========== ПРОСТОЙ ТЕСТ ГИРОСКОПА ==========
+useEffect(() => {
+  console.log('🔵 Setting up simple gyro test');
+  
+  // Создаём индикатор на экране
+  const indicator = document.createElement('div');
+  indicator.id = 'simple-gyro-test';
+  indicator.style.cssText = `
+    position: fixed;
+    bottom: 180px;
+    left: 20px;
+    z-index: 99999;
+    background: black;
+    color: lime;
+    padding: 10px;
+    border-radius: 10px;
+    font-family: monospace;
+    font-size: 14px;
+    border: 1px solid lime;
+  `;
+  indicator.innerHTML = 'GYRO: <span id="gyro-val">---</span>';
+  document.body.appendChild(indicator);
+  
+  // Обработчик
+  const onGyro = (e: DeviceOrientationEvent) => {
+    const gamma = e.gamma || 0;
+    const span = document.getElementById('gyro-val');
+    if (span) span.textContent = gamma.toFixed(2);
+    console.log('GYRO gamma:', gamma);
+    
+    // Если активен гироскоп — управляем панорамой
+    if (gyroActive) {
+      const maxView = 75;
+      const minView = -75;
+      const newView = Math.max(minView, Math.min(maxView, gamma * 0.8));
+      window.currentView = newView;
+      window.updateView?.();
+    }
+  };
+  
+  // Запрос разрешения или сразу подписка
+  if (typeof DeviceOrientationEvent !== 'undefined') {
+    if (typeof (DeviceOrientationEvent as any).requestPermission === 'function') {
+      // iOS — показываем кнопку
+      const btn = document.createElement('button');
+      btn.textContent = '🔘 ENABLE GYRO';
+      btn.style.cssText = `
+        position: fixed;
+        bottom: 100px;
+        left: 20px;
+        z-index: 99999;
+        background: #00d4ff;
+        color: black;
+        padding: 12px 20px;
+        border: none;
+        border-radius: 30px;
+        font-family: monospace;
+        font-weight: bold;
+        cursor: pointer;
+      `;
+      btn.onclick = async () => {
+        const permission = await (DeviceOrientationEvent as any).requestPermission();
+        if (permission === 'granted') {
+          window.addEventListener('deviceorientation', onGyro);
+          btn.remove();
+          indicator.style.borderColor = '#00ff00';
+          alert('Gyro enabled! Turn your phone');
+        }
+      };
+      document.body.appendChild(btn);
+    } else {
+      // Android
+      window.addEventListener('deviceorientation', onGyro);
+      indicator.style.borderColor = '#00ff00';
+      console.log('Gyro listener added for Android');
+    }
+  }
+  
+  return () => {
+    window.removeEventListener('deviceorientation', onGyro);
+    const btn = document.querySelector('#simple-gyro-test');
+    if (btn) btn.remove();
+    const ind = document.getElementById('simple-gyro-test');
+    if (ind) ind.remove();
+  };
+}, [gyroActive]);
   return (
     <>
       <LoadingScreen progress={loadingProgress} isVisible={showLoading} />
@@ -747,7 +844,7 @@ style.textContent = `
                 </div>
               </div>
               <div className="layer-animated">
-                <div className="animated-object person" style={{ left: '30%', top: '60%' }} id="person-5"></div>
+                <div className="animated-object person" style={{ left: '30', top: '60%' }} id="person-5"></div>
                 <div className="animated-object person" style={{ left: '70%', top: '55%' }} id="person-6"></div>
               </div>
             </div>
@@ -797,6 +894,13 @@ style.textContent = `
           </div>
         </div>
       </div>
+
+      {/* Кнопка гироскопа для мобильных */}
+      <GyroToggle 
+        onOrientationChange={handleOrientationChange}
+        isActive={gyroActive}
+        onToggle={() => setGyroActive(!gyroActive)}
+      />
     </>
   )
 }
