@@ -77,35 +77,24 @@ export default function PanoramaPage() {
   }
 
   // ====================== GYRO HANDLER ======================
-  const handleGyroChange = (gamma: number) => {
-    if (!gyroActive) return
-    
-    // При первом получении данных сохраняем базовое значение
-    if (!isGyroInitialized.current) {
-      gyroBaseGamma.current = gamma
-      isGyroInitialized.current = true
-      return
-    }
-    
-    // Вычисляем дельту от базового положения
-    let delta = gamma - gyroBaseGamma.current
-    
-    // Инвертируем направление
-    delta = -delta
-    
-    // Замедляем
-    delta = delta * 0.6
-    
-    // Получаем текущую позицию панорамы
-    let newView = window.currentView + delta
-    
-    // Ограничиваем
-    const maxView = 75
-    const minView = -75
-    newView = Math.max(minView, Math.min(maxView, newView))
-    
-    window.currentView = newView
+const handleGyroChange = (gamma: number) => {
+  if (!gyroActive) return
+  
+  if (!isGyroInitialized.current) {
+    gyroBaseGamma.current = gamma
+    isGyroInitialized.current = true
+    return
   }
+  
+  let delta = gamma - gyroBaseGamma.current
+  let newView = window.currentView + (delta * -2.5)
+  
+  const maxView = 75
+  const minView = -75
+  newView = Math.max(minView, Math.min(maxView, newView))
+  
+  window.currentView = newView
+}
 
   // Сброс инициализации гироскопа при выключении
   useEffect(() => {
@@ -359,6 +348,13 @@ export default function PanoramaPage() {
     let ringTargetY = 0
     let ringCurrentX = 0
     let ringCurrentY = 0
+
+    // Переменные для drag
+    let isDragging = false
+    let startX = 0
+    let startView = 0
+    let isTransitioning = false
+    let autoScrollActive = false
 
     const fixPanoramaScale = () => {
       const activeLoc = document.querySelector('.location.active')
@@ -623,46 +619,27 @@ export default function PanoramaPage() {
     window.addEventListener('resize', handleResize)
     window.addEventListener('orientationchange', handleResize)
 
-    // ====================== БЛОКИРОВКА РУЧНОГО УПРАВЛЕНИЯ ПРИ АКТИВНОМ ГИРОСКОПЕ ======================
+    // ====================== DRAG HANDLERS С БЛОКИРОВКОЙ ПРИ ГИРОСКОПЕ ======================
     const viewport = document.getElementById('viewport')
     
-    if (viewport) {
-      const originalMousedown = viewport.onmousedown
-      viewport.addEventListener('mousedown', (e) => {
-        if (gyroActive) return
-        if (isTransitioning || autoScrollActive) return
-        // ... остальная логика
-      })
-    }
-
-    // Простая блокировка через проверку в существующих обработчиках
-    // Добавляем глобальную переменную для проверки
-    let isDragging = false
-    let startX = 0
-    let startView = 0
-    let isTransitioning = false
-    let autoScrollActive = false
-    let currentView = 0
-
-    // Переопределяем обработчики с проверкой gyroActive
     const handleMouseDown = (e: MouseEvent) => {
-      if (gyroActive) return
+      if (gyroActive) return  // Блокируем при активном гироскопе
       if (isTransitioning || autoScrollActive) return
       isDragging = true
       startX = e.clientX
-      startView = currentView
+      startView = window.currentView || 0
       if (viewport) viewport.style.cursor = 'grabbing'
     }
 
     const handleMouseMove = (e: MouseEvent) => {
-      if (gyroActive) return
+      if (gyroActive) return  // Блокируем при активном гироскопе
       if (!isDragging || isTransitioning) return
       e.preventDefault()
       const delta = e.clientX - startX
       const sensitivity = window.innerWidth < 768 ? 0.4 : 0.3
-      currentView = startView + delta * sensitivity
-      currentView = Math.max(-75, Math.min(75, currentView))
-      window.currentView = currentView
+      let newView = startView + delta * sensitivity
+      newView = Math.max(-75, Math.min(75, newView))
+      window.currentView = newView
       updatePanoramaView()
     }
 
@@ -671,12 +648,42 @@ export default function PanoramaPage() {
       if (viewport) viewport.style.cursor = 'grab'
     }
 
+    const handleTouchStart = (e: TouchEvent) => {
+      if (gyroActive) return  // Блокируем при активном гироскопе
+      if (isTransitioning || autoScrollActive) return
+      isDragging = true
+      startX = e.touches[0].clientX
+      startView = window.currentView || 0
+    }
+
+    const handleTouchMove = (e: TouchEvent) => {
+      if (gyroActive) return  // Блокируем при активном гироскопе
+      if (!isDragging || isTransitioning) return
+      e.preventDefault()
+      const delta = e.touches[0].clientX - startX
+      let newView = startView + delta * 0.4
+      newView = Math.max(-75, Math.min(75, newView))
+      window.currentView = newView
+      updatePanoramaView()
+    }
+
+    const handleTouchEnd = () => {
+      isDragging = false
+    }
+
     viewport?.addEventListener('mousedown', handleMouseDown)
     document.addEventListener('mousemove', handleMouseMove)
     document.addEventListener('mouseup', handleMouseUp)
+    viewport?.addEventListener('touchstart', handleTouchStart)
+    viewport?.addEventListener('touchmove', handleTouchMove)
+    viewport?.addEventListener('touchend', handleTouchEnd)
 
-    // Сохраняем оригинальные функции в window для доступа
-    ;(window as any).gyroActive = gyroActive
+    const handleMouseMoveForRing = (e: MouseEvent) => {
+      if (ringVisible) {
+        updateRingPosition(e.clientX, e.clientY)
+      }
+    }
+    window.addEventListener('mousemove', handleMouseMoveForRing)
 
     return () => {
       const oldLink = document.querySelector('link[href="/css/style.css"]')
@@ -693,6 +700,10 @@ export default function PanoramaPage() {
       viewport?.removeEventListener('mousedown', handleMouseDown)
       document.removeEventListener('mousemove', handleMouseMove)
       document.removeEventListener('mouseup', handleMouseUp)
+      viewport?.removeEventListener('touchstart', handleTouchStart)
+      viewport?.removeEventListener('touchmove', handleTouchMove)
+      viewport?.removeEventListener('touchend', handleTouchEnd)
+      window.removeEventListener('mousemove', handleMouseMoveForRing)
 
       if (ringAnimationFrame) cancelAnimationFrame(ringAnimationFrame)
       if (viewLoopId) cancelAnimationFrame(viewLoopId)
