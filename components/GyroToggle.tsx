@@ -21,6 +21,7 @@ export function GyroToggle({ onOrientationChange, isActive, onToggle }: GyroTogg
     const alpha = event.alpha || 0
     const beta = event.beta || 0
     const gamma = event.gamma || 0
+    console.log('Gyro event:', { alpha, beta, gamma })
     onOrientationChange(alpha, beta, gamma)
   }, [isActive, onOrientationChange])
 
