@@ -36,7 +36,7 @@ export default function PanoramaPage() {
     requestAnimationFrame(() => requestAnimationFrame(cb))
   }
 
-  // ====================== PANORAMA UPDATE ======================
+// ====================== UPDATE PANORAMA ======================
   const updatePanoramaView = () => {
     const activeLoc = document.querySelector('.location.active') as HTMLElement | null
     if (!activeLoc) return
@@ -44,15 +44,18 @@ export default function PanoramaPage() {
     const wrapper = activeLoc.querySelector('.panorama-wrapper') as HTMLElement | null
     if (!wrapper) return
 
+    // Многослойный force reflow — очень важно для Safari
+    void document.body.offsetHeight
     void activeLoc.offsetHeight
     void wrapper.offsetWidth
+    void wrapper.offsetLeft
 
     const vw = window.innerWidth
     const img = activeLoc.querySelector('.panorama-img') as HTMLImageElement | null
     const imgWidth = img ? (img.clientWidth || img.naturalWidth || vw * 2) : vw * 2
 
-    if (imgWidth <= vw + 30) {
-      wrapper.style.setProperty('--translate-x', '0px')
+    if (imgWidth <= vw + 40) {
+      wrapper.style.transform = 'translate3d(0px, 0px, 0px)'
       return
     }
 
@@ -60,19 +63,20 @@ export default function PanoramaPage() {
     const normalized = (currentTargetView + 75) / 150
     const translateX = Math.round(-normalized * maxShift)
 
-    wrapper.style.setProperty('--translate-x', `${translateX}px`)
+    wrapper.style.transition = 'none'
+    wrapper.style.transform = `translate3d(${translateX}px, 0px, 0px)`
   }
 
   const startViewLoop = () => {
     const loop = () => {
-      const currentView = window.currentView || 0
-      if (Math.abs(currentView - currentTargetView) > 0.4) {
-        currentTargetView = currentView
+      const cv = window.currentView || 0
+      if (Math.abs(cv - currentTargetView) > 0.5) {
+        currentTargetView = cv
         updatePanoramaView()
       }
       viewLoopId = requestAnimationFrame(loop)
     }
-    if (!viewLoopId) viewLoopId = requestAnimationFrame(loop)
+    viewLoopId = requestAnimationFrame(loop)
   }
 
   const handleGyroChange = (gamma: number) => {
@@ -92,7 +96,7 @@ export default function PanoramaPage() {
       setLoadingProgress(Math.floor(newProgress))
 
       if (newProgress >= 100) {
-        setTimeout(() => setShowLoading(false), 120)
+        setTimeout(() => setShowLoading(false), 100)
       } else {
         animationId = requestAnimationFrame(updateProgress)
       }
