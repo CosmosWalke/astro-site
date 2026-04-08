@@ -115,6 +115,262 @@ const statusMessages = [
 
 const barcodeWidths = [2, 1, 2, 1, 1, 2, 1, 2, 2, 1, 1, 2, 1, 1, 2, 2, 1, 2, 1, 1, 2, 1, 2, 1, 1, 2, 2, 1, 1, 2]
 
+// Добавь эту функцию перед useEffect с загрузкой (примерно после всех констант и перед export function HeroStoryCombined)
+
+// Функция загрузки всех ресурсов
+const loadAllResources = async (onProgress: (progress: number) => void) => {
+  console.log('🚀 НАЧАЛО ЗАГРУЗКИ ВСЕХ РЕСУРСОВ...')
+  
+  const resourcesToLoad: Promise<unknown>[] = []
+  
+  // Список изображений hero
+  const heroImages = [
+    { src: '/image/hero.webp', name: 'Hero Desktop' },
+    { src: '/image/hero-mobile.webp', name: 'Hero Mobile' },
+  ]
+  
+  // Список изображений панорамы (десктоп)
+  const panoramaDesktopImages = [
+    '/image/pan1.webp',
+    '/image/pan2.webp',
+    '/image/pan3.webp',
+    '/image/pan4.webp',
+    '/image/pan5.webp',
+  ]
+  
+  // Список изображений панорамы (мобильные)
+  const panoramaMobileImages = [
+    '/image/pan1-mobile.webp',
+    '/image/pan2-mobile.webp',
+    '/image/pan3-mobile.webp',
+    '/image/pan4-mobile.webp',
+    '/image/pan5-mobile.webp',
+  ]
+  
+  // Видео панорамы
+  const panoramaVideos = [
+    { src: '/video/pan1.webm', name: 'Panorama Desktop' },
+    { src: '/video/pan1-mobile.webm', name: 'Panorama Mobile' },
+  ]
+  
+  // Видео для флип карты
+  const flipVideo = { src: '/video/void.webm', name: 'Flip Card Video' }
+  
+  // Загрузочное видео
+  const loadingVideo = { src: '/video/loading.webm', name: 'Loading Video' }
+  
+  let loadedCount = 0
+  const totalCount = heroImages.length + 
+    panoramaDesktopImages.length + 
+    panoramaMobileImages.length + 
+    panoramaVideos.length + 
+    1 + // flip video
+    1   // loading video
+  
+  const updateProgress = (resourceName: string) => {
+    loadedCount++
+    const progress = Math.floor((loadedCount / totalCount) * 100)
+    console.log(`✅ Загружено: ${resourceName} (${loadedCount}/${totalCount}) - ${progress}%`)
+    onProgress(progress)
+  }
+  
+  // Загрузка hero изображений
+  heroImages.forEach(({ src, name }) => {
+    const img = new Image()
+    img.src = src
+    console.log(`🖼️ Начинаю загрузку: ${name} (${src})`)
+    const promise = new Promise((resolve) => {
+      if (img.complete) {
+        console.log(`⚡ ${name} - уже в кеше`)
+        updateProgress(name)
+        resolve(true)
+      } else {
+        img.onload = () => {
+          console.log(`📷 ${name} - загружено!`)
+          updateProgress(name)
+          resolve(true)
+        }
+        img.onerror = (e) => {
+          console.error(`❌ Ошибка загрузки ${name}:`, e)
+          updateProgress(name)
+          resolve(false)
+        }
+      }
+    })
+    resourcesToLoad.push(promise)
+  })
+  
+  // Загрузка панорамных изображений (десктоп)
+  panoramaDesktopImages.forEach((src) => {
+    const img = new Image()
+    img.src = src
+    const name = `Panorama Desktop: ${src.split('/').pop()}`
+    console.log(`🖼️ Начинаю загрузку: ${name}`)
+    const promise = new Promise((resolve) => {
+      if (img.complete) {
+        updateProgress(name)
+        resolve(true)
+      } else {
+        img.onload = () => {
+          updateProgress(name)
+          resolve(true)
+        }
+        img.onerror = () => {
+          updateProgress(name)
+          resolve(false)
+        }
+      }
+    })
+    resourcesToLoad.push(promise)
+  })
+  
+  // Загрузка панорамных изображений (мобильные)
+  panoramaMobileImages.forEach((src) => {
+    const img = new Image()
+    img.src = src
+    const name = `Panorama Mobile: ${src.split('/').pop()}`
+    console.log(`🖼️ Начинаю загрузку: ${name}`)
+    const promise = new Promise((resolve) => {
+      if (img.complete) {
+        updateProgress(name)
+        resolve(true)
+      } else {
+        img.onload = () => {
+          updateProgress(name)
+          resolve(true)
+        }
+        img.onerror = () => {
+          updateProgress(name)
+          resolve(false)
+        }
+      }
+    })
+    resourcesToLoad.push(promise)
+  })
+  
+  // Загрузка видео панорамы
+  panoramaVideos.forEach(({ src, name }) => {
+    console.log(`🎬 Начинаю загрузку: ${name} (${src})`)
+    const promise = new Promise((resolve) => {
+      const video = document.createElement('video')
+      video.preload = 'auto'
+      video.src = src
+      
+      let resolved = false
+      
+      video.addEventListener('canplaythrough', () => {
+        if (!resolved) {
+          resolved = true
+          console.log(`📹 ${name} - загружено!`)
+          updateProgress(name)
+          resolve(true)
+        }
+      }, { once: true })
+      
+      video.addEventListener('error', (e) => {
+        if (!resolved) {
+          resolved = true
+          console.error(`❌ Ошибка загрузки ${name}:`, e)
+          updateProgress(name)
+          resolve(false)
+        }
+      }, { once: true })
+      
+      setTimeout(() => {
+        if (!resolved) {
+          resolved = true
+          console.warn(`⚠️ Таймаут загрузки ${name}, продолжаем...`)
+          updateProgress(name)
+          resolve(false)
+        }
+      }, 10000)
+    })
+    resourcesToLoad.push(promise)
+  })
+  
+  // Загрузка видео для флип карты
+  console.log(`🎬 Начинаю загрузку: ${flipVideo.name} (${flipVideo.src})`)
+  const flipVideoPromise = new Promise((resolve) => {
+    const video = document.createElement('video')
+    video.preload = 'auto'
+    video.src = flipVideo.src
+    
+    let resolved = false
+    
+    video.addEventListener('canplaythrough', () => {
+      if (!resolved) {
+        resolved = true
+        console.log(`📹 ${flipVideo.name} - загружено!`)
+        updateProgress(flipVideo.name)
+        resolve(true)
+      }
+    }, { once: true })
+    
+    video.addEventListener('error', (e) => {
+      if (!resolved) {
+        resolved = true
+        console.error(`❌ Ошибка загрузки ${flipVideo.name}:`, e)
+        updateProgress(flipVideo.name)
+        resolve(false)
+      }
+    }, { once: true })
+    
+    setTimeout(() => {
+      if (!resolved) {
+        resolved = true
+        console.warn(`⚠️ Таймаут загрузки ${flipVideo.name}, продолжаем...`)
+        updateProgress(flipVideo.name)
+        resolve(false)
+      }
+    }, 10000)
+  })
+  resourcesToLoad.push(flipVideoPromise)
+  
+  // Загрузка загрузочного видео
+  console.log(`🎬 Начинаю загрузку: ${loadingVideo.name} (${loadingVideo.src})`)
+  const loadingVideoPromise = new Promise((resolve) => {
+    const video = document.createElement('video')
+    video.preload = 'auto'
+    video.src = loadingVideo.src
+    
+    let resolved = false
+    
+    video.addEventListener('canplaythrough', () => {
+      if (!resolved) {
+        resolved = true
+        console.log(`📹 ${loadingVideo.name} - загружено!`)
+        updateProgress(loadingVideo.name)
+        resolve(true)
+      }
+    }, { once: true })
+    
+    video.addEventListener('error', (e) => {
+      if (!resolved) {
+        resolved = true
+        console.error(`❌ Ошибка загрузки ${loadingVideo.name}:`, e)
+        updateProgress(loadingVideo.name)
+        resolve(false)
+      }
+    }, { once: true })
+    
+    setTimeout(() => {
+      if (!resolved) {
+        resolved = true
+        console.warn(`⚠️ Таймаут загрузки ${loadingVideo.name}, продолжаем...`)
+        updateProgress(loadingVideo.name)
+        resolve(false)
+      }
+    }, 10000)
+  })
+  resourcesToLoad.push(loadingVideoPromise)
+  
+  console.log('⏳ Ожидание загрузки всех ресурсов...')
+  await Promise.all(resourcesToLoad)
+  console.log('🎉 ВСЕ РЕСУРСЫ ЗАГРУЖЕНЫ!')
+  return true
+}
+
+
 export function HeroStoryCombined() {
   const containerRef = useRef<HTMLDivElement>(null)
   const stickyRef = useRef<HTMLDivElement>(null)
@@ -214,48 +470,50 @@ export function HeroStoryCombined() {
     return () => window.removeEventListener('resize', checkDevice)
   }, [])
 
-  // Эффект загрузки
-  useEffect(() => {
-    let startTime = Date.now();
-    let animationId: number;
-
-    const updateProgress = () => {
-      const elapsed = Date.now() - startTime;
-      let newProgress = Math.min(100, (elapsed / 2600) * 100 + (Math.random() * 3 - 1.5));
-
-      if (newProgress > 95) newProgress = 95;
-      setLoadingProgress(Math.floor(newProgress));
-
-      const statusIndex = Math.floor((newProgress / 100) * (statusMessages.length - 1));
-      setLoadingText(statusMessages[Math.min(statusIndex, statusMessages.length - 1)]);
-
-      if (newProgress >= 95) {
-        setTimeout(() => {
-          setLoadingProgress(100);
-          setLoadingText(statusMessages[statusMessages.length - 1]);
-          
-          setTimeout(() => {
-            if (loadingContainerRef.current) {
-              gsap.to(loadingContainerRef.current, {
-                opacity: 0,
-                duration: 0.6,
-                ease: 'power2.inOut',
-                onComplete: () => {
-                  setIsLoading(false);
-                }
-              });
-            }
-          }, 500);
-        }, 600);
-      } else {
-        animationId = requestAnimationFrame(updateProgress);
+// Эффект загрузки - реальная загрузка ресурсов
+useEffect(() => {
+  let isMounted = true
+  
+  const startLoading = async () => {
+    // Загружаем все ресурсы с реальным прогрессом
+    await loadAllResources((progress) => {
+      if (isMounted) {
+        setLoadingProgress(progress)
+        
+        // Обновляем текст загрузки на основе прогресса
+        const statusIndex = Math.floor((progress / 100) * (statusMessages.length - 1))
+        setLoadingText(statusMessages[Math.min(statusIndex, statusMessages.length - 1)])
       }
-    };
-
-    animationId = requestAnimationFrame(updateProgress);
-    return () => cancelAnimationFrame(animationId);
-  }, []);
-
+    })
+    
+    if (isMounted) {
+      setLoadingProgress(100)
+      setLoadingText(statusMessages[statusMessages.length - 1])
+      
+      // Плавно скрываем загрузочный экран
+      setTimeout(() => {
+        if (loadingContainerRef.current) {
+          gsap.to(loadingContainerRef.current, {
+            opacity: 0,
+            duration: 0.6,
+            ease: 'power2.inOut',
+            onComplete: () => {
+              if (isMounted) {
+                setIsLoading(false)
+              }
+            }
+          })
+        }
+      }, 500)
+    }
+  }
+  
+  startLoading()
+  
+  return () => {
+    isMounted = false
+  }
+}, [])
   useEffect(() => {
     const updatePositions = () => {
       if (thumbnailFrameRef.current && stickyRef.current) {

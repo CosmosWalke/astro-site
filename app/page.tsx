@@ -23,10 +23,12 @@ export default function PanoramaPage() {
   const isLoaded = useRef(false)
   const router = useRouter()
   const panoramaInitialized = useRef(false)
+  const resourcesLoaded = useRef(false)
 
   const [loadingProgress, setLoadingProgress] = useState(0)
   const [showLoading, setShowLoading] = useState(true)
   const [gyroActive, setGyroActive] = useState(false)
+  const [allResourcesReady, setAllResourcesReady] = useState(false)
 
   let ringAnimationFrame: number | null = null
   let viewLoopId: number | null = null
@@ -76,85 +78,201 @@ export default function PanoramaPage() {
   const handleGyroChange = (gamma: number) => {
     if (!gyroActive) return
     
-    // Инвертируем и замедляем
-    // gamma обычно от -30 до 30, умножаем на 0.5 для очень медленного движения
     const maxView = 75
     const minView = -75
-    let newView = gamma * -2.5  // ← очень медленно, инвертировано
+    let newView = gamma * -2.5
     
     newView = Math.max(minView, Math.min(maxView, newView))
     
     window.currentView = newView
   }
 
-const setupMobileLabels = () => {
-  if (mobileObserver) {
-    mobileObserver.disconnect()
-    mobileObserver = null
+  const setupMobileLabels = () => {
+    if (mobileObserver) {
+      mobileObserver.disconnect()
+      mobileObserver = null
+    }
+
+    const activeLoc = document.querySelector('.location.active')
+    if (!activeLoc) return
+
+    const hotspots = activeLoc.querySelectorAll('.hotspot') as NodeListOf<HTMLElement>
+
+    hotspots.forEach((hotspot) => {
+      let labelEl = hotspot.querySelector('.hotspot-label') as HTMLElement | null
+
+      if (!labelEl) {
+        const labelText = hotspot.dataset.label || ''
+        if (!labelText) return
+
+        labelEl = document.createElement('div')
+        labelEl.className = 'hotspot-label'
+        labelEl.textContent = labelText
+        hotspot.appendChild(labelEl)
+      }
+    })
+
+    mobileObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const hotspot = entry.target as HTMLElement
+          const label = hotspot.querySelector('.hotspot-label') as HTMLElement | null
+          if (!label) return
+
+          if (entry.isIntersecting && entry.intersectionRatio >= 0.25) {
+            label.classList.add('show')
+          } else {
+            label.classList.remove('show')
+          }
+        })
+      },
+      {
+        threshold: [0, 0.25, 0.5],
+        rootMargin: '-40px 0px -100px 0px'
+      }
+    )
+
+    hotspots.forEach((hotspot) => mobileObserver!.observe(hotspot))
   }
 
-  const activeLoc = document.querySelector('.location.active')
-  if (!activeLoc) return
-
-  const hotspots = activeLoc.querySelectorAll('.hotspot') as NodeListOf<HTMLElement>
-
-  hotspots.forEach((hotspot) => {
-    let labelEl = hotspot.querySelector('.hotspot-label') as HTMLElement | null
-
-    if (!labelEl) {
-      const labelText = hotspot.dataset.label || ''
-      if (!labelText) return
-
-      labelEl = document.createElement('div')
-      labelEl.className = 'hotspot-label'
-      labelEl.textContent = labelText
-      hotspot.appendChild(labelEl)
-    }
-  })
-
-  mobileObserver = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        const hotspot = entry.target as HTMLElement
-        const label = hotspot.querySelector('.hotspot-label') as HTMLElement | null
-        if (!label) return
-
-        if (entry.isIntersecting && entry.intersectionRatio >= 0.25) {
-          label.classList.add('show')
-        } else {
-          label.classList.remove('show')
+// ====================== ФУНКЦИЯ ЗАГРУЗКИ ВСЕХ РЕСУРСОВ ======================
+const loadAllResources = async (onProgress: (progress: number) => void) => {
+  const resourcesToLoad: Promise<unknown>[] = []
+  
+  // Список всех изображений панорам
+  const panoramaImages = [
+    '/images/panorama-bridge.jpg',
+    '/images/panorama-bridge.jpg',
+  ]
+  
+  // Список видео
+  const videos = [
+    '/videos/intro-fly.mp4',
+    '/videos/intro-enter.mp4',
+  ]
+  
+  // Список аудио
+  const audios = [
+    '/sounds/intro-fly-audio.mp3',
+    '/sounds/intro-enter-audio.mp3',
+  ]
+  
+  let loadedCount = 0
+  const totalCount = panoramaImages.length + videos.length + audios.length
+  
+  const updateProgress = () => {
+    loadedCount++
+    onProgress(Math.floor((loadedCount / totalCount) * 100))
+  }
+  
+  // Загрузка изображений
+  panoramaImages.forEach((src) => {
+    const img = new Image()
+    img.src = src
+    const promise = new Promise((resolve) => {
+      if (img.complete) {
+        updateProgress()
+        resolve(true)
+      } else {
+        img.onload = () => {
+          updateProgress()
+          resolve(true)
         }
-      })
-    },
-    {
-      threshold: [0, 0.25, 0.5],
-      rootMargin: '-40px 0px -100px 0px'   // подстроено под большие надписи
-    }
-  )
-
-  hotspots.forEach((hotspot) => mobileObserver!.observe(hotspot))
+        img.onerror = () => {
+          updateProgress()
+          resolve(false)
+        }
+      }
+    })
+    resourcesToLoad.push(promise)
+  })
+  
+  // Загрузка видео
+  videos.forEach((src) => {
+    const promise = new Promise((resolve) => {
+      const video = document.createElement('video')
+      video.preload = 'auto'
+      video.src = src
+      video.addEventListener('canplaythrough', () => {
+        updateProgress()
+        resolve(true)
+      }, { once: true })
+      video.addEventListener('error', () => {
+        updateProgress()
+        resolve(false)
+      }, { once: true })
+      setTimeout(() => {
+        updateProgress()
+        resolve(false)
+      }, 5000)
+    })
+    resourcesToLoad.push(promise)
+  })
+  
+  // Загрузка аудио
+  audios.forEach((src) => {
+    const promise = new Promise((resolve) => {
+      const audio = new Audio()
+      audio.preload = 'auto'
+      audio.src = src
+      audio.addEventListener('canplaythrough', () => {
+        updateProgress()
+        resolve(true)
+      }, { once: true })
+      audio.addEventListener('error', () => {
+        updateProgress()
+        resolve(false)
+      }, { once: true })
+      setTimeout(() => {
+        updateProgress()
+        resolve(false)
+      }, 5000)
+    })
+    resourcesToLoad.push(promise)
+  })
+  
+  await Promise.all(resourcesToLoad)
+  return true
 }
 
-  // ====================== LOADING ======================
+// ====================== LOADING ======================
+useEffect(() => {
+  const startLoading = async () => {
+    await loadAllResources((progress) => {
+      setLoadingProgress(progress)
+    })
+    
+    setAllResourcesReady(true)
+    
+    setTimeout(() => {
+      setShowLoading(false)
+    }, 300)
+  }
+  
+  startLoading()
+}, [])
+
+  // Запуск видео и инициализация только после полной загрузки
   useEffect(() => {
-    let startTime = Date.now()
-    let animationId: number
-
-    const updateProgress = () => {
-      const elapsed = Date.now() - startTime
-      const newProgress = Math.min(100, (elapsed / 500) * 100)
-      setLoadingProgress(Math.floor(newProgress))
-
-      if (newProgress >= 100) {
-        setTimeout(() => setShowLoading(false), 100)
-      } else {
-        animationId = requestAnimationFrame(updateProgress)
-      }
+    if (!allResourcesReady) return
+    
+    // Показываем main-content
+    const mainContent = document.getElementById('main-content')
+    if (mainContent) mainContent.style.display = 'block'
+    
+    // Запускаем первое видео
+    const player1 = document.getElementById('intro-video-player-1') as HTMLVideoElement
+    const audio1 = document.getElementById('audio-intro-1') as HTMLAudioElement
+    
+    if (player1) {
+      player1.play().catch(e => console.log('Video 1 autoplay failed:', e))
     }
-
-    animationId = requestAnimationFrame(updateProgress)
-    return () => cancelAnimationFrame(animationId)
-  }, [])
+    if (audio1) {
+      audio1.volume = 0.5
+      audio1.play().catch(e => console.log('Audio 1 autoplay failed:', e))
+    }
+    
+  }, [allResourcesReady])
 
   // ====================== MAIN INIT ======================
   useEffect(() => {
@@ -363,7 +481,6 @@ const setupMobileLabels = () => {
         animation: dotPulse 2s infinite ease-in-out; 
       }
 
-      /* ==================== MOBILE HOTSPOT LABELS ==================== */
       .hotspot-label {
         position: absolute;
         top: -68px;
@@ -396,14 +513,12 @@ const setupMobileLabels = () => {
         transform: translateX(-50%) translateY(0);
       }
 
-      /* Скрываем на десктопе */
       @media (min-width: 769px) {
         .hotspot-label {
           display: none !important;
         }
       }
 
-      /* На мобильных хотспоты уже увеличены — подгоняем отступ */
       @media (max-width: 768px) {
         .hotspot-label {
           top: -78px;
@@ -559,7 +674,6 @@ const setupMobileLabels = () => {
     }
 
     window.enterLocation = (targetLocId: string, locationName: string) => {
-      // Скрываем все предыдущие лейблы
       document.querySelectorAll('.hotspot-label.show').forEach((label) => {
         (label as HTMLElement).classList.remove('show')
       })
@@ -731,48 +845,6 @@ const setupMobileLabels = () => {
       
       <Script src="/js/main.js" strategy="afterInteractive" />
 
-      <div id="intro-video-1" className="intro-video">
-        <img id="static-bg-1" src="/images/space-bg.jpg" alt="Static door scene" className="static-bg" />
-        <video autoPlay muted playsInline id="intro-video-player-1">
-          <source src="/videos/intro-fly.mp4" type="video/mp4" />
-        </video>
-        <audio id="audio-intro-1" preload="auto">
-          <source src="/sounds/intro-fly-audio.mp3" type="audio/mpeg" />
-        </audio>
-      </div>
-
-      <div id="intro-video-2" className="intro-video" style={{ opacity: 0, pointerEvents: 'none' }}>
-        <img id="static-bg-2" src="/images/panorama-1-center.jpg" alt="Static bridge scene" className="static-bg" />
-        <video muted playsInline id="intro-video-player-2">
-          <source src="/videos/intro-enter.mp4" type="video/mp4" />
-        </video>
-        <audio id="audio-intro-2" preload="auto">
-          <source src="/sounds/intro-enter-audio.mp3" type="audio/mpeg" />
-        </audio>
-      </div>
-
-      <div id="intro-screen" className="intro-screen" style={{ opacity: 0, pointerEvents: 'none' }}>
-        <div className="scene-background"></div>
-        <div className="door-container">
-          <div className="door door-left"></div>
-          <div className="door door-right"></div>
-          <div
-            className="hotspot-door"
-            style={{
-              left: '75.28%',
-              top: '65.39%',
-              width: '140px',
-              height: '140px',
-              cursor: 'pointer',
-              zIndex: 100,
-            }}
-            onClick={() => window.openDoorWithVideo?.()}
-          >
-            <div className="hotspot-dot"></div>
-          </div>
-        </div>
-      </div>
-
       <div id="main-content" style={{ display: 'none' }}>
         <div id="hud">
           <div className="scanline"></div>
@@ -916,6 +988,48 @@ const setupMobileLabels = () => {
             <div className="close-btn" onClick={() => window.closeSection?.('storage')}>×</div>
             <h2 className="section-title">📦 STORAGE</h2>
             <p>Supply storage</p>
+          </div>
+        </div>
+      </div>
+
+      <div id="intro-video-1" className="intro-video">
+        <img id="static-bg-1" src="/images/space-bg.jpg" alt="Static door scene" className="static-bg" />
+        <video muted playsInline id="intro-video-player-1">
+          <source src="/videos/intro-fly.mp4" type="video/mp4" />
+        </video>
+        <audio id="audio-intro-1" preload="auto">
+          <source src="/sounds/intro-fly-audio.mp3" type="audio/mpeg" />
+        </audio>
+      </div>
+
+      <div id="intro-video-2" className="intro-video" style={{ opacity: 0, pointerEvents: 'none' }}>
+        <img id="static-bg-2" src="/images/panorama-1-center.jpg" alt="Static bridge scene" className="static-bg" />
+        <video muted playsInline id="intro-video-player-2">
+          <source src="/videos/intro-enter.mp4" type="video/mp4" />
+        </video>
+        <audio id="audio-intro-2" preload="auto">
+          <source src="/sounds/intro-enter-audio.mp3" type="audio/mpeg" />
+        </audio>
+      </div>
+
+      <div id="intro-screen" className="intro-screen" style={{ opacity: 0, pointerEvents: 'none' }}>
+        <div className="scene-background"></div>
+        <div className="door-container">
+          <div className="door door-left"></div>
+          <div className="door door-right"></div>
+          <div
+            className="hotspot-door"
+            style={{
+              left: '75.28%',
+              top: '65.39%',
+              width: '140px',
+              height: '140px',
+              cursor: 'pointer',
+              zIndex: 100,
+            }}
+            onClick={() => window.openDoorWithVideo?.()}
+          >
+            <div className="hotspot-dot"></div>
           </div>
         </div>
       </div>
