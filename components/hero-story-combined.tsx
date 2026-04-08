@@ -464,289 +464,261 @@ useEffect(() => {
   }
 
   // ОСНОВНОЙ GSAP useEffect с masterTl
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      if (!containerRef.current || !heroImageRef.current || !flipCardWrapperRef.current) return
+// ОСНОВНОЙ GSAP useEffect с masterTl
+useEffect(() => {
+  const ctx = gsap.context(() => {
+    if (!containerRef.current || !heroImageRef.current || !flipCardWrapperRef.current) return
 
-      const startDelay = isMobile ? 0.1 : 0.05
+    const startDelay = isMobile ? 0.1 : 0.05
 
-      gsap.set(headingRef.current, { opacity: 0, y: 60 })
-      gsap.set(leftContentRef.current, { opacity: 0, y: 40 })
-      gsap.set(flipCardContainerRef.current, { opacity: 0, scale: 0.8 })
-      gsap.set(trailerCardRef.current, { opacity: 0, x: 100 })
-      gsap.set(panoramaRef.current, { opacity: 0, visibility: 'hidden' })
-      gsap.set(maskContainerRef.current, { opacity: 1 })
-      gsap.set(heroImageRef.current, { opacity: 1 }) 
-      
-      if (isMobile) {
-        gsap.set(maskContainerRef.current, { display: 'none' })
-      }
-      
-      gsap.set(text1Ref.current, { opacity: 0, y: 80 })
-      gsap.set(text2Ref.current, { opacity: 0, y: 80 })
-      gsap.set(uiPanelRef.current, { opacity: 0, x: 50 })
-      gsap.set(keeperSymbolRef.current, { opacity: 0, scale: 0.3 })
-      gsap.set(frameContainerRef.current, { opacity: 0 })
-      gsap.set(frameWrapperRef.current, { opacity: 0, scale: 0.8 })
-      gsap.set(worldSectionRef.current, { opacity: 0 })
-      gsap.set(worldHeaderRef.current, { opacity: 0, y: 40 })
-      gsap.set(worldMapRef.current, { opacity: 0, scale: 0.95 })
-      gsap.set(worldPanelRef.current, { opacity: 0, x: 50 })
-      gsap.set(cardsSectionRef.current, { opacity: 0, pointerEvents: 'none' })
-      gsap.set(gradient1Ref.current, { opacity: 0 })
-      gsap.set(gradient2Ref.current, { opacity: 0 })
-      
-      const masterTl = gsap.timeline({
-        scrollTrigger: {
-          trigger: containerRef.current,
-          start: 'top top',
-          end: 'bottom bottom',
-          scrub: isMobile ? 1.6 : 2.0,
-          pin: stickyRef.current,
-          anticipatePin: 1,
-          fastScrollEnd: true,
-          preventOverlaps: true,
-          invalidateOnRefresh: true,
-        }
-      });
+    gsap.set(headingRef.current, { opacity: 0, y: 60 })
+    gsap.set(leftContentRef.current, { opacity: 0, y: 40 })
+    gsap.set(flipCardContainerRef.current, { opacity: 0, scale: 0.8 })
+    gsap.set(trailerCardRef.current, { opacity: 0, x: 100 })
+    gsap.set(panoramaRef.current, { opacity: 0, visibility: 'hidden' })
+    gsap.set(maskContainerRef.current, { opacity: 1 })
+    gsap.set(heroImageRef.current, { opacity: 1 }) 
     
-      masterTl.to(heroTextRef.current, { opacity: 0, scale: 0.95, duration: 0.02 }, 0 + startDelay)
-      masterTl.to(headingRef.current, { opacity: 1, y: 0, duration: 0.02 }, 0.01 + startDelay)
-      masterTl.to(leftContentRef.current, { opacity: 1, y: 0, duration: 0.02 }, 0.02 + startDelay)
-      masterTl.to(trailerCardRef.current, { opacity: 1, x: 0, duration: 0.02 }, 0.02 + startDelay)
-      masterTl.to(flipCardContainerRef.current, { opacity: 1, scale: 1, duration: 0.02 }, 0.02 + startDelay)
-
-      // Анимация сжатия hero
-      if (isMobile) {
-        masterTl.to(heroImageRef.current, {
-          width: framePos.width,
-          height: framePos.height + 50,
-          left: framePos.x,
-          top: framePos.y - 50,
-          borderRadius: 12,
-          duration: 0.04,
-          ease: 'power2.inOut'
-        }, 0.01 + startDelay)
-        
-        const heroImg = heroImageRef.current?.querySelector('img')
-        if (heroImg) {
-          masterTl.to(heroImg, {
-            y: 50,
-            duration: 0.04,
-            ease: 'power2.inOut'
-          }, 0.00 + startDelay)
-        }
-      } else {
-        masterTl.to(heroImageRef.current, {
-          width: framePos.width,
-          height: framePos.height,
-          left: framePos.x,
-          top: framePos.y,
-          borderRadius: 12,
-          duration: 0.04,
-          ease: 'power2.inOut'
-        }, 0.01 + startDelay)
+    if (isMobile) {
+      gsap.set(maskContainerRef.current, { display: 'none' })
+    }
+    
+    gsap.set(text1Ref.current, { opacity: 0, y: 80 })
+    gsap.set(text2Ref.current, { opacity: 0, y: 80 })
+    gsap.set(uiPanelRef.current, { opacity: 0, x: 50 })
+    gsap.set(keeperSymbolRef.current, { opacity: 0, scale: 0.3 })
+    gsap.set(frameContainerRef.current, { opacity: 0 })
+    gsap.set(frameWrapperRef.current, { opacity: 0, scale: 0.8 })
+    gsap.set(worldSectionRef.current, { opacity: 0 })
+    gsap.set(worldHeaderRef.current, { opacity: 0, y: 40 })
+    gsap.set(worldMapRef.current, { opacity: 0, scale: 0.95 })
+    gsap.set(worldPanelRef.current, { opacity: 0, x: 50 })
+    gsap.set(cardsSectionRef.current, { opacity: 0, pointerEvents: 'none' })
+    gsap.set(gradient1Ref.current, { opacity: 0 })
+    gsap.set(gradient2Ref.current, { opacity: 0 })
+    
+    const masterTl = gsap.timeline({
+      scrollTrigger: {
+        trigger: containerRef.current,
+        start: 'top top',
+        end: 'bottom bottom',
+        scrub: isMobile ? 1.6 : 2.0,
+        pin: stickyRef.current,
+        anticipatePin: 1,
+        fastScrollEnd: true,
+        preventOverlaps: true,
+        invalidateOnRefresh: true,
       }
+    });
+  
+    masterTl.to(heroTextRef.current, { opacity: 0, scale: 0.95, duration: 0.02 }, 0 + startDelay)
+    masterTl.to(headingRef.current, { opacity: 1, y: 0, duration: 0.02 }, 0.01 + startDelay)
+    masterTl.to(leftContentRef.current, { opacity: 1, y: 0, duration: 0.02 }, 0.02 + startDelay)
+    
+    // ВСЕ ЭЛЕМЕНТЫ ПОЯВЛЯЮТСЯ ОДНОВРЕМЕННО на 0.02 + startDelay
+    masterTl.to(trailerCardRef.current, { opacity: 1, x: 0, duration: 0.02 }, 0.02 + startDelay)
+    masterTl.to(flipCardContainerRef.current, { opacity: 1, scale: 1, duration: 0.02 }, 0.02 + startDelay)
+    masterTl.to(overlayFrameRef.current, { opacity: 1, duration: 0.02 }, 0.02 + startDelay)
+    masterTl.to(textOverlayFrameRef.current, { opacity: 1, duration: 0.02 }, 0.02 + startDelay)
 
-      if (isMobile) {
-        const heroImg = heroImageRef.current?.querySelector('img')
-        if (heroImg) {
-          masterTl.to(heroImg, {
-            y: 50,
-            duration: 0.04,
-            ease: 'power2.inOut'
-          }, 0.01 + startDelay)
-        }
-      }
-      
-      masterTl.to(overlayFrameRef.current, {
-        opacity: 1,
-        duration: 0.03,
-        ease: 'power2.out'
-      }, 0.02 + startDelay)
-      
-      masterTl.to(textOverlayFrameRef.current, {
-        opacity: 1,
-        duration: 0.03,
-        ease: 'power2.out'
-      }, 0.025 + startDelay)
-      
+    // Анимация сжатия hero ТОЛЬКО ДЛЯ ДЕСКТОПА
+    if (!isMobile) {
+      masterTl.to(heroImageRef.current, {
+        width: framePos.width,
+        height: framePos.height,
+        left: framePos.x,
+        top: framePos.y,
+        borderRadius: 12,
+        duration: 0.04,
+        ease: 'power2.inOut'
+      }, 0.01 + startDelay)
+    }
+    // НА МОБИЛЬНЫХ hero ОСТАЕТСЯ НА МЕСТЕ
+    
+    // НА МОБИЛЬНЫХ НЕ СКРЫВАЕМ trailerCardRef
+    if (!isMobile) {
       masterTl.to([heroImageRef.current, headingRef.current, leftContentRef.current, trailerCardRef.current], {
         opacity: 0,
         duration: 0.02
       }, 0.08 + startDelay)
-
-      // МОБИЛЬНАЯ ВЕРСИЯ
-// МОБИЛЬНАЯ ВЕРСИЯ
-if (isMobile) {
-  gsap.set(panoramaRef.current, { opacity: 0, visibility: 'hidden' })
-  gsap.set(flipCardWrapperRef.current, { width: 140, height: 200 })
-  
-  masterTl.to([overlayFrameRef.current, textOverlayFrameRef.current], {
-    opacity: 0,
-    duration: 0.01,
-    ease: 'none'
-  }, 0.07 + startDelay)
-
-  masterTl.to(flipCardWrapperRef.current, {
-    scale: 2.5,
-    duration: 0.18,                    // чуть уменьшил для скорости
-    ease: 'power2.inOut'
-  }, 0.09 + startDelay)
-
-  masterTl.to(flipCardRef.current, { 
-    rotateY: 180, 
-    duration: 0.22,                    // чуть уменьшил для скорости
-    ease: 'power2.inOut'
-  }, 0.13 + startDelay)
-  
-  masterTl.to(panoramaRef.current, { 
-    opacity: 1, 
-    visibility: 'visible',
-    duration: 0.03,
-    onComplete: () => {
-      requestAnimationFrame(() => {
-        updatePanoramaProgress(0)
-      })
+    } else {
+      // На мобильных скрываем только heroImageRef, headingRef, leftContentRef
+      masterTl.to([heroImageRef.current, headingRef.current, leftContentRef.current], {
+        opacity: 0,
+        duration: 0.02
+      }, 0.08 + startDelay)
+      // trailerCardRef остается видимым
     }
-  }, 0.22 + startDelay)                // ← панорама появляется раньше
-  
-  masterTl.set(contentLayerRef.current, { opacity: 0 }, 0.14 + startDelay)
 
-  masterTl.to(flipCardWrapperRef.current, { 
-    opacity: 0,
-    duration: 0.04,
-    ease: 'power2.out'
-  }, 0.26 + startDelay)                // ← синхронизировано
-  
-  masterTl.to(flipCardContainerRef.current, { 
-    opacity: 0, 
-    duration: 0.02 
-  }, 0.28 + startDelay)                // ← синхронизировано
-} else {
-        // ДЕСКТОПНАЯ ВЕРСИЯ
-        gsap.set(panoramaRef.current, { opacity: 0, visibility: 'hidden' })
-        gsap.set(flipCardWrapperRef.current, { width: 220, height: 320 })
-        
-        masterTl.to([overlayFrameRef.current, textOverlayFrameRef.current], {
-          opacity: 0,
-          duration: 0.01,
-          ease: 'none'
-        }, 0.07 + startDelay)
-
-        masterTl.to(flipCardWrapperRef.current, {
-          scale: 2.5,
-          duration: 0.04,
-          ease: 'power2.inOut'
-        }, 0.09 + startDelay)
-
-        masterTl.to(flipCardRef.current, { 
-          rotateY: 180, 
-          duration: 0.05,
-          ease: 'power2.inOut'
-        }, 0.13 + startDelay)
-        
-        masterTl.to(panoramaRef.current, { 
-          opacity: 1, 
-          visibility: 'visible',
-          duration: 0.02
-        }, 0.28 + startDelay)
-        
-        masterTl.set(contentLayerRef.current, { opacity: 0 }, 0.14 + startDelay)
-
-        masterTl.to(flipCardWrapperRef.current, { 
-          opacity: 0,
-          duration: 0.03,
-          ease: 'power2.out'
-        }, 0.18 + startDelay)
-        
-        masterTl.to(flipCardContainerRef.current, { 
-          opacity: 0, 
-          duration: 0.01 
-        }, 0.18 + startDelay)
-      }
+    if (isMobile) {
+      gsap.set(panoramaRef.current, { opacity: 0, visibility: 'hidden' })
+      gsap.set(flipCardWrapperRef.current, { width: 140, height: 200 })
       
-      // ОБЩАЯ ЧАСТЬ
-      masterTl.to(text1Ref.current, { opacity: 1, y: 0, duration: 0.02 }, 0.20 + startDelay)
+      masterTl.to([overlayFrameRef.current, textOverlayFrameRef.current], {
+        opacity: 0,
+        duration: 0.01,
+        ease: 'none'
+      }, 0.07 + startDelay)
+
+      masterTl.to(flipCardWrapperRef.current, {
+        scale: 2.5,
+        duration: 0.18,
+        ease: 'power2.inOut'
+      }, 0.09 + startDelay)
+
+      masterTl.to(flipCardRef.current, { 
+        rotateY: 180, 
+        duration: 0.22,
+        ease: 'power2.inOut'
+      }, 0.13 + startDelay)
       
-      if (!isMobile) {
-        masterTl.to(uiPanelRef.current, { opacity: 1, x: 0, duration: 0.02 }, 0.21 + startDelay)
-      }
-
-      masterTl.to(panoramaInnerRef.current, { y: panoramaMoveValue, duration: 0.4, ease: 'none' }, 0.22 + startDelay)
-
-      masterTl.eventCallback('onUpdate', () => {
-        const totalProgress = masterTl.progress()
-        if (totalProgress >= (0.22 + startDelay) && totalProgress <= (0.58 + startDelay)) {
-          const panoramaProgress = (totalProgress - (0.22 + startDelay)) / 0.36
-          updatePanoramaProgress(panoramaProgress)
+      masterTl.to(panoramaRef.current, { 
+        opacity: 1, 
+        visibility: 'visible',
+        duration: 0.03,
+        onComplete: () => {
+          requestAnimationFrame(() => {
+            updatePanoramaProgress(0)
+          })
         }
-      })
+      }, 0.22 + startDelay)
+      
+      masterTl.set(contentLayerRef.current, { opacity: 0 }, 0.14 + startDelay)
 
-      masterTl.to({}, { duration: 0.02 }, 0.62 + startDelay)
-      masterTl.to(keeperSymbolRef.current, { opacity: 1, scale: 1, duration: 0.12, ease: 'back.out(0.8)', clearProps: 'all' }, 0.58 + startDelay)
-      masterTl.to(keeperSymbolRef.current, { opacity: 1, duration: 0.02 }, 0.60 + startDelay)
+      masterTl.to(flipCardWrapperRef.current, { 
+        opacity: 0,
+        duration: 0.04,
+        ease: 'power2.out'
+      }, 0.26 + startDelay)
       
-      const clipInset = isMobile ? 'calc(50% - 100px)' : 'calc(50% - 260px)'
+      masterTl.to(flipCardContainerRef.current, { 
+        opacity: 0, 
+        duration: 0.02 
+      }, 0.28 + startDelay)
+    } else {
+      // ДЕСКТОП - без изменений
+      gsap.set(panoramaRef.current, { opacity: 0, visibility: 'hidden' })
+      gsap.set(flipCardWrapperRef.current, { width: 220, height: 320 })
       
-      masterTl.fromTo(panoramaRef.current, {
-        clipPath: 'inset(0% 0% 0% 0% round 0px)',
-        rotateY: 0,
-        rotateX: 0,
-        rotateZ: 0,
-      }, {
-        clipPath: `inset(${clipInset} ${clipInset} ${clipInset} ${clipInset} round ${isMobile ? '8px' : '16px'})`,
-        rotateY: isMobile ? -15 : -35,
-        rotateX: isMobile ? 3 : 8,
-        rotateZ: isMobile ? -2 : -4,
+      masterTl.to([overlayFrameRef.current, textOverlayFrameRef.current], {
+        opacity: 0,
+        duration: 0.01,
+        ease: 'none'
+      }, 0.07 + startDelay)
+
+      masterTl.to(flipCardWrapperRef.current, {
+        scale: 2.5,
         duration: 0.04,
         ease: 'power2.inOut'
-      }, 0.63 + startDelay)
+      }, 0.09 + startDelay)
+
+      masterTl.to(flipCardRef.current, { 
+        rotateY: 180, 
+        duration: 0.05,
+        ease: 'power2.inOut'
+      }, 0.13 + startDelay)
       
-      masterTl.to(panoramaRef.current, { rotateY: -90, duration: 0.02, ease: 'power2.in' }, 0.65 + startDelay)
-      masterTl.to(panoramaRef.current, { opacity: 0, duration: 0.01 }, 0.67 + startDelay)
+      masterTl.to(panoramaRef.current, { 
+        opacity: 1, 
+        visibility: 'visible',
+        duration: 0.02
+      }, 0.16 + startDelay)
+      
+      masterTl.set(contentLayerRef.current, { opacity: 0 }, 0.14 + startDelay)
 
-      masterTl.to(frameContainerRef.current, { opacity: 1, duration: 0.02 }, 0.68 + startDelay)
-      masterTl.to(frameWrapperRef.current, { opacity: 1, scale: 1, duration: 0.02, ease: 'power2.out' }, 0.68 + startDelay)
-      masterTl.to(worldSectionRef.current, { opacity: 1, duration: 0.02 }, 0.70 + startDelay)
-      masterTl.to(worldHeaderRef.current, { opacity: 1, y: 0, duration: 0.03, ease: 'power2.out' }, 0.71 + startDelay)
-      masterTl.to(worldMapRef.current, { opacity: 1, scale: 1, duration: 0.04, ease: 'back.out(0.8)' }, 0.73 + startDelay)
-      masterTl.to(worldPanelRef.current, { opacity: 1, x: 0, duration: 0.04, ease: 'power2.out' }, 0.74 + startDelay)
+      masterTl.to(flipCardWrapperRef.current, { 
+        opacity: 0,
+        duration: 0.03,
+        ease: 'power2.out'
+      }, 0.18 + startDelay)
+      
+      masterTl.to(flipCardContainerRef.current, { 
+        opacity: 0, 
+        duration: 0.01 
+      }, 0.18 + startDelay)
+    }
+    
+    // ВСЁ ОСТАЛЬНОЕ БЕЗ ИЗМЕНЕНИЙ
+    masterTl.to(text1Ref.current, { opacity: 1, y: 0, duration: 0.02 }, 0.20 + startDelay)
+    
+    if (!isMobile) {
+      masterTl.to(uiPanelRef.current, { opacity: 1, x: 0, duration: 0.02 }, 0.21 + startDelay)
+    }
 
-      masterTl.to(gradient1Ref.current, { opacity: 1, duration: 0.08, ease: 'power2.out' }, 0.76 + startDelay)
-      masterTl.to(gradient2Ref.current, { opacity: 1, duration: 0.05, ease: 'power2.out' }, 0.83 + startDelay)
-      masterTl.to(worldSectionRef.current, { opacity: 0, duration: 0.03 }, 0.86 + startDelay)
-      masterTl.to(frameContainerRef.current, { opacity: 0, duration: 0.03 }, 0.86 + startDelay)
-      masterTl.set(cardsSectionRef.current, { opacity: 1, pointerEvents: 'auto' }, 0.89 + startDelay)
-      masterTl.to([gradient1Ref.current, gradient2Ref.current], { opacity: 0, duration: 0.04 }, 0.90 + startDelay)
+    masterTl.to(panoramaInnerRef.current, { y: panoramaMoveValue, duration: 0.4, ease: 'none' }, 0.22 + startDelay)
 
-      if (!isMobile) {
-        const cardRanges = [
-          { start: 1.03, end: 1.105 },
-          { start: 1.105, end: 1.18 },
-          { start: 1.18, end: 1.255 },
-          { start: 1.255, end: 1.33 }
-        ]
-        
-        cardRanges.forEach((range, i) => {
-          masterTl.call(() => {
-            if (hoveredCard === null) {
-              setActiveCardIndex(i)
-            }
-          }, [], range.start + startDelay)
-        })
-        
+    masterTl.eventCallback('onUpdate', () => {
+      const totalProgress = masterTl.progress()
+      if (totalProgress >= (0.22 + startDelay) && totalProgress <= (0.58 + startDelay)) {
+        const panoramaProgress = (totalProgress - (0.22 + startDelay)) / 0.36
+        updatePanoramaProgress(panoramaProgress)
+      }
+    })
+
+    masterTl.to({}, { duration: 0.02 }, 0.62 + startDelay)
+    masterTl.to(keeperSymbolRef.current, { opacity: 1, scale: 1, duration: 0.12, ease: 'back.out(0.8)', clearProps: 'all' }, 0.58 + startDelay)
+    masterTl.to(keeperSymbolRef.current, { opacity: 1, duration: 0.02 }, 0.60 + startDelay)
+    
+    const clipInset = isMobile ? 'calc(50% - 100px)' : 'calc(50% - 260px)'
+    
+    masterTl.fromTo(panoramaRef.current, {
+      clipPath: 'inset(0% 0% 0% 0% round 0px)',
+      rotateY: 0,
+      rotateX: 0,
+      rotateZ: 0,
+    }, {
+      clipPath: `inset(${clipInset} ${clipInset} ${clipInset} ${clipInset} round ${isMobile ? '8px' : '16px'})`,
+      rotateY: isMobile ? -15 : -35,
+      rotateX: isMobile ? 3 : 8,
+      rotateZ: isMobile ? -2 : -4,
+      duration: 0.04,
+      ease: 'power2.inOut'
+    }, 0.63 + startDelay)
+    
+    masterTl.to(panoramaRef.current, { rotateY: -90, duration: 0.02, ease: 'power2.in' }, 0.65 + startDelay)
+    masterTl.to(panoramaRef.current, { opacity: 0, duration: 0.01 }, 0.67 + startDelay)
+
+    masterTl.to(frameContainerRef.current, { opacity: 1, duration: 0.02 }, 0.68 + startDelay)
+    masterTl.to(frameWrapperRef.current, { opacity: 1, scale: 1, duration: 0.02, ease: 'power2.out' }, 0.68 + startDelay)
+    masterTl.to(worldSectionRef.current, { opacity: 1, duration: 0.02 }, 0.70 + startDelay)
+    masterTl.to(worldHeaderRef.current, { opacity: 1, y: 0, duration: 0.03, ease: 'power2.out' }, 0.71 + startDelay)
+    masterTl.to(worldMapRef.current, { opacity: 1, scale: 1, duration: 0.04, ease: 'back.out(0.8)' }, 0.73 + startDelay)
+    masterTl.to(worldPanelRef.current, { opacity: 1, x: 0, duration: 0.04, ease: 'power2.out' }, 0.74 + startDelay)
+
+    masterTl.to(gradient1Ref.current, { opacity: 1, duration: 0.08, ease: 'power2.out' }, 0.76 + startDelay)
+    masterTl.to(gradient2Ref.current, { opacity: 1, duration: 0.05, ease: 'power2.out' }, 0.83 + startDelay)
+    masterTl.to(worldSectionRef.current, { opacity: 0, duration: 0.03 }, 0.86 + startDelay)
+    masterTl.to(frameContainerRef.current, { opacity: 0, duration: 0.03 }, 0.86 + startDelay)
+    masterTl.set(cardsSectionRef.current, { opacity: 1, pointerEvents: 'auto' }, 0.89 + startDelay)
+    masterTl.to([gradient1Ref.current, gradient2Ref.current], { opacity: 0, duration: 0.04 }, 0.90 + startDelay)
+
+    if (!isMobile) {
+      const cardRanges = [
+        { start: 1.03, end: 1.105 },
+        { start: 1.105, end: 1.18 },
+        { start: 1.18, end: 1.255 },
+        { start: 1.255, end: 1.33 }
+      ]
+      
+      cardRanges.forEach((range, i) => {
         masterTl.call(() => {
           if (hoveredCard === null) {
-            setActiveCardIndex(0)
+            setActiveCardIndex(i)
           }
-        }, [], 1.02 + startDelay)
-      }
+        }, [], range.start + startDelay)
+      })
+      
+      masterTl.call(() => {
+        if (hoveredCard === null) {
+          setActiveCardIndex(0)
+        }
+      }, [], 1.02 + startDelay)
+    }
 
-    }, containerRef)
+  }, containerRef)
 
-    return () => ctx.revert()
-  }, [framePos, hoveredCard, isMobile, panoramaMoveValue])
+  return () => ctx.revert()
+}, [framePos, hoveredCard, isMobile, panoramaMoveValue])
 
   useEffect(() => {
     const adjustOverlap = () => {
@@ -1620,7 +1592,7 @@ if (isMobile) {
           </div>
 
           {/* CONTENT LAYER */}
-          <div ref={contentLayerRef} className="absolute inset-0 z-20 bg-[#050508]">
+          <div ref={contentLayerRef} className="absolute inset-0 z-26">
             <div className="h-full px-4 md:px-8 lg:px-16 py-12">
               <div className="max-w-7xl mx-auto h-full flex flex-col">
                 
@@ -1704,6 +1676,7 @@ if (isMobile) {
                         marginTop: isMobile ? '60px' : '0',
                         paddingLeft: isMobile ? '10px' : '0',
                         paddingRight: isMobile ? '10px' : '0',
+                         zIndex: 30,  // Добавь эту строку
                       }}
                     >
                       <div 
