@@ -5,7 +5,7 @@ import Script from 'next/script'
 import { useRouter } from 'next/navigation'
 import { LoadingScreen } from '@/components/LoadingScreen'
 import { GyroToggle } from '@/components/GyroToggle'
-
+import SimpleGlobe from "@/components/ui/SimpleGlobe"
 declare global {
   interface Window {
     enterLocation: (targetLocId: string, locationName: string) => void
@@ -877,8 +877,29 @@ useEffect(() => {
                     <div className="hotspot-dot"></div>
                   </div>
                   <div className="hotspot" data-percent-x="50.09" data-percent-y="43.09" data-label="ABOUT" onClick={() => router.push('/about')}>
-                    <div className="hotspot-dot"></div>
-                  </div>
+                    <div className="hotspot-dot"></div>{/* Глобус за хотспотом */}
+<div className="absolute pointer-events-none" style={{
+  left: '50%',
+  top: '50%',
+  transform: 'translate(-50%, -50%)',
+   marginLeft: '-5px',   // 👈 добавить - смещает влево
+  width: '180px',    // увеличивай здесь
+  height: '180px',   // и здесь (должны быть одинаковыми)
+  zIndex: -1,
+  opacity: 0.7,  // 👈 добавь эту строку (0 = прозрачный, 1 = непрозрачный)
+}}>
+  <SimpleGlobe 
+  width={180} 
+  height={180} 
+  color="#00d4ff"
+  autoRotate={true}
+  globeSpeed={0.1}
+  satellite={true}
+  satelliteColor="#ff6b35"
+  satelliteSpeed={0.05}
+  />
+</div>
+</div>
                   <div className="hotspot" data-percent-x="26.34" data-percent-y="58.00" data-label="LIFT" onClick={() => console.log('LIFT')}>
                     <div className="hotspot-dot"></div>
                   </div>
