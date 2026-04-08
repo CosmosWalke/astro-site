@@ -332,7 +332,7 @@ useEffect(() => {
 
   // Функция обновления прогресса панорамы - на мобильных скрываем лишние слои
   const updatePanoramaProgress = (progress: number) => {
-    const moveDistance = isMobile ? 20 : 80
+    const moveDistance = isMobile ? 40 : 80
     const moveUp = -progress * moveDistance
 
     const parallaxSpeeds = isMobile 
@@ -645,15 +645,23 @@ useEffect(() => {
       masterTl.to(uiPanelRef.current, { opacity: 1, x: 0, duration: 0.02 }, 0.21 + startDelay)
     }
 
-    masterTl.to(panoramaInnerRef.current, { y: panoramaMoveValue, duration: 0.4, ease: 'none' }, 0.22 + startDelay)
+    masterTl.to(panoramaInnerRef.current, { 
+  y: panoramaMoveValue, 
+  duration: isMobile ? 0.15 : 0.3,  // для десктопа 0.4, для мобильных 0.25
+  ease: 'none' 
+}, isMobile ? 0.35 + startDelay : 0.22 + startDelay)  // для мобильных старт позже
 
-    masterTl.eventCallback('onUpdate', () => {
-      const totalProgress = masterTl.progress()
-      if (totalProgress >= (0.22 + startDelay) && totalProgress <= (0.58 + startDelay)) {
-        const panoramaProgress = (totalProgress - (0.22 + startDelay)) / 0.36
-        updatePanoramaProgress(panoramaProgress)
-      }
-    })
+ masterTl.eventCallback('onUpdate', () => {
+  const totalProgress = masterTl.progress()
+  const startPanProgress = isMobile ? 0.35 : 0.22  // для мобильных старт позже
+  const endPanProgress = isMobile ? 0.71 : 0.58    // для мобильных конец позже
+  
+  if (totalProgress >= (startPanProgress + startDelay) && totalProgress <= (endPanProgress + startDelay)) {
+    const divider = endPanProgress - startPanProgress
+    const panoramaProgress = (totalProgress - (startPanProgress + startDelay)) / divider
+    updatePanoramaProgress(panoramaProgress)
+  }
+})
 
     masterTl.to({}, { duration: 0.02 }, 0.62 + startDelay)
     masterTl.to(keeperSymbolRef.current, { opacity: 1, scale: 1, duration: 0.12, ease: 'back.out(0.8)', clearProps: 'all' }, 0.58 + startDelay)
@@ -671,7 +679,7 @@ useEffect(() => {
       rotateY: isMobile ? -15 : -35,
       rotateX: isMobile ? 3 : 8,
       rotateZ: isMobile ? -2 : -4,
-      duration: 0.04,
+       duration: isMobile ? 0.04 : 0.04,  // для мобильных увеличил с 0.04 до 0.12
       ease: 'power2.inOut'
     }, 0.63 + startDelay)
     
@@ -778,37 +786,41 @@ useEffect(() => {
   useEffect(() => {
     if (!panoramaInnerRef.current || !img1WrapperRef.current) return
 
-    const calculateOptimalMove = () => {
-      const wrappers = [img1WrapperRef, img2WrapperRef, img3WrapperRef, img4WrapperRef, img5WrapperRef]
-      let totalHeight = 0
-      let totalOverlap = 0
+const calculateOptimalMove = () => {
+  const wrappers = [img1WrapperRef, img2WrapperRef, img3WrapperRef, img4WrapperRef, img5WrapperRef]
+  let totalHeight = 0
+  let totalOverlap = 0
+  
+  wrappers.forEach((wrapper, idx) => {
+    if (wrapper.current) {
+      const height = wrapper.current.offsetHeight
+      totalHeight += height
       
-      wrappers.forEach((wrapper, idx) => {
-        if (wrapper.current) {
-          const height = wrapper.current.offsetHeight
-          totalHeight += height
-          
-          if (idx > 0) {
-            const computedStyle = getComputedStyle(wrapper.current)
-            const marginTop = parseFloat(computedStyle.marginTop)
-            if (!isNaN(marginTop) && marginTop < 0) {
-              totalOverlap += Math.abs(marginTop)
-            }
-          }
+      if (idx > 0) {
+        const computedStyle = getComputedStyle(wrapper.current)
+        const marginTop = parseFloat(computedStyle.marginTop)
+        if (!isNaN(marginTop) && marginTop < 0) {
+          totalOverlap += Math.abs(marginTop)
         }
-      })
-      
-      const actualHeight = totalHeight - totalOverlap
-      const viewportHeight = window.innerHeight
-      
-      let neededScroll = actualHeight - viewportHeight
-      neededScroll = Math.max(neededScroll, viewportHeight * 0.3)
-      
-      let moveInVh = (neededScroll / viewportHeight) * 100
-      moveInVh = Math.min(Math.max(moveInVh, 30), 500)
-      
-      setPanoramaMoveValue(`-${Math.round(moveInVh)}vh`)
+      }
     }
+  })
+  
+  const actualHeight = totalHeight - totalOverlap
+  const viewportHeight = window.innerHeight
+  
+  let neededScroll = actualHeight - viewportHeight
+  // Для мобильных увеличиваем минимальный скролл
+  const minScroll = isMobile ? viewportHeight * 0.8 : viewportHeight * 0.3
+  neededScroll = Math.max(neededScroll, minScroll)
+  
+  let moveInVh = (neededScroll / viewportHeight) * 100
+  // Для мобильных увеличиваем максимальное значение
+  const maxMove = isMobile ? 800 : 500
+  moveInVh = Math.min(Math.max(moveInVh, 30), maxMove)
+  
+  setPanoramaMoveValue(`-${Math.round(moveInVh)}vh`)
+}
     
     const timer = setTimeout(calculateOptimalMove, 500)
     
