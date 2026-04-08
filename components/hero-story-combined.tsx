@@ -545,7 +545,7 @@ useEffect(() => {
       // На мобильных скрываем только heroImageRef, headingRef, leftContentRef
       masterTl.to([heroImageRef.current, headingRef.current, leftContentRef.current], {
         opacity: 0,
-        duration: 0.02
+        duration: 0.15
       }, 0.08 + startDelay)
       // trailerCardRef остается видимым
     }
@@ -554,7 +554,7 @@ useEffect(() => {
       gsap.set(panoramaRef.current, { opacity: 0, visibility: 'hidden' })
       gsap.set(flipCardWrapperRef.current, { width: 140, height: 200 })
       
-      masterTl.to([overlayFrameRef.current, textOverlayFrameRef.current], {
+      masterTl.to([overlayFrameRef.current, textOverlayFrameRef.current, trailerCardRef.current], {
         opacity: 0,
         duration: 0.01,
         ease: 'none'
@@ -878,8 +878,8 @@ useEffect(() => {
       
       if (textOverlayFrameRef.current) {
         if (isMobile) {
-          textOverlayFrameRef.current.style.left = `165px`
-          textOverlayFrameRef.current.style.top = `75px`
+          textOverlayFrameRef.current.style.left = `90px`
+          textOverlayFrameRef.current.style.top = `90px`
         } else {
           textOverlayFrameRef.current.style.left = `${framePos.x + framePos.width - 640}px`
           textOverlayFrameRef.current.style.top = `${framePos.y + (framePos.height / 2) - 80}px`
@@ -1806,8 +1806,8 @@ useEffect(() => {
             <div
               style={{
                 position: 'relative',
-                width: isMobile ? '100px' : '180px',
-                height: isMobile ? '100px' : '150px',
+                width: isMobile ? '250px' : '180px',
+                height: isMobile ? '150px' : '150px',
                 marginBottom: '16px',
               }}
             >
@@ -1822,7 +1822,7 @@ useEffect(() => {
             <div 
               className="text-sm text-[#FFFFFF] leading-relaxed"
               style={{
-                maxWidth: isMobile ? '220px' : '180px',
+                maxWidth: isMobile ? '350px' : '180px',
                 fontSize: isMobile ? '16px' : '14px',
                 marginLeft: isMobile ? '-40px' : '0',
               }}

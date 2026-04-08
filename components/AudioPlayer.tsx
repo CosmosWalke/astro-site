@@ -5,17 +5,28 @@ import { CustomCursor } from './CustomCursor'
 
 export function AudioPlayer() {
   const [isPlaying, setIsPlaying] = useState(false)
-  const [volume, setVolume] = useState(0.07) // 7% громкости
+  const [volume, setVolume] = useState(0.07)
   const [isMuted, setIsMuted] = useState(false)
   const [isHovered, setIsHovered] = useState(false)
   const [isSoundEnabled, setIsSoundEnabled] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
+  const [showVolumeControl, setShowVolumeControl] = useState(false)
   const audioRef = useRef<HTMLAudioElement>(null)
   const hideTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
-  // Включение звука (первый клик)
+  // Определяем мобильное устройство
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768)
+    }
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
+
   const enableSound = () => {
     if (audioRef.current && !isSoundEnabled) {
-      audioRef.current.volume = 0.07 // 7% при первом включении
+      audioRef.current.volume = 0.07
       audioRef.current.play()
         .then(() => {
           console.log('Sound enabled')
@@ -72,15 +83,14 @@ export function AudioPlayer() {
     }
   }
 
-  // При загрузке устанавливаем громкость 0.07
   useEffect(() => {
     if (audioRef.current) {
       audioRef.current.volume = 0.07
     }
   }, [])
 
-  // Показываем регулятор
-  const showVolumeControl = () => {
+  // Для десктопа: показываем при наведении
+  const showVolumeOnHover = () => {
     if (hideTimeoutRef.current) clearTimeout(hideTimeoutRef.current)
     setIsHovered(true)
   }
@@ -92,16 +102,34 @@ export function AudioPlayer() {
     }, 800)
   }
 
-  const handleMouseEnter = () => showVolumeControl()
-  const handleMouseLeave = () => startHideTimer()
-  const handleVolumeMouseEnter = () => showVolumeControl()
-  const handleVolumeMouseLeave = () => startHideTimer()
+  // Для мобильных: показываем/скрываем по тапу
+  const toggleVolumeControl = () => {
+    if (showVolumeControl) {
+      setShowVolumeControl(false)
+    } else {
+      setShowVolumeControl(true)
+      // Автоматически скрываем через 3 секунды
+      setTimeout(() => {
+        setShowVolumeControl(false)
+      }, 3000)
+    }
+  }
+
+  const handleMouseEnter = () => !isMobile && showVolumeOnHover()
+  const handleMouseLeave = () => !isMobile && startHideTimer()
+  const handleVolumeMouseEnter = () => !isMobile && showVolumeOnHover()
+  const handleVolumeMouseLeave = () => !isMobile && startHideTimer()
 
   useEffect(() => {
     return () => {
       if (hideTimeoutRef.current) clearTimeout(hideTimeoutRef.current)
     }
   }, [])
+
+  // Определяем, показывать ли регулятор громкости
+  const shouldShowVolume = isMobile 
+    ? showVolumeControl && isSoundEnabled 
+    : isHovered && isSoundEnabled
 
   return (
     <>
@@ -115,7 +143,7 @@ export function AudioPlayer() {
         {/* Вертикальный регулятор громкости */}
         <div 
           className={`absolute bottom-full left-1/2 -translate-x-1/2 mb-3 transition-all duration-300 ${
-            isHovered && isSoundEnabled ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'
+            shouldShowVolume ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'
           }`}
           onMouseEnter={handleVolumeMouseEnter}
           onMouseLeave={handleVolumeMouseLeave}
@@ -159,7 +187,10 @@ export function AudioPlayer() {
         </div>
 
         {/* Основная кнопка */}
-        <div className={`flex items-center gap-3 bg-black/80 backdrop-blur-md border border-[#00d4ff] rounded-full px-4 py-2 shadow-[0_0_15px_rgba(0,212,255,0.3)] transition-all duration-300 ${!isSoundEnabled ? 'opacity-70' : ''}`}>
+        <div 
+          className={`flex items-center gap-3 bg-black/80 backdrop-blur-md border border-[#00d4ff] rounded-full px-4 py-2 shadow-[0_0_15px_rgba(0,212,255,0.3)] transition-all duration-300 ${!isSoundEnabled ? 'opacity-70' : ''}`}
+          onClick={isMobile ? toggleVolumeControl : undefined}
+        >
           <audio
             ref={audioRef}
             src="/audio/Audio1.mp3"
