@@ -93,10 +93,10 @@ importers:
         specifier: 1.2.8
         version: 1.2.8(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@react-three/drei':
-        specifier: ^9.92.7
+        specifier: ^9.122.0
         version: 9.122.0(@react-three/fiber@8.18.0(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(three@0.160.1))(@types/react@19.2.14)(@types/three@0.160.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(three@0.160.1)(use-sync-external-store@1.6.0(react@19.2.4))
       '@react-three/fiber':
-        specifier: ^8.15.12
+        specifier: ^8.18.0
         version: 8.18.0(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(three@0.160.1)
       '@vercel/analytics':
         specifier: 1.6.1
@@ -162,7 +162,7 @@ importers:
         specifier: ^3.3.1
         version: 3.4.0
       three:
-        specifier: ^0.160.0
+        specifier: ^0.160.1
         version: 0.160.1
       vaul:
         specifier: ^1.1.2
