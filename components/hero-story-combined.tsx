@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import Lenis from 'lenis'
+import 'lenis/dist/lenis.css'
 import { Play, ChevronLeft, ChevronRight } from 'lucide-react'
 import { TextScramble } from "@/components/ui/text-scramble"
 import { Starfield } from '@/components/ui/starfield-1'
@@ -295,6 +297,39 @@ export function HeroStoryCombined() {
     }
   }, [])
 
+  // Добавляем класс lenis на html
+  useEffect(() => {
+    document.documentElement.classList.add('lenis')
+    return () => document.documentElement.classList.remove('lenis')
+  }, [])
+
+ // === LENIS + SCROLLTRIGGER SYNC ===
+useEffect(() => {
+  // Включаем Lenis ТОЛЬКО на десктопе
+  if (typeof window === 'undefined' || isMobile) return
+
+  const lenis = new Lenis({
+    duration: 1.2,
+    easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+    smoothWheel: true,
+    wheelMultiplier: 1,
+    touchMultiplier: 2,
+  })
+
+  lenis.on('scroll', ScrollTrigger.update)
+
+  gsap.ticker.add((time: number) => {
+    lenis.raf(time * 1000)
+  })
+
+  gsap.ticker.lagSmoothing(0)
+
+  return () => {
+    lenis.destroy()
+    gsap.ticker.remove((time: number) => lenis.raf(time * 1000))
+  }
+}, [isMobile])
+
   // Функция обновления прогресса панорамы - на мобильных скрываем лишние слои
   const updatePanoramaProgress = (progress: number) => {
     const moveDistance = isMobile ? 20 : 80
@@ -428,11 +463,12 @@ export function HeroStoryCombined() {
     setActiveCardIndex(mobileCardIndex - 1)
   }
 
+  // ОСНОВНОЙ GSAP useEffect с masterTl
   useEffect(() => {
     const ctx = gsap.context(() => {
       if (!containerRef.current || !heroImageRef.current || !flipCardWrapperRef.current) return
 
-     const startDelay = isMobile ? 0.1 : 0.05
+      const startDelay = isMobile ? 0.1 : 0.05
 
       gsap.set(headingRef.current, { opacity: 0, y: 60 })
       gsap.set(leftContentRef.current, { opacity: 0, y: 40 })
@@ -460,19 +496,19 @@ export function HeroStoryCombined() {
       gsap.set(gradient1Ref.current, { opacity: 0 })
       gsap.set(gradient2Ref.current, { opacity: 0 })
       
-      const scrubValue = isMobile ? 0.8 : 1.2
-      
       const masterTl = gsap.timeline({
         scrollTrigger: {
           trigger: containerRef.current,
           start: 'top top',
           end: 'bottom bottom',
-          scrub: scrubValue,
+          scrub: isMobile ? 1.6 : 2.0,
           pin: stickyRef.current,
           anticipatePin: 1,
+          fastScrollEnd: true,
+          preventOverlaps: true,
           invalidateOnRefresh: true,
         }
-      })
+      });
     
       masterTl.to(heroTextRef.current, { opacity: 0, scale: 0.95, duration: 0.02 }, 0 + startDelay)
       masterTl.to(headingRef.current, { opacity: 1, y: 0, duration: 0.02 }, 0.01 + startDelay)
@@ -541,52 +577,53 @@ export function HeroStoryCombined() {
       }, 0.08 + startDelay)
 
       // МОБИЛЬНАЯ ВЕРСИЯ
-      if (isMobile) {
-        gsap.set(panoramaRef.current, { opacity: 0, visibility: 'hidden' })
-        gsap.set(flipCardWrapperRef.current, { width: 140, height: 200 })
-        
-        masterTl.to([overlayFrameRef.current, textOverlayFrameRef.current], {
-          opacity: 0,
-          duration: 0.01,
-          ease: 'none'
-        }, 0.07 + startDelay)
+// МОБИЛЬНАЯ ВЕРСИЯ
+if (isMobile) {
+  gsap.set(panoramaRef.current, { opacity: 0, visibility: 'hidden' })
+  gsap.set(flipCardWrapperRef.current, { width: 140, height: 200 })
+  
+  masterTl.to([overlayFrameRef.current, textOverlayFrameRef.current], {
+    opacity: 0,
+    duration: 0.01,
+    ease: 'none'
+  }, 0.07 + startDelay)
 
-        masterTl.to(flipCardWrapperRef.current, {
-          scale: 2.5,
-          duration: 0.04,
-          ease: 'power2.inOut'
-        }, 0.09 + startDelay)
+  masterTl.to(flipCardWrapperRef.current, {
+    scale: 2.5,
+    duration: 0.18,                    // чуть уменьшил для скорости
+    ease: 'power2.inOut'
+  }, 0.09 + startDelay)
 
-        masterTl.to(flipCardRef.current, { 
-          rotateY: 180, 
-          duration: 0.05,
-          ease: 'power2.inOut'
-        }, 0.13 + startDelay)
-        
-        masterTl.to(panoramaRef.current, { 
-          opacity: 1, 
-          visibility: 'visible',
-          duration: 0.02,
-          onComplete: () => {
-            requestAnimationFrame(() => {
-              updatePanoramaProgress(0)
-            })
-          }
-        }, 0.16 + startDelay)
-        
-        masterTl.set(contentLayerRef.current, { opacity: 0 }, 0.14 + startDelay)
+  masterTl.to(flipCardRef.current, { 
+    rotateY: 180, 
+    duration: 0.22,                    // чуть уменьшил для скорости
+    ease: 'power2.inOut'
+  }, 0.13 + startDelay)
+  
+  masterTl.to(panoramaRef.current, { 
+    opacity: 1, 
+    visibility: 'visible',
+    duration: 0.03,
+    onComplete: () => {
+      requestAnimationFrame(() => {
+        updatePanoramaProgress(0)
+      })
+    }
+  }, 0.22 + startDelay)                // ← панорама появляется раньше
+  
+  masterTl.set(contentLayerRef.current, { opacity: 0 }, 0.14 + startDelay)
 
-        masterTl.to(flipCardWrapperRef.current, { 
-          opacity: 0,
-          duration: 0.03,
-          ease: 'power2.out'
-        }, 0.18 + startDelay)
-        
-        masterTl.to(flipCardContainerRef.current, { 
-          opacity: 0, 
-          duration: 0.01 
-        }, 0.18 + startDelay)
-      } else {
+  masterTl.to(flipCardWrapperRef.current, { 
+    opacity: 0,
+    duration: 0.04,
+    ease: 'power2.out'
+  }, 0.26 + startDelay)                // ← синхронизировано
+  
+  masterTl.to(flipCardContainerRef.current, { 
+    opacity: 0, 
+    duration: 0.02 
+  }, 0.28 + startDelay)                // ← синхронизировано
+} else {
         // ДЕСКТОПНАЯ ВЕРСИЯ
         gsap.set(panoramaRef.current, { opacity: 0, visibility: 'hidden' })
         gsap.set(flipCardWrapperRef.current, { width: 220, height: 320 })
@@ -613,7 +650,7 @@ export function HeroStoryCombined() {
           opacity: 1, 
           visibility: 'visible',
           duration: 0.02
-        }, 0.16 + startDelay)
+        }, 0.28 + startDelay)
         
         masterTl.set(contentLayerRef.current, { opacity: 0 }, 0.14 + startDelay)
 
@@ -636,7 +673,7 @@ export function HeroStoryCombined() {
         masterTl.to(uiPanelRef.current, { opacity: 1, x: 0, duration: 0.02 }, 0.21 + startDelay)
       }
 
-      masterTl.to(panoramaInnerRef.current, { y: panoramaMoveValue, duration: 0.45, ease: 'none' }, 0.22 + startDelay)
+      masterTl.to(panoramaInnerRef.current, { y: panoramaMoveValue, duration: 0.4, ease: 'none' }, 0.22 + startDelay)
 
       masterTl.eventCallback('onUpdate', () => {
         const totalProgress = masterTl.progress()
