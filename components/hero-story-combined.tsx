@@ -622,7 +622,7 @@ useEffect(() => {
         opacity: 1, 
         visibility: 'visible',
         duration: 0.02
-      }, 0.16 + startDelay)
+      }, 0.161 + startDelay)
       
       masterTl.set(contentLayerRef.current, { opacity: 0 }, 0.14 + startDelay)
 
