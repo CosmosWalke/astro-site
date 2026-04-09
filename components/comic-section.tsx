@@ -14,12 +14,12 @@ export function ComicSection() {
   const flairRightRef = useRef<HTMLImageElement>(null)
 
   const panels = [
-    { title: 'Star Trek #1 (Gold Key)', img: 'https://d29xot63vimef3.cloudfront.net/image/star-trek/1-1.jpg', large: true },
-    { title: 'Action Comics #37', img: 'https://assets.codepen.io/2856/ACTION-37-Cooke-var.jpg', large: true },
-    { title: 'Superman vs. Spider-Man', img: 'https://assets.codepen.io/2856/spider-man_superman.jpg' },
-    { title: 'Wolverine: Jungle Adventure', img: 'https://assets.codepen.io/2856/jungle_adventure.jpg' },
-    { title: 'Daredevil #217', img: 'https://d29xot63vimef3.cloudfront.net/image/daredevil/217-1.jpg' },
-    { title: 'Batman #426', img: 'https://d29xot63vimef3.cloudfront.net/image/batman/426-1.jpg' },
+    { title: 'Star Trek #1 (Gold Key)', img: '/image/comi1.png', large: true },
+    { title: 'Action Comics #37', img: '/image/comi2.png', large: true },
+    { title: 'Superman vs. Spider-Man', img: '/image/comi3.png' },
+    { title: 'Wolverine: Jungle Adventure', img: '/image/comi4.png' },
+    { title: 'Daredevil #217', img: '/image/comi5.png' },
+    { title: 'Batman #426', img: '/image/comi6.png'},
   ]
 
   useEffect(() => {
@@ -101,7 +101,7 @@ export function ComicSection() {
       {/* Decorative flair - Left - overlapping behind content */}
       <img 
         ref={flairLeftRef}
-        src="https://assets.codepen.io/2856/flair_left.webp" 
+        src= '/image/leftcomi.webp'
         alt="" 
         className="absolute top-0 w-[320px] object-contain object-top pointer-events-none hidden xl:block"
         style={{ zIndex: 5, left: 'calc(50% - 610px)' }}
@@ -110,7 +110,7 @@ export function ComicSection() {
       {/* Decorative flair - Right - overlapping behind content */}
       <img 
         ref={flairRightRef}
-        src="https://assets.codepen.io/2856/flair_right.webp" 
+        src='/image/rightcomi.webp' 
         alt="" 
         className="absolute top-0 w-[320px] object-contain object-top pointer-events-none hidden xl:block"
         style={{ zIndex: 5, right: 'calc(50% - 610px)' }}
@@ -139,11 +139,12 @@ export function ComicSection() {
           />
           
           {/* Logo banner */}
-          <img 
-            src="https://assets.codepen.io/2856/We+Read+Comics+Bannerhead_4.webp" 
-            alt="We Read Comics" 
-            className="relative z-[2] block w-full max-w-[600px] h-auto mx-auto py-4"
-          />
+ <img 
+  src="/image/comiheader.webp" 
+  alt="We Read Comics" 
+  className="relative z-[2] block w-full h-auto mx-auto py-4"
+  style={{ width: '100%', height: 'auto', objectFit: 'cover' }}
+/>
           
           {/* Issue number */}
           <div className="absolute right-4 top-4 z-[3]">
@@ -192,9 +193,9 @@ export function ComicSection() {
             />
           </div>
           <div className="flex flex-1 items-center justify-around">
-            <span className="px-4 py-2 hover:underline cursor-pointer">Link 1</span>
-            <span className="px-4 py-2 hover:underline cursor-pointer">Link 2</span>
-            <span className="px-4 py-2 hover:underline cursor-pointer">Link 3</span>
+            <span className="px-4 py-2 hover:underline cursor-pointer"></span>
+            <span className="px-4 py-2 hover:underline cursor-pointer"></span>
+            <span className="px-4 py-2 hover:underline cursor-pointer"></span>
           </div>
         </nav>
 
@@ -256,20 +257,29 @@ export function ComicSection() {
           ))}
         </div>
 
-        {/* Footer */}
-        <div 
-          className="text-center py-4 rounded-b-lg"
-          style={{ 
-            backgroundColor: 'hsl(192, 43%, 46%)',
-            border: '3px solid hsl(188, 9%, 17%)',
-            borderTop: 'none',
-            fontFamily: '"Bangers", cursive',
-            color: 'white',
-            fontSize: '1.2rem'
-          }}
+        {/* Footer - кликабельная кнопка с шрифтом CCUltimatum */}
+        <a
+          href="https://heyzine.com/flip-book/d2e1bcc5d9.html#page/1"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="block"
         >
-          More Comics Coming Soon!
-        </div>
+          <div 
+            className="text-center py-4 rounded-b-lg transition-all duration-300 hover:brightness-110 cursor-pointer"
+            style={{ 
+              backgroundColor: 'hsl(192, 43%, 46%)',
+              border: '3px solid hsl(188, 9%, 17%)',
+              borderTop: 'none',
+              fontFamily: "'CCUltimatum', system-ui, sans-serif",
+              color: 'white',
+              fontSize: '1.2rem',
+              fontWeight: '400',
+              letterSpacing: '0.05em'
+            }}
+          >
+            Read More Comics
+          </div>
+        </a>
       </main>
     </section>
   )
