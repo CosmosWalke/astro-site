@@ -120,10 +120,10 @@ export function FactionsSection() {
         </div>
         <h2 className="text-4xl md:text-6xl font-bold text-center mb-4">
           <span className="text-[#e8e8ec]">The </span>
-          <span className="text-[#ff6b35] text-glow-orange">Factions</span>
+          <span className="text-[#ff6b35] text-glow-orange">FLAVORS</span>
         </h2>
         <p className="text-center text-[#6b6b7b] max-w-2xl mx-auto">
-          Five distinct groups united under the Protocol. Each faction brings unique strengths to ensure humanitys survival.
+          Welcome to Astro Universe — where we take your experience to a whole new dimension. Our premium cannabis products are crafted to launch your mind, body, and spirit into the cosmos. Get ready to explore bold flavors, stellar highs, and an otherworldly vibe. The universe is vast, and your journey is just beginning. Buckle up — it’s time to elevate with Astro Universe!
         </p>
       </div>
 

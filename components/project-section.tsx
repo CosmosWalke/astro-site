@@ -94,18 +94,21 @@ export function ProjectSection() {
         <div className="absolute inset-0 circuit-pattern opacity-30" />
       </div>
 
+
       <div className="relative z-10 max-w-7xl mx-auto px-4 md:px-8 mb-20">
         <div className="flex items-center gap-4 mb-6">
           <div className="h-px flex-1 bg-gradient-to-r from-transparent to-[#00d4ff]/50" />
           <span className="font-mono text-xs text-[#00d4ff] tracking-[0.3em]">SECTION 001</span>
           <div className="h-px flex-1 bg-gradient-to-l from-transparent to-[#00d4ff]/50" />
         </div>
-        <h2 className="text-4xl md:text-6xl font-bold text-center">
+        <h2 className="text-4xl md:text-6xl font-bold text-center mb-4">
           <span className="text-[#e8e8ec]">ASTRO </span>
           <span className="text-[#00d4ff] text-glow-cyan">PRODUCTS</span>
         </h2>
+        <p className="text-center text-[#6b6b7b] max-w-2xl mx-auto">
+          Welcome to Astro Universe — where we take your experience to a whole new dimension. Our premium cannabis products are crafted to launch your mind, body, and spirit into the cosmos. Get ready to explore bold flavors, stellar highs, and an otherworldly vibe. The universe is vast, and your journey is just beginning. Buckle up — it’s time to elevate with Astro Universe!
+        </p>
       </div>
-
       <div ref={cardsRef} className="relative z-10 max-w-7xl mx-auto px-4 md:px-8">
         <div className="space-y-32">
           {projectData.map((project, index) => (
