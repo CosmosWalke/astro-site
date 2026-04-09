@@ -6,28 +6,84 @@ import { Menu, X } from 'lucide-react'
 import { TextScramble } from "@/components/ui/text-scramble"
 
 const navItems = [
-  { label: 'Project', href: '#project' },
-  { label: 'The Keep', href: '#keep' },
-  { label: 'Factions', href: '#factions' },
-  { label: 'The World', href: '#world' },
+  { label: 'Universe', href: '#universe' },
+  { label: 'Comic', href: '#comic' },
+  { label: 'Products', href: '#products' },
+  { label: 'Media', href: '#media' },
 ]
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
+  const [activeSection, setActiveSection] = useState<string>('universe')
+  const [isScrolling, setIsScrolling] = useState(false)
+  const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+
   const headerRef = useRef<HTMLElement>(null)
   const menuRef = useRef<HTMLDivElement>(null)
   const logoRef = useRef<HTMLDivElement>(null)
 
+  // Функция плавной прокрутки с пересчетом позиции
+  const smoothScrollTo = (elementId: string, retryCount = 0) => {
+    if (isScrolling && retryCount === 0) return
+
+    const element = document.getElementById(elementId)
+    if (!element) {
+      if (retryCount < 10) {
+        setTimeout(() => smoothScrollTo(elementId, retryCount + 1), 100)
+      }
+      return
+    }
+
+    setIsScrolling(true)
+    
+    if (scrollTimeoutRef.current) {
+      clearTimeout(scrollTimeoutRef.current)
+    }
+
+    setActiveSection(elementId)
+
+    const headerOffset = 80
+    
+    const performScroll = () => {
+      const rect = element.getBoundingClientRect()
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop
+      const offsetPosition = rect.top + scrollTop - headerOffset
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      })
+
+      // Проверяем результат через 500ms
+      setTimeout(() => {
+        const newRect = element.getBoundingClientRect()
+        const newOffsetPosition = newRect.top + window.pageYOffset - headerOffset
+        const currentScroll = window.pageYOffset
+        
+        if (Math.abs(currentScroll - newOffsetPosition) > 50 && retryCount < 3) {
+          smoothScrollTo(elementId, retryCount + 1)
+        }
+      }, 500)
+    }
+
+    setTimeout(performScroll, 50)
+
+    scrollTimeoutRef.current = setTimeout(() => {
+      setIsScrolling(false)
+    }, 1000)
+  }
+
+  // Скролл для шапки
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50)
     }
-
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
+  // Анимация логотипа
   useEffect(() => {
     if (logoRef.current) {
       gsap.fromTo(logoRef.current,
@@ -37,20 +93,64 @@ export function Header() {
     }
   }, [])
 
+  // Анимация меню
   useEffect(() => {
-    if (menuRef.current) {
-      if (isMenuOpen) {
-        gsap.fromTo(menuRef.current,
-          { opacity: 0, y: -20 },
-          { opacity: 1, y: 0, duration: 0.4, ease: 'power3.out' }
-        )
-        gsap.fromTo(menuRef.current.querySelectorAll('.menu-item'),
-          { opacity: 0, x: -30 },
-          { opacity: 1, x: 0, duration: 0.4, stagger: 0.1, ease: 'power3.out' }
-        )
-      }
+    if (menuRef.current && isMenuOpen) {
+      gsap.fromTo(menuRef.current,
+        { opacity: 0, y: -20 },
+        { opacity: 1, y: 0, duration: 0.4, ease: 'power3.out' }
+      )
+      gsap.fromTo(menuRef.current.querySelectorAll('.menu-item'),
+        { opacity: 0, x: -30 },
+        { opacity: 1, x: 0, duration: 0.4, stagger: 0.1, ease: 'power3.out' }
+      )
     }
   }, [isMenuOpen])
+
+  // Определение активной секции при скролле
+  useEffect(() => {
+    const handleScrollDetection = () => {
+      const sections = [
+        { id: 'universe', element: document.getElementById('universe') },
+        { id: 'comic', element: document.getElementById('comic') },
+        { id: 'products', element: document.getElementById('products') },
+        { id: 'media', element: document.getElementById('media') }
+      ]
+
+      const scrollPosition = window.scrollY + 200
+
+      let currentSection = 'universe'
+      
+      for (let i = sections.length - 1; i >= 0; i--) {
+        const section = sections[i]
+        if (section.element) {
+          const offsetTop = section.element.offsetTop
+          if (scrollPosition >= offsetTop - 100) {
+            currentSection = section.id
+            break
+          }
+        }
+      }
+
+      if (currentSection !== activeSection && !isScrolling) {
+        setActiveSection(currentSection)
+      }
+    }
+
+    window.addEventListener('scroll', handleScrollDetection)
+    setTimeout(handleScrollDetection, 100)
+    
+    return () => window.removeEventListener('scroll', handleScrollDetection)
+  }, [activeSection, isScrolling])
+
+  // Очистка таймаута
+  useEffect(() => {
+    return () => {
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current)
+      }
+    }
+  }, [])
 
   return (
     <>
@@ -65,7 +165,14 @@ export function Header() {
         <div className="max-w-7xl mx-auto px-4 md:px-8">
           <div className="flex items-center justify-between h-20">
             <div ref={logoRef} className="relative group">
-              <a href="#" className="flex items-center gap-3">
+              <a 
+                href="#universe" 
+                onClick={(e) => {
+                  e.preventDefault()
+                  smoothScrollTo('universe')
+                }}
+                className="flex items-center gap-3"
+              >
                 <div className="relative">
                   <div className="w-10 h-10 border-2 border-[#00d4ff] flex items-center justify-center relative overflow-hidden group-hover:border-[#ff6b35] transition-colors duration-300">
                     <span className="text-xl font-bold text-[#00d4ff] group-hover:text-[#ff6b35] transition-colors duration-300">A</span>
@@ -78,26 +185,43 @@ export function Header() {
                 </span>
               </a>
             </div>
-<a 
-  href="/"
-  className="px-4 py-2 bg-[#00d4ff] text-black rounded-full text-sm font-mono hover:shadow-[0_0_15px_#00d4ff] transition-all"
->
-  EXPLORE SHIP
-</a>
+
+            <a 
+              href="/"
+              className="px-4 py-2 bg-[#00d4ff] text-black rounded-full text-sm font-mono hover:shadow-[0_0_15px_#00d4ff] transition-all"
+            >
+              BACK TO SHIP
+            </a>
+
             <nav className="hidden lg:flex items-center gap-1">
-              {navItems.map((item, index) => (
-                <a
-                  key={item.label}
-                  href={item.href}
-                  className="group relative px-6 py-2 text-sm font-medium text-[#6b6b7b] hover:text-[#e8e8ec] transition-colors duration-300"
-                >
-                  <span className="relative z-10">{item.label}</span>
-                  <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-px bg-[#00d4ff] group-hover:w-full transition-all duration-300" />
-                  <span className="absolute -top-1 -right-1 text-[10px] font-mono text-[#00d4ff] opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    0{index + 1}
-                  </span>
-                </a>
-              ))}
+              {navItems.map((item, index) => {
+                const sectionId = item.href.replace('#', '')
+                const isActive = activeSection === sectionId
+                
+                return (
+                  <a
+                    key={item.label}
+                    href={item.href}
+                    onClick={(e) => {
+                      e.preventDefault()
+                      smoothScrollTo(sectionId)
+                    }}
+                    className={`group relative px-6 py-2 text-sm font-medium transition-colors duration-300 ${
+                      isActive 
+                        ? 'text-[#00d4ff]' 
+                        : 'text-[#6b6b7b] hover:text-[#e8e8ec]'
+                    } ${isScrolling ? 'pointer-events-none opacity-50' : ''}`}
+                  >
+                    <span className="relative z-10">{item.label}</span>
+                    <span className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-px bg-[#00d4ff] transition-all duration-300 ${
+                      isActive ? 'w-full' : 'w-0 group-hover:w-full'
+                    }`} />
+                    <span className="absolute -top-1 -right-1 text-[10px] font-mono text-[#00d4ff] opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      0{index + 1}
+                    </span>
+                  </a>
+                )
+              })}
             </nav>
 
             <div className="flex items-center gap-4">
@@ -138,51 +262,100 @@ export function Header() {
         </div>
       </header>
 
-      {/* Full Screen Menu */}
+      {/* Full Screen Menu - без изменений */}
       {isMenuOpen && (
         <div 
           ref={menuRef}
-          className="fixed inset-0 z-40 bg-[#050508]/98 backdrop-blur-lg"
+          className="fixed inset-0 z-40 bg-[#050508]/98 backdrop-blur-lg overflow-y-auto"
         >
           <div className="absolute inset-0 grid-pattern opacity-20" />
           
-          <div className="relative z-10 h-full flex flex-col items-center justify-center px-8">
-            {/* Main Navigation - ТОЛЬКО ЗДЕСЬ используем TextScramble с огромным шрифтом */}
+          <div className="relative z-10 min-h-full flex flex-col items-center justify-center py-16 px-8">
             <nav className="flex flex-col items-center gap-2 mb-16">
-              {navItems.map((item, index) => (
-                <a
-                  key={item.label}
-                  href={item.href}
-                  onClick={() => setIsMenuOpen(false)}
-                  className="menu-item group relative py-4 px-8"
-                >
-                  <TextScramble 
-                    text={item.label.toUpperCase()} 
-                    className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-wide"
-                  />
-                  <span className="absolute -left-8 top-1/2 -translate-y-1/2 text-sm font-mono text-[#6b6b7b] group-hover:text-[#00d4ff] transition-colors duration-300">
-                    0{index + 1}
-                  </span>
-                  <span className="absolute -right-16 top-1/2 w-12 h-px bg-[#2a2a38] group-hover:bg-[#00d4ff] group-hover:w-24 transition-all duration-300" />
-                </a>
-              ))}
+              {navItems.map((item, index) => {
+                const sectionId = item.href.replace('#', '')
+                const isActive = activeSection === sectionId
+
+                return (
+                  <a
+                    key={item.label}
+                    href={item.href}
+                    onClick={(e) => {
+                      e.preventDefault()
+                      smoothScrollTo(sectionId)
+                      setIsMenuOpen(false)
+                    }}
+                    className={`menu-item group relative py-4 px-8 cursor-pointer ${isScrolling ? 'pointer-events-none opacity-50' : ''}`}
+                  >
+                    {isActive ? (
+                      <div className="relative inline-block">
+                        <span 
+                          className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-wide 
+                                     bg-[#39ff14] text-black px-10 py-4 rounded-r-3xl inline-block"
+                        >
+                          {item.label.toUpperCase()}
+                        </span>
+                        <span className="absolute -top-3 -right-3 text-xs font-mono bg-black text-[#39ff14] px-3 py-1 tracking-[2px] border border-[#39ff14]/50">
+                          PAGE 00{index + 1}
+                        </span>
+                      </div>
+                    ) : (
+                      <TextScramble 
+                        text={item.label.toUpperCase()} 
+                        className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-wide text-white group-hover:text-[#00d4ff] transition-colors duration-300"
+                      />
+                    )}
+
+                    <span className="absolute -left-8 top-1/2 -translate-y-1/2 text-sm font-mono text-[#6b6b7b] group-hover:text-[#00d4ff] transition-colors duration-300">
+                      0{index + 1}
+                    </span>
+                    <span className="absolute -right-16 top-1/2 w-12 h-px bg-[#2a2a38] group-hover:bg-[#00d4ff] group-hover:w-24 transition-all duration-300" />
+                  </a>
+                )
+              })}
             </nav>
 
-            {/* Secondary Links - БЕЗ TextScramble, обычный текст */}
             <div className="flex flex-wrap justify-center gap-6 text-sm text-[#6b6b7b]">
-              {['Story', 'Journal', 'Media', 'Gallery', 'About', 'Careers'].map((link) => (
-                <a 
-                  key={link}
-                  href={`#${link.toLowerCase()}`}
-                  onClick={() => setIsMenuOpen(false)}
-                  className="hover:text-[#00d4ff] transition-colors duration-300"
-                >
-                  {link}
-                </a>
-              ))}
+              <a 
+                href="https://instagram.com/ваш_аккаунт"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => setIsMenuOpen(false)}
+                className="hover:text-[#00d4ff] transition-colors duration-300 flex items-center gap-2"
+              >
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>
+                </svg>
+                <span>Instagram</span>
+              </a>
+              
+              <a 
+                href="https://twitter.com/ваш_аккаунт"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => setIsMenuOpen(false)}
+                className="hover:text-[#00d4ff] transition-colors duration-300 flex items-center gap-2"
+              >
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                </svg>
+                <span>X (Twitter)</span>
+              </a>
+              
+              <a 
+                href="https://youtube.com/@ваш_канал"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => setIsMenuOpen(false)}
+                className="hover:text-[#00d4ff] transition-colors duration-300 flex items-center gap-2"
+              >
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                </svg>
+                <span>YouTube</span>
+              </a>
             </div>
 
-            {/* Footer Info - БЕЗ TextScramble, обычный текст */}
             <div className="absolute bottom-8 left-8 right-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-mono text-[#6b6b7b]">
               <div className="flex items-center gap-4">
                 <span>hello@astroverse.com</span>

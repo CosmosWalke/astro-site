@@ -785,3 +785,16 @@ html.lenis {
 .lenis.lenis-smooth iframe {
   pointer-events: none;
 }
+/* app/globals.css */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Отступы для якорей с учетом фиксированной шапки */
+#universe,
+#comic,
+#products,
+#factions,
+#media {
+  scroll-margin-top: 80px;
+}

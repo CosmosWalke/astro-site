@@ -11,8 +11,7 @@ import { FactionsSection } from '@/components/factions-section'
 import { GallerySection } from '@/components/gallery-section'
 import { Footer } from '@/components/footer'
 import { ScrollProgress } from '@/components/ScrollProgress'
-//import { ScrollToBottomButton } from '@/components/ScrollToBottomButton'
-//import { EdgeScroll } from '@/components/EdgeScroll'
+
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger)
 }
@@ -31,39 +30,42 @@ export default function Home() {
   }, [])
 
   return (
-    
-    <><ScrollProgress />
-   
-      {/* Main Content */}
+    <>
+      <ScrollProgress />
+      
       <div ref={mainRef} className="relative opacity-0">
-        {/* Header */}
         <Header />
 
-        {/* Main Wrapper - for reveal footer effect */}
         <div className="relative z-10 bg-[#050508]">
-          {/* Hero + Story Combined */}
-          <HeroStoryCombined />
+          {/* Universe Section - с ID на обертке */}
+          <div id="universe" className="relative">
+            <HeroStoryCombined />
+          </div>
 
           {/* Comic Section */}
-          <ComicSection />
+          <div id="comic" className="relative">
+            <ComicSection />
+          </div>
 
-          {/* Project Section */}
-          <ProjectSection />
+          {/* Products Section */}
+          <div id="products" className="relative">
+            <ProjectSection />
+          </div>
 
           {/* Factions Section */}
-          <FactionsSection />
+          <div id="factions" className="relative">
+            <FactionsSection />
+          </div>
 
-          {/* Gallery Section */}
-          <GallerySection />
+          {/* Media/Gallery Section */}
+          <div id="media" className="relative">
+            <GallerySection />
+          </div>
         </div>
 
-        {/* Footer with reveal effect */}
         <Footer />
-
-        {/* Cursor Follower Effect */}
         <CursorFollower />
 
-        {/* Background Noise */}
         <div className="fixed inset-0 pointer-events-none z-[100] opacity-[0.015]">
           <div className="absolute inset-0 noise" />
         </div>
@@ -76,6 +78,10 @@ export default function Home() {
 function CursorFollower() {
   const cursorRef = useRef<HTMLDivElement>(null)
   const followerRef = useRef<HTMLDivElement>(null)
+
+
+
+
 
   useEffect(() => {
     const cursor = cursorRef.current

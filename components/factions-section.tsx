@@ -102,7 +102,7 @@ export function FactionsSection() {
   return (
     <section 
       ref={sectionRef}
-      id="factions"
+      id=""
       className="relative py-32 bg-[#050508] overflow-hidden"
     >
       {/* Background */}

@@ -71,6 +71,7 @@ export function ComicSection() {
   return (
     <section 
       ref={containerRef} 
+      id="comic"
       className="relative py-20 min-h-screen overflow-hidden"
     >
       {/* Фоновое изображение через Next.js Image */}

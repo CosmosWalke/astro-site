@@ -8,7 +8,7 @@ import 'lenis/dist/lenis.css'
 import { Play, ChevronLeft, ChevronRight } from 'lucide-react'
 import { TextScramble } from "@/components/ui/text-scramble"
 import { Starfield } from '@/components/ui/starfield-1'
-
+import SimpleGlobe from "@/components/ui/SimpleGlobe"
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger)
 }
@@ -1251,7 +1251,9 @@ const calculateOptimalMove = () => {
         </div>
       )}
 
-      <div ref={containerRef} className="relative bg-[#050508]" style={{ height: isMobile ? '350vh' : '800vh' }}>
+      <div
+      //id="universe"
+      ref={containerRef} className="relative bg-[#050508]" style={{ height: isMobile ? '350vh' : '800vh' }}>
         <div 
           ref={stickyRef} 
           className="h-screen w-full overflow-hidden"
@@ -1284,7 +1286,9 @@ const calculateOptimalMove = () => {
           </div>
 
           {/* WORLD SECTION */}
-          <div ref={worldSectionRef} className="absolute inset-0 z-[36] flex items-center justify-center pointer-events-auto opacity-0" style={{ padding: '2rem' }}>
+          <div
+           //id="comic"
+           ref={worldSectionRef} className="absolute inset-0 z-[36] flex items-center justify-center pointer-events-auto opacity-0" style={{ padding: '2rem' }}>
             <div className="w-full max-w-[1300px] h-full">
               <div className="py-8 px-6">
                 <div ref={worldHeaderRef} className="text-center mb-12 opacity-0 translate-y-10">
@@ -1979,6 +1983,7 @@ const calculateOptimalMove = () => {
 
           {/* HERO IMAGE */}
           <div
+         // id="universe" 
             ref={heroImageRef}
             className="absolute z-25 overflow-hidden"
             style={{

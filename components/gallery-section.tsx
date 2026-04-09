@@ -107,7 +107,7 @@ export function GallerySection() {
   return (
     <section 
       ref={sectionRef}
-      id="gallery"
+      id="media"
       className="relative py-32 bg-[#050508] overflow-hidden"
     >
       {/* Background */}
