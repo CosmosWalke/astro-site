@@ -1942,38 +1942,60 @@ const calculateOptimalMove = () => {
 
                   <div className="lg:col-span-4" />
 
-                  <div className="lg:col-span-5">
-                    <div 
-                      ref={trailerCardRef} 
-                      className="relative"
-                      style={{
-                        marginTop: isMobile ? '60px' : '0',
-                        paddingLeft: isMobile ? '10px' : '0',
-                        paddingRight: isMobile ? '10px' : '0',
-                         zIndex: 30,  // Добавь эту строку
-                      }}
-                    >
-                      <div 
-                        className="relative rounded-xl overflow-hidden bg-[#0a0a15] border border-[#2a2a3a] cursor-pointer group"
-                        style={{
-                          aspectRatio: '16/9',
-                          width: isMobile ? 'calc(100% - 20px)' : '100%',
-                          marginLeft: isMobile ? '10px' : '0',
-                        }}
-                      >
-                        {/* видео контент */}
-                      </div>
+<div className="lg:col-span-5">
+  <div 
+    ref={trailerCardRef} 
+    className="relative"
+    style={{
+      marginTop: isMobile ? '60px' : '0',
+      paddingLeft: isMobile ? '10px' : '0',
+      paddingRight: isMobile ? '10px' : '0',
+      zIndex: 30,
+    }}
+  >
+    <div 
+      className="relative rounded-xl overflow-hidden bg-[#0a0a15] border border-[#2a2a3a] cursor-pointer group"
+      style={{
+        aspectRatio: '16/9',
+        width: isMobile ? 'calc(100% - 20px)' : '100%',
+        marginLeft: isMobile ? '10px' : '0',
+      }}
+      onClick={() => {
+        // Открыть видео в модальном окне или перейти по ссылке
+        window.open('https://your-video-link.com', '_blank')
+      }}
+    >
+      {/* Миниатюра трейлера */}
+      <img 
+        src="/image/comingsoon.webp"  // <-- УКАЖИТЕ ПУТЬ К ВАШЕЙ МИНИАТЮРЕ
+        alt="Trailer thumbnail"
+        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+      />
+      
+      {/* Кнопка Play поверх изображения */}
+      <div className="absolute inset-0 flex items-center justify-center">
+        <div className="w-16 h-16 rounded-full bg-[#00d4ff]/80 flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
+          <Play className="w-6 h-6 text-black ml-1" />
+        </div>
+      </div>
+      
+      {/* Затемнение при наведении */}
+      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+    </div>
                       
-                      {!isMobile && (
-                        <div className="flex gap-3 mt-4">
-                          <button className="px-6 py-2.5 bg-[#00d4ff] hover:bg-[#00b8e0] text-[#050508] rounded-lg text-sm font-medium transition-colors">
-                            Watch Now
-                          </button>
-                          <button className="px-6 py-2.5 border border-[#3a3a4a] hover:border-[#5a5a6a] text-[#e8e8ec] rounded-lg text-sm font-medium transition-colors">
-                            Add to List
-                          </button>
-                        </div>
-                      )}
+    {!isMobile && (
+      <div className="flex gap-3 mt-4">
+        <button 
+          onClick={() => window.open('https://your-video-link.com', '_blank')}
+          className="px-6 py-2.5 bg-[#00d4ff] hover:bg-[#00b8e0] text-[#050508] rounded-lg text-sm font-medium transition-colors"
+        >
+          Watch Now
+        </button>
+        <button className="px-6 py-2.5 border border-[#3a3a4a] hover:border-[#5a5a6a] text-[#e8e8ec] rounded-lg text-sm font-medium transition-colors">
+          Add to List
+        </button>
+      </div>
+    )}
                     </div>
                   </div>
                 </div>
