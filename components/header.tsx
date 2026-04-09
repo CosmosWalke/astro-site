@@ -7,24 +7,88 @@ import { TextScramble } from "@/components/ui/text-scramble"
 
 const navItems = [
   { label: 'Universe', href: '#universe' },
-  { label: 'Map', href: '#world' },        // <-- Map вместо World
-   { label: 'Cards', href: '#cards' }, 
+  { label: 'Map', href: '#world' },
+  { label: 'Cards', href: '#cards' }, 
   { label: 'Comic', href: '#comic' },
   { label: 'Products', href: '#products' },
   { label: 'Media', href: '#media' },
 ]
+
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
   const [activeSection, setActiveSection] = useState<string>('universe')
   const [isScrolling, setIsScrolling] = useState(false)
+  // Случайное начальное значение при загрузке страницы
+  const [keeperCount, setKeeperCount] = useState(() => {
+    return Math.floor(Math.random() * (1500 - 80 + 1) + 80)
+  })
   const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   const headerRef = useRef<HTMLElement>(null)
   const menuRef = useRef<HTMLDivElement>(null)
   const logoRef = useRef<HTMLDivElement>(null)
 
-  // Функция плавной прокрутки с пересчетом позиции
+  // Функция для генерации плавающего числа посетителей
+  useEffect(() => {
+    // Плавное изменение числа
+    const updateKeeperCount = () => {
+      // Текущее значение
+      const currentCount = keeperCount
+      
+      // Случайное изменение от -12 до +25 (больше в сторону увеличения)
+      const change = Math.floor(Math.random() * 38) - 12 // диапазон -12..25
+      
+      // Новое значение с ограничением от 80 до 1500
+      let newCount = currentCount + change
+      
+      // Ограничиваем диапазон
+      if (newCount < 80) newCount = 80
+      if (newCount > 1500) newCount = 1500
+      
+      // Плавное обновление с анимацией
+      const startValue = currentCount
+      const endValue = newCount
+      const duration = 800 // длительность анимации в мс
+      const startTime = performance.now()
+      
+      const animate = (currentTime: number) => {
+        const elapsed = currentTime - startTime
+        const progress = Math.min(elapsed / duration, 1)
+        
+        // Плавная функция easeOutCubic
+        const easeProgress = 1 - Math.pow(1 - progress, 3)
+        const currentValue = Math.floor(startValue + (endValue - startValue) * easeProgress)
+        
+        setKeeperCount(currentValue)
+        
+        if (progress < 1) {
+          requestAnimationFrame(animate)
+        }
+      }
+      
+      requestAnimationFrame(animate)
+    }
+    
+    // Интервал обновления от 3 до 10 секунд (случайно)
+    let timeoutId: NodeJS.Timeout
+    
+    const scheduleUpdate = () => {
+      const delay = Math.random() * 7000 + 3000 // 3-10 секунд
+      timeoutId = setTimeout(() => {
+        updateKeeperCount()
+        scheduleUpdate()
+      }, delay)
+    }
+    
+    scheduleUpdate()
+    
+    return () => {
+      if (timeoutId) clearTimeout(timeoutId)
+    }
+  }, [keeperCount])
+
+  // Остальной код без изменений...
   const smoothScrollTo = (elementId: string, retryCount = 0) => {
     if (isScrolling && retryCount === 0) return
 
@@ -56,7 +120,6 @@ export function Header() {
         behavior: 'smooth'
       })
 
-      // Проверяем результат через 500ms
       setTimeout(() => {
         const newRect = element.getBoundingClientRect()
         const newOffsetPosition = newRect.top + window.pageYOffset - headerOffset
@@ -111,14 +174,14 @@ export function Header() {
   // Определение активной секции при скролле
   useEffect(() => {
     const handleScrollDetection = () => {
-  const sections = [
-    { id: 'universe', element: document.getElementById('universe') },
-    { id: 'world', element: document.getElementById('world') },    // <-- ДОБАВИТЬ
-    { id: 'cards', element: document.getElementById('cards') },    // <-- ДОБАВИТЬ
-    { id: 'comic', element: document.getElementById('comic') },
-    { id: 'products', element: document.getElementById('products') },
-    { id: 'media', element: document.getElementById('media') }
-  ]
+      const sections = [
+        { id: 'universe', element: document.getElementById('universe') },
+        { id: 'world', element: document.getElementById('world') },
+        { id: 'cards', element: document.getElementById('cards') },
+        { id: 'comic', element: document.getElementById('comic') },
+        { id: 'products', element: document.getElementById('products') },
+        { id: 'media', element: document.getElementById('media') }
+      ]
 
       const scrollPosition = window.scrollY + 200
 
@@ -233,7 +296,9 @@ export function Header() {
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#00d4ff] opacity-75" />
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-[#00d4ff]" />
                 </span>
-                <span className="text-xs font-mono text-[#6b6b7b]">328 Keepers Live</span>
+                <span className="text-xs font-mono text-[#6b6b7b]">
+                  {keeperCount.toLocaleString()} Keepers Live
+                </span>
               </div>
 
               <button
@@ -265,7 +330,7 @@ export function Header() {
         </div>
       </header>
 
-      {/* Full Screen Menu - без изменений */}
+      {/* Full Screen Menu */}
       {isMenuOpen && (
         <div 
           ref={menuRef}
@@ -290,24 +355,24 @@ export function Header() {
                     }}
                     className={`menu-item group relative py-4 px-8 cursor-pointer ${isScrolling ? 'pointer-events-none opacity-50' : ''}`}
                   >
-{isActive ? (
-  <div className="relative inline-block">
-    <span 
-      className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-wide 
-                 bg-[#39ff14] text-black px-8 py-3 rounded-r-3xl inline-block"
-    >
-      {item.label.toUpperCase()}
-    </span>
-    <span className="absolute -top-2 -right-2 text-[9px] font-mono bg-black text-[#39ff14] px-2 py-0.5 tracking-[2px] border border-[#39ff14]/50">
-      PAGE 00{index + 1}
-    </span>
-  </div>
-) : (
-  <TextScramble 
-    text={item.label.toUpperCase()} 
-    className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-wide text-white group-hover:text-[#00d4ff] transition-colors duration-300"
-  />
-)}
+                    {isActive ? (
+                      <div className="relative inline-block">
+                        <span 
+                          className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-wide 
+                                     bg-[#39ff14] text-black px-8 py-3 rounded-r-3xl inline-block"
+                        >
+                          {item.label.toUpperCase()}
+                        </span>
+                        <span className="absolute -top-2 -right-2 text-[9px] font-mono bg-black text-[#39ff14] px-2 py-0.5 tracking-[2px] border border-[#39ff14]/50">
+                          PAGE 00{index + 1}
+                        </span>
+                      </div>
+                    ) : (
+                      <TextScramble 
+                        text={item.label.toUpperCase()} 
+                        className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-wide text-white group-hover:text-[#00d4ff] transition-colors duration-300"
+                      />
+                    )}
 
                     <span className="absolute -left-8 top-1/2 -translate-y-1/2 text-sm font-mono text-[#6b6b7b] group-hover:text-[#00d4ff] transition-colors duration-300">
                       0{index + 1}
