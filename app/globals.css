@@ -798,3 +798,12 @@ html {
 #media {
   scroll-margin-top: 80px;
 }
+/* Фикс pin-spacer ghost clicks / touch events */
+.pin-spacer {
+  pointer-events: none !important;
+}
+
+/* Возвращаем интерактивность только контенту внутри pinned области */
+.pin-spacer > * {
+  pointer-events: auto !important;
+}

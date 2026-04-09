@@ -9,6 +9,7 @@ import { Play, ChevronLeft, ChevronRight } from 'lucide-react'
 import { TextScramble } from "@/components/ui/text-scramble"
 import { Starfield } from '@/components/ui/starfield-1'
 import SimpleGlobe from "@/components/ui/SimpleGlobe"
+import { WorldSection } from '@/components/WorldSection'
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger)
 }
@@ -114,8 +115,6 @@ const statusMessages = [
 ]
 
 const barcodeWidths = [2, 1, 2, 1, 1, 2, 1, 2, 2, 1, 1, 2, 1, 1, 2, 2, 1, 2, 1, 1, 2, 1, 2, 1, 1, 2, 2, 1, 1, 2]
-
-// Добавь эту функцию перед useEffect с загрузкой (примерно после всех констант и перед export function HeroStoryCombined)
 
 // Функция загрузки всех ресурсов
 const loadAllResources = async (onProgress: (progress: number) => void) => {
@@ -445,6 +444,7 @@ export function HeroStoryCombined() {
   
   const [activeLocation, setActiveLocation] = useState<string | null>(null)
   const [hoveredLocation, setHoveredLocation] = useState<string | null>(null)
+  const [mobileLocationIndex, setMobileLocationIndex] = useState<number>(0)
   
   const [framePos, setFramePos] = useState({ x: 100, y: 290, width: 180, height: 225 })
   const [panoramaMoveValue, setPanoramaMoveValue] = useState('-40vh')
@@ -457,7 +457,41 @@ export function HeroStoryCombined() {
   const [loadingProgress, setLoadingProgress] = useState(0)
   const [loadingText, setLoadingText] = useState('// initializing')
   const loadingContainerRef = useRef<HTMLDivElement>(null)
-  
+
+  // Состояние для видимости панели (ДОБАВЛЕНО)
+  const [isWorldPanelVisible, setIsWorldPanelVisible] = useState(false)
+
+  // Функции для переключения локаций на мобильных
+  const nextMobileLocation = () => {
+    setMobileLocationIndex((prev) => (prev + 1) % worldLocations.length)
+    setActiveLocation(worldLocations[(mobileLocationIndex + 1) % worldLocations.length].id)
+  }
+
+  const prevMobileLocation = () => {
+    setMobileLocationIndex((prev) => (prev - 1 + worldLocations.length) % worldLocations.length)
+    setActiveLocation(worldLocations[(mobileLocationIndex - 1 + worldLocations.length) % worldLocations.length].id)
+  }
+
+// Эффект видимости World Panel — максимально строгий
+useEffect(() => {
+  if (!worldPanelRef.current) return;
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        // Очень строгий порог — кнопка активна только когда панель реально видна
+        setIsWorldPanelVisible(entry.isIntersecting && entry.intersectionRatio >= 0.48);
+      });
+    },
+    {
+      threshold: [0.35, 0.48, 0.65],
+      rootMargin: isMobile ? "-90px 0px -130px 0px" : "-60px 0px -110px 0px"
+    }
+  );
+
+  observer.observe(worldPanelRef.current);
+  return () => observer.disconnect();
+}, [isMobile]);
   useEffect(() => {
     const checkDevice = () => {
       const width = window.innerWidth
@@ -762,6 +796,7 @@ useEffect(() => {
         end: 'bottom bottom',
         scrub: isMobile ? 1.6 : 2.0,
         pin: stickyRef.current,
+        pinType: "fixed",
         anticipatePin: 1,
         fastScrollEnd: true,
         preventOverlaps: true,
@@ -1285,181 +1320,279 @@ const calculateOptimalMove = () => {
             </div>
           </div>
 
-          {/* WORLD SECTION */}
-          <div
-           //id="comic"
-           ref={worldSectionRef} className="absolute inset-0 z-[36] flex items-center justify-center pointer-events-auto opacity-0" style={{ padding: '2rem' }}>
-            <div className="w-full max-w-[1300px] h-full">
-              <div className="py-8 px-6">
-                <div ref={worldHeaderRef} className="text-center mb-12 opacity-0 translate-y-10">
-                  <div className="flex items-center gap-4 mb-6 justify-center">
-                    <div className="h-px w-16 bg-gradient-to-r from-transparent to-[#00d4ff]/50" />
-                    <span className="font-mono text-xs text-[#00d4ff] tracking-[0.3em]">SECTION 003</span>
-                    <div className="h-px w-16 bg-gradient-to-l from-transparent to-[#00d4ff]/50" />
-                  </div>
-                  <h2 className="text-5xl md:text-7xl font-bold">
-                    <span className="text-[#e8e8ec]">The </span>
-                    <span className="text-[#00d4ff]">World</span>
-                  </h2>
-                  <p className="text-center text-[#6b6b7b] text-sm mt-4 max-w-md mx-auto">
-                    Explore the territories under the Protocol&apos;s protection
-                  </p>
+          {/* WORLD SECTION - Адаптировано для мобильных */}
+<div
+
+  ref={worldSectionRef} 
+  className={`absolute inset-0 z-[36] flex items-center justify-center ${
+    isWorldPanelVisible ? 'pointer-events-auto' : 'pointer-events-none'
+  } opacity-0`} 
+  style={{ padding: isMobile ? '1rem' : '2rem' }}
+>
+
+  <div className="w-full max-w-[1300px] h-full">
+    <div className="py-4 md:py-8 px-4 md:px-6">
+      <div ref={worldHeaderRef} className="text-center mb-8 md:mb-12 opacity-0 translate-y-10">
+        <div className="flex items-center gap-2 md:gap-4 mb-4 md:mb-6 justify-center">
+          <div className="h-px w-8 md:w-16 bg-gradient-to-r from-transparent to-[#00d4ff]/50" />
+          <span className="font-mono text-[10px] md:text-xs text-[#00d4ff] tracking-[0.2em] md:tracking-[0.3em]">
+            &gt; SECTION_003
+          </span>
+          <div className="h-px w-8 md:w-16 bg-gradient-to-l from-transparent to-[#00d4ff]/50" />
+        </div>
+        <h2 className="text-3xl md:text-5xl lg:text-7xl font-bold">
+          <span className="text-[#e8e8ec]">The </span>
+          <span className="text-[#00d4ff]">World</span>
+        </h2>
+        <p className="text-center text-[#6b6b7b] text-xs md:text-sm mt-2 md:mt-4 max-w-md mx-auto">
+          Explore the territories under the Protocol&apos;s protection
+        </p>
+      </div>
+      
+      <div className="flex flex-col lg:flex-row gap-4 md:gap-6 w-full items-start">
+        {/* КАРТА - всегда видна */}
+        <div 
+          ref={worldMapRef}
+          className="relative flex-1 w-full bg-[#0a0a0f]/80 border border-[#1a1a24] overflow-hidden rounded-xl opacity-0 scale-95"
+          style={{ minHeight: isMobile ? '400px' : '450px' }}
+        >
+          {/* Фоновое изображение map.webp */}
+          <div className="absolute inset-0 w-full h-full">
+            <img 
+              src="/image/map.webp"
+              alt="World Map Background"
+              className="w-full h-full object-cover opacity-70"
+            />
+            <div className="absolute inset-0 bg-black/20" />
+          </div>
+
+          {/* Линии между точками - адаптированы для мобильных */}
+          <svg className="absolute inset-0 w-full h-full z-10 pointer-events-none" viewBox="0 0 100 100" preserveAspectRatio="none">
+            {worldLocations.map((loc, i) => {
+              const nextLoc = worldLocations[(i + 1) % worldLocations.length]
+              return (
+                <g key={`line-${i}`}>
+                  <line
+                    x1={loc.coordinates.x}
+                    y1={loc.coordinates.y}
+                    x2={nextLoc.coordinates.x}
+                    y2={nextLoc.coordinates.y}
+                    stroke="#00d4ff"
+                    strokeWidth={isMobile ? "0.8" : "0.6"}
+                    strokeOpacity="0.5"
+                    strokeDasharray="3 3"
+                  />
+                </g>
+              )
+            })}
+            <line x1="50" y1="40" x2="30" y2="20" stroke="#ff006e" strokeWidth={isMobile ? "0.8" : "0.6"} strokeOpacity="0.5" strokeDasharray="3 3" />
+            <line x1="50" y1="40" x2="70" y2="30" stroke="#9d4edd" strokeWidth={isMobile ? "0.8" : "0.6"} strokeOpacity="0.5" strokeDasharray="3 3" />
+            <line x1="50" y1="40" x2="80" y2="60" stroke="#00d4ff" strokeWidth={isMobile ? "0.8" : "0.6"} strokeOpacity="0.5" strokeDasharray="3 3" />
+            <line x1="50" y1="40" x2="20" y2="65" stroke="#ff006e" strokeWidth={isMobile ? "0.8" : "0.6"} strokeOpacity="0.5" strokeDasharray="3 3" />
+            <line x1="50" y1="40" x2="55" y2="75" stroke="#9d4edd" strokeWidth={isMobile ? "0.8" : "0.6"} strokeOpacity="0.5" strokeDasharray="3 3" />
+          </svg>
+
+          {/* Точки (маркеры) - всегда видны */}
+          {worldLocations.map((location) => (
+            <div
+              key={location.id}
+              className="absolute transform -translate-x-1/2 -translate-y-1/2 cursor-pointer group z-20"
+              style={{
+                left: `${location.coordinates.x}%`,
+                top: `${location.coordinates.y}%`
+              }}
+              onClick={() => setActiveLocation(activeLocation === location.id ? null : location.id)}
+              onMouseEnter={() => setHoveredLocation(location.id)}
+              onMouseLeave={() => setHoveredLocation(null)}
+            >
+              <div 
+                className="absolute inset-0 rounded-full animate-ping opacity-30"
+                style={{ backgroundColor: getStatusColor(location.status), animationDuration: '2s' }}
+              />
+              <div 
+                className={`relative w-3 h-3 md:w-4 md:h-4 rounded-full border-2 transition-all duration-300 ${
+                  activeLocation === location.id ? 'scale-150' : 'group-hover:scale-125'
+                }`}
+                style={{ 
+                  borderColor: getStatusColor(location.status),
+                  backgroundColor: activeLocation === location.id ? getStatusColor(location.status) : 'transparent'
+                }}
+              />
+              {(hoveredLocation === location.id && activeLocation !== location.id && !isMobile) && (
+                <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 px-2 py-1 bg-[#0a0a0f] border border-[#1a1a24] whitespace-nowrap z-10 rounded">
+                  <div className="text-xs font-medium text-[#e8e8ec]">{location.name}</div>
+                  <div className="text-xs font-mono" style={{ color: getStatusColor(location.status) }}>{location.status}</div>
                 </div>
-                
-                <div className="flex flex-col lg:flex-row gap-6 w-full">
-                  <div 
-                    ref={worldMapRef}
-                    className="relative flex-1 bg-[#0a0a0f]/80 border border-[#1a1a24] overflow-hidden min-h-[450px] rounded-xl opacity-0 scale-95"
+              )}
+            </div>
+          ))}
+
+          {/* Corner Decorations */}
+          <div className="absolute top-2 left-2 md:top-4 md:left-4 w-4 h-4 md:w-8 md:h-8 border-t-2 border-l-2 border-[#00d4ff]/50" />
+          <div className="absolute top-2 right-2 md:top-4 md:right-4 w-4 h-4 md:w-8 md:h-8 border-t-2 border-r-2 border-[#00d4ff]/50" />
+          <div className="absolute bottom-2 left-2 md:bottom-4 md:left-4 w-4 h-4 md:w-8 md:h-8 border-b-2 border-l-2 border-[#00d4ff]/50" />
+          <div className="absolute bottom-2 right-2 md:bottom-4 md:right-4 w-4 h-4 md:w-8 md:h-8 border-b-2 border-r-2 border-[#00d4ff]/50" />
+          
+          <div className="absolute top-2 left-1/2 -translate-x-1/2 px-2 md:px-4 py-0.5 md:py-1 bg-[#050508]/80 rounded-full whitespace-nowrap">
+            <span className="font-mono text-[8px] md:text-xs text-[#00d4ff]">PROTOCOL NETWORK MAP v2.4</span>
+          </div>
+          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 font-mono text-[8px] md:text-xs text-[#6b6b7b] whitespace-nowrap">
+            {hoveredLocation ? (
+              <span>X: {worldLocations.find(l => l.id === hoveredLocation)?.coordinates.x} | Y: {worldLocations.find(l => l.id === hoveredLocation)?.coordinates.y}</span>
+            ) : (
+              <span>HOVER TO VIEW COORDINATES</span>
+            )}
+          </div>
+        </div>
+
+       
+{/* Панель с описанием - адаптирована для мобильных */}
+
+{/* Панель с описанием - адаптирована для мобильных */}
+<div 
+  ref={worldPanelRef} 
+  className={`w-full lg:w-80 space-y-3 md:space-y-4 transition-opacity duration-300 ${isWorldPanelVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+  style={isMobile ? { marginTop: '30%' } : { transform: 'translateY(-30%) translateX(3rem)' }}
+>
+
+{/* Кнопка EXPLORE MAP — с двойной защитой */}
+<div className={isWorldPanelVisible ? 'pointer-events-auto' : 'pointer-events-none'}>
+  <a 
+    href={isWorldPanelVisible ? "/galaxy-map-demo" : "#"}
+    target={isWorldPanelVisible ? "_blank" : undefined}
+    rel={isWorldPanelVisible ? "noopener noreferrer" : undefined}
+    onClick={(e) => {
+      if (!isWorldPanelVisible) {
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
+      }
+    }}
+  >
+    <button 
+      disabled={!isWorldPanelVisible}
+      className={`w-full py-3 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 border text-sm font-medium tracking-wider
+        ${isWorldPanelVisible 
+          ? 'bg-gradient-to-r from-[#00d4ff]/10 to-[#ff006e]/10 border-[#00d4ff] hover:shadow-[0_0_25px_rgba(0,212,255,0.4)] active:scale-[0.97]' 
+          : 'border-[#1a1a24] bg-transparent opacity-30 cursor-default'
+        }`}
+    >
+      <svg className={`w-4 h-4 ${isWorldPanelVisible ? 'text-[#00d4ff]' : 'text-[#444]'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      <TextScramble 
+        text="EXPLORE MAP" 
+        className={`font-mono font-bold tracking-[0.1em] ${isWorldPanelVisible ? 'text-[#00d4ff]' : 'text-[#555]'}`} 
+      />
+      <svg className={`w-4 h-4 transition-transform ${isWorldPanelVisible ? 'group-hover:translate-x-1 text-[#00d4ff]' : 'text-[#444]'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+      </svg>
+    </button>
+  </a>
+</div>
+          {activeLocationData ? (
+            <div className="relative p-3 md:p-6 bg-[#0a0a0f]/80 border border-[#1a1a24] rounded-xl transition-all duration-300">
+              {/* Навигация стрелками ТОЛЬКО для мобильных */}
+              {isMobile && (
+                <>
+                  <button
+                    onClick={prevMobileLocation}
+                    className="absolute left-2 top-1/2 -translate-y-1/2 w-7 h-7 bg-[#0a0a0f] border border-[#1a1a24] rounded-full flex items-center justify-center z-10 hover:border-[#00d4ff] transition-colors"
                   >
-                    <div className="absolute inset-0 grid-pattern opacity-30" />
-                    <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
-                      {[...Array(10)].map((_, i) => (
-                        <g key={i}>
-                          <line x1={i * 10} y1="0" x2={i * 10} y2="100" stroke="#1a1a24" strokeWidth="0.2" />
-                          <line x1="0" y1={i * 10} x2="100" y2={i * 10} stroke="#1a1a24" strokeWidth="0.2" />
-                        </g>
-                      ))}
-                      {worldLocations.map((loc, i) => {
-                        const nextLoc = worldLocations[(i + 1) % worldLocations.length]
-                        return (
-                          <line
-                            key={`line-${i}`}
-                            x1={loc.coordinates.x}
-                            y1={loc.coordinates.y}
-                            x2={nextLoc.coordinates.x}
-                            y2={nextLoc.coordinates.y}
-                            stroke="#00d4ff"
-                            strokeWidth="0.3"
-                            strokeOpacity="0.3"
-                            strokeDasharray="2 2"
-                          />
-                        )
-                      })}
-                    </svg>
+                    <ChevronLeft className="w-4 h-4 text-[#00d4ff]" />
+                  </button>
+                  <button
+                    onClick={nextMobileLocation}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 bg-[#0a0a0f] border border-[#1a1a24] rounded-full flex items-center justify-center z-10 hover:border-[#00d4ff] transition-colors"
+                  >
+                    <ChevronRight className="w-4 h-4 text-[#00d4ff]" />
+                  </button>
+                </>
+              )}
 
-                    {worldLocations.map((location) => (
-                      <div
-                        key={location.id}
-                        className="absolute transform -translate-x-1/2 -translate-y-1/2 cursor-pointer group"
-                        style={{
-                          left: `${location.coordinates.x}%`,
-                          top: `${location.coordinates.y}%`
-                        }}
-                        onClick={() => setActiveLocation(activeLocation === location.id ? null : location.id)}
-                        onMouseEnter={() => setHoveredLocation(location.id)}
-                        onMouseLeave={() => setHoveredLocation(null)}
-                      >
-                        <div 
-                          className="absolute inset-0 rounded-full animate-ping opacity-30"
-                          style={{ backgroundColor: getStatusColor(location.status), animationDuration: '2s' }}
-                        />
-                        <div 
-                          className={`relative w-4 h-4 rounded-full border-2 transition-all duration-300 ${
-                            activeLocation === location.id ? 'scale-150' : 'group-hover:scale-125'
-                          }`}
-                          style={{ 
-                            borderColor: getStatusColor(location.status),
-                            backgroundColor: activeLocation === location.id ? getStatusColor(location.status) : 'transparent'
-                          }}
-                        />
-                        {(hoveredLocation === location.id && activeLocation !== location.id) && (
-                          <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 px-2 py-1 bg-[#0a0a0f] border border-[#1a1a24] whitespace-nowrap z-10 rounded">
-                            <div className="text-xs font-medium text-[#e8e8ec]">{location.name}</div>
-                            <div className="text-xs font-mono" style={{ color: getStatusColor(location.status) }}>{location.status}</div>
-                          </div>
-                        )}
-                      </div>
-                    ))}
+              {/* Индикатор номера (только для мобильных) */}
+              {isMobile && (
+                <div className="absolute top-2 right-2 text-[8px] font-mono text-[#00d4ff] bg-black/50 px-2 py-0.5 rounded">
+                  {mobileLocationIndex + 1}/{worldLocations.length}
+                </div>
+              )}
 
-                    <div className="absolute top-4 left-4 w-8 h-8 border-t-2 border-l-2 border-[#00d4ff]/50" />
-                    <div className="absolute top-4 right-4 w-8 h-8 border-t-2 border-r-2 border-[#00d4ff]/50" />
-                    <div className="absolute bottom-4 left-4 w-8 h-8 border-b-2 border-l-2 border-[#00d4ff]/50" />
-                    <div className="absolute bottom-4 right-4 w-8 h-8 border-b-2 border-r-2 border-[#00d4ff]/50" />
-                    <div className="absolute top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-[#050508]/80 rounded-full">
-                      <span className="font-mono text-xs text-[#00d4ff]">PROTOCOL NETWORK MAP v2.4</span>
-                    </div>
-                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 font-mono text-xs text-[#6b6b7b]">
-                      {hoveredLocation ? (
-                        <span>X: {worldLocations.find(l => l.id === hoveredLocation)?.coordinates.x} | Y: {worldLocations.find(l => l.id === hoveredLocation)?.coordinates.y}</span>
-                      ) : (
-                        <span>HOVER TO VIEW COORDINATES</span>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Панель с описанием планет */}
-                  <div ref={worldPanelRef} className="lg:w-80 space-y-4 opacity-0 translate-x-12">
-                    <a 
-                      href="/galaxy-map-demo"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="block"
-                    >
-                      <button className="w-full py-2.5 bg-gradient-to-r from-[#00d4ff]/10 to-[#ff006e]/10 border border-[#00d4ff] rounded-lg hover:shadow-[0_0_20px_rgba(0,212,255,0.3)] hover:from-[#00d4ff]/20 hover:to-[#ff006e]/20 transition-all duration-300 group">
-                        <span className="flex items-center justify-center gap-2">
-                          <svg className="w-3.5 h-3.5 text-[#00d4ff]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                          </svg>
-                          <span className="flex items-center">
-                            <TextScramble 
-                              text="EXPLORE MAP" 
-                              className="text-xs font-mono font-bold tracking-wider text-[#00d4ff] leading-none" 
-                            />
-                          </span>
-                          <svg className="w-3.5 h-3.5 text-[#00d4ff] group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                          </svg>
-                        </span>
-                      </button>
-                    </a>
-
-                    {activeLocationData ? (
-                      <div className="p-6 bg-[#0a0a0f]/80 border border-[#1a1a24] rounded-xl">
-                        <div className="flex items-center justify-between mb-4">
-                          <span className="px-2 py-1 text-xs font-mono rounded" style={{ backgroundColor: `${getStatusColor(activeLocationData.status)}20`, color: getStatusColor(activeLocationData.status) }}>{activeLocationData.type}</span>
-                          <span className="text-xs font-mono" style={{ color: getStatusColor(activeLocationData.status) }}>{activeLocationData.status}</span>
-                        </div>
-                        <h3 className="text-xl font-bold text-[#e8e8ec] mb-2">{activeLocationData.name}</h3>
-                        <p className="text-sm text-[#6b6b7b] mb-4">{activeLocationData.description}</p>
-                        <div className="pt-4 border-t border-[#1a1a24]">
-                          <div className="flex justify-between text-xs font-mono">
-                            <span className="text-[#6b6b7b]">COORDINATES</span>
-                            <span className="text-[#00d4ff]">{activeLocationData.coordinates.x}, {activeLocationData.coordinates.y}</span>
-                          </div>
-                        </div>
-                        <button className="w-full mt-4 py-2 border border-[#2a2a38] hover:border-[#00d4ff] text-sm font-medium text-[#e8e8ec] transition-colors duration-300 rounded">
-                          View Full Details
-                        </button>
-                      </div>
-                    ) : (
-                      <div className="p-6 bg-[#0a0a0f]/80 border border-[#1a1a24] text-center rounded-xl">
-                        <div className="text-[#6b6b7b] text-sm mb-2">Select a location on the map</div>
-                        <div className="font-mono text-xs text-[#00d4ff]">{worldLocations.length} LOCATIONS AVAILABLE</div>
-                      </div>
-                    )}
-
-                    <div className="space-y-2">
-                      {worldLocations.map((location) => (
-                        <button
-                          key={location.id}
-                          onClick={() => setActiveLocation(activeLocation === location.id ? null : location.id)}
-                          className={`w-full flex items-center justify-between p-3 border transition-all duration-300 rounded ${
-                            activeLocation === location.id ? 'bg-[#0a0a0f] border-[#00d4ff]' : 'bg-transparent border-[#1a1a24] hover:border-[#2a2a38]'
-                          }`}
-                        >
-                          <div className="flex items-center gap-2">
-                            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: getStatusColor(location.status) }} />
-                            <span className="text-xs text-[#e8e8ec]">{location.name}</span>
-                          </div>
-                          <span className="text-[10px] font-mono text-[#6b6b7b]">{location.id}</span>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
+              <div className="flex items-center justify-between mb-2 md:mb-4">
+                <span 
+                  className="px-1.5 py-0.5 md:px-2 md:py-1 text-[8px] md:text-xs font-mono rounded" 
+                  style={{ backgroundColor: `${getStatusColor(activeLocationData.status)}20`, color: getStatusColor(activeLocationData.status) }}
+                >
+                  {activeLocationData.type}
+                </span>
+                <span className="text-[8px] md:text-xs font-mono" style={{ color: getStatusColor(activeLocationData.status) }}>
+                  {activeLocationData.status}
+                </span>
+              </div>
+              <h3 className="text-base md:text-xl font-bold text-[#e8e8ec] mb-1 md:mb-2 pr-8 md:pr-0">{activeLocationData.name}</h3>
+              <p className="text-xs md:text-sm text-[#6b6b7b] mb-2 md:mb-4">{activeLocationData.description}</p>
+              <div className="pt-2 md:pt-4 border-t border-[#1a1a24]">
+                <div className="flex justify-between text-[8px] md:text-xs font-mono">
+                  <span className="text-[#6b6b7b]">COORDINATES</span>
+                  <span className="text-[#00d4ff]">{activeLocationData.coordinates.x}, {activeLocationData.coordinates.y}</span>
                 </div>
               </div>
+              <button className="w-full mt-2 md:mt-4 py-1.5 md:py-2 border border-[#2a2a38] hover:border-[#00d4ff] text-xs md:text-sm font-medium text-[#e8e8ec] transition-colors duration-300 rounded">
+                View Full Details
+              </button>
             </div>
-          </div>
+          ) : (
+            <div className="relative p-3 md:p-6 bg-[#0a0a0f]/80 border border-[#1a1a24] text-center rounded-xl">
+              <div className="text-[#6b6b7b] text-xs md:text-sm mb-2">Select a location on the map</div>
+              <div className="font-mono text-[10px] md:text-xs text-[#00d4ff]">{worldLocations.length} LOCATIONS AVAILABLE</div>
+              
+              {/* Кнопки выбора локации на мобильных */}
+              {isMobile && (
+                <div className="flex justify-center gap-4 mt-4">
+                  <button
+                    onClick={prevMobileLocation}
+                    className="px-4 py-1 border border-[#00d4ff] rounded text-xs text-[#00d4ff] hover:bg-[#00d4ff]/10"
+                  >
+                    Previous
+                  </button>
+                  <button
+                    onClick={nextMobileLocation}
+                    className="px-4 py-1 border border-[#00d4ff] rounded text-xs text-[#00d4ff] hover:bg-[#00d4ff]/10"
+                  >
+                    Next
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Список локаций - только для десктопа */}
+          {!isMobile && (
+            <div className="space-y-2 max-h-[300px] md:max-h-[400px] overflow-y-auto pr-1">
+              <div className="text-[8px] font-mono text-[#00d4ff] mb-2 px-2">
+                {worldLocations.length} NODES_ACTIVE
+              </div>
+              {worldLocations.map((location) => (
+                <button
+                  key={location.id}
+                  onClick={() => setActiveLocation(activeLocation === location.id ? null : location.id)}
+                  className={`w-full flex items-center justify-between p-2 md:p-3 border transition-all duration-300 rounded ${
+                    activeLocation === location.id ? 'bg-[#0a0a0f] border-[#00d4ff]' : 'bg-transparent border-[#1a1a24] hover:border-[#2a2a38]'
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
+                    <div className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full" style={{ backgroundColor: getStatusColor(location.status) }} />
+                    <span className="text-xs md:text-sm text-[#e8e8ec]">{location.name}</span>
+                  </div>
+                  <span className="text-[8px] md:text-[10px] font-mono text-[#6b6b7b]">{location.id}</span>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
           {/* CARDS SECTION */}
           <div ref={cardsSectionRef} className="absolute inset-0 z-[100] bg-[#050508] opacity-0 pointer-events-none">

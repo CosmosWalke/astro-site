@@ -112,7 +112,6 @@ export function WorldSection() {
       )
     })
 
-    // Random glitch effect
     const glitchInterval = setInterval(() => {
       setGlitchText(true)
       setTimeout(() => setGlitchText(false), 150)
@@ -156,29 +155,11 @@ export function WorldSection() {
     <section 
       ref={sectionRef}
       id="world"
-      className="relative min-h-screen py-32 overflow-hidden"
+      className="relative min-h-screen py-32"
       style={{ 
-        background: 'radial-gradient(ellipse at 50% 40%, #0a0a0f 0%, #000000 100%)',
+        background: '#050508',
       }}
     >
-      {/* Cyberpunk Grid Background */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute inset-0" style={{
-          backgroundImage: `
-            linear-gradient(rgba(0, 212, 255, 0.05) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(0, 212, 255, 0.05) 1px, transparent 1px)
-          `,
-          backgroundSize: '40px 40px',
-        }} />
-        
-        {/* Scanning line effect */}
-        <div className="absolute top-0 left-0 right-0 h-px bg-[#00d4ff] opacity-30 animate-scan" />
-        
-        {/* Glitch lines */}
-        <div className="absolute top-[20%] left-0 w-full h-px bg-[#ff006e] opacity-20 animate-pulse" />
-        <div className="absolute top-[60%] left-0 w-full h-px bg-[#9d4edd] opacity-20 animate-pulse" style={{ animationDelay: '2s' }} />
-      </div>
-
       {/* Section Header */}
       <div className="relative z-10 max-w-7xl mx-auto px-4 md:px-8 mb-16">
         <div className="flex items-center gap-4 mb-6 justify-center">
@@ -200,45 +181,56 @@ export function WorldSection() {
       {/* Interactive Map */}
       <div className="relative z-10 max-w-6xl mx-auto px-4 md:px-8">
         <div className="flex flex-col lg:flex-row gap-8">
-          {/* Map */}
+          {/* Map с фоновым изображением - БЕЗ ВСЯКИХ СЕТОК И ФОНОВ */}
           <div 
             ref={mapRef}
-            className="relative flex-1 aspect-square bg-[#0a0a0f]/90 backdrop-blur-sm border border-[#00d4ff]/30 overflow-hidden rounded-xl shadow-[0_0_30px_rgba(0,212,255,0.2)]"
+            className="relative flex-1 aspect-square overflow-hidden rounded-xl shadow-[0_0_30px_rgba(0,212,255,0.2)]"
           >
-            {/* Cyberpunk Rings */}
-            <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
-              {/* Outer Ring */}
-              <circle cx="50" cy="50" r="45" fill="none" stroke="#9d4edd" strokeWidth="0.5" strokeOpacity="0.4" strokeDasharray="4 6" />
-              <circle cx="50" cy="50" r="44" fill="none" stroke="#9d4edd" strokeWidth="0.1" strokeOpacity="0.2" />
-              
-              {/* Mid Ring */}
-              <circle cx="50" cy="50" r="32" fill="none" stroke="#ff006e" strokeWidth="0.5" strokeOpacity="0.4" strokeDasharray="4 6" />
-              <circle cx="50" cy="50" r="31" fill="none" stroke="#ff006e" strokeWidth="0.1" strokeOpacity="0.2" />
-              
-              {/* Inner Ring */}
-              <circle cx="50" cy="50" r="20" fill="none" stroke="#00d4ff" strokeWidth="0.5" strokeOpacity="0.4" strokeDasharray="4 6" />
-              <circle cx="50" cy="50" r="19" fill="none" stroke="#00d4ff" strokeWidth="0.1" strokeOpacity="0.2" />
-              
-              {/* Core */}
-              <circle cx="50" cy="50" r="8" fill="rgba(0,212,255,0.05)" stroke="#00d4ff" strokeWidth="0.8" strokeOpacity="0.6" />
-              <circle cx="50" cy="50" r="4" fill="#00d4ff" opacity="0.3" />
-              
-              {/* Data stream lines */}
-              <path d="M50,50 L80,20 M50,50 L20,20 M50,50 L80,80 M50,50 L20,80" stroke="#00d4ff" strokeWidth="0.2" strokeOpacity="0.2" />
-              <path d="M50,50 L95,50 M50,50 L5,50" stroke="#ff006e" strokeWidth="0.2" strokeOpacity="0.2" />
-              
-              {/* Circuit traces */}
-              <path d="M0,0 L15,15 L20,10 L35,25" fill="none" stroke="#00d4ff" strokeWidth="0.2" strokeOpacity="0.3" />
-              <path d="M100,0 L85,15 L80,10 L65,25" fill="none" stroke="#ff006e" strokeWidth="0.2" strokeOpacity="0.3" />
-              <path d="M0,100 L15,85 L20,90 L35,75" fill="none" stroke="#9d4edd" strokeWidth="0.2" strokeOpacity="0.3" />
-              <path d="M100,100 L85,85 L80,90 L65,75" fill="none" stroke="#00d4ff" strokeWidth="0.2" strokeOpacity="0.3" />
+            {/* Фоновое изображение карты - ЕДИНСТВЕННЫЙ ФОН */}
+            <div className="absolute inset-0 w-full h-full">
+              <img 
+                src="/image/map.webp"
+                alt="World Map"
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  console.error('Image failed to load:', e)
+                  e.currentTarget.style.display = 'none'
+                }}
+              />
+            </div>
+
+            {/* Data Connections - линии между точками */}
+            <svg className="absolute inset-0 w-full h-full pointer-events-none z-10" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
+              {worldLocations.map((loc, i) => {
+                const nextLoc = worldLocations[(i + 1) % worldLocations.length]
+                return (
+                  <g key={`connection-${i}`}>
+                    <line
+                      x1={loc.coordinates.x}
+                      y1={loc.coordinates.y}
+                      x2={nextLoc.coordinates.x}
+                      y2={nextLoc.coordinates.y}
+                      stroke="#00d4ff"
+                      strokeWidth="1"
+                      strokeOpacity="0.6"
+                      strokeDasharray="3 4"
+                    />
+                  </g>
+                )
+              })}
+              {/* Центральные соединения */}
+              <line x1="50" y1="40" x2="30" y2="20" stroke="#ff006e" strokeWidth="1" strokeOpacity="0.6" strokeDasharray="3 4" />
+              <line x1="50" y1="40" x2="70" y2="30" stroke="#9d4edd" strokeWidth="1" strokeOpacity="0.6" strokeDasharray="3 4" />
+              <line x1="50" y1="40" x2="80" y2="60" stroke="#00d4ff" strokeWidth="1" strokeOpacity="0.6" strokeDasharray="3 4" />
+              <line x1="50" y1="40" x2="20" y2="65" stroke="#ff006e" strokeWidth="1" strokeOpacity="0.6" strokeDasharray="3 4" />
+              <line x1="50" y1="40" x2="55" y2="75" stroke="#9d4edd" strokeWidth="1" strokeOpacity="0.6" strokeDasharray="3 4" />
             </svg>
 
-            {/* Location Markers */}
+            {/* Location Markers - точки */}
             {worldLocations.map((location) => (
               <div
                 key={location.id}
-                className="location-marker absolute transform -translate-x-1/2 -translate-y-1/2 cursor-pointer group"
+                className="location-marker absolute transform -translate-x-1/2 -translate-y-1/2 cursor-pointer group z-20"
                 style={{
                   left: `${location.coordinates.x}%`,
                   top: `${location.coordinates.y}%`
@@ -256,33 +248,33 @@ export function WorldSection() {
                   }}
                 />
                 
-                {/* Node Marker - киберпанк стиль */}
+                {/* Node Marker */}
                 <div 
                   className={`relative transition-all duration-300 flex items-center justify-center ${
                     activeLocation === location.id ? 'scale-150' : 'group-hover:scale-125'
                   }`}
                 >
                   <div 
-                    className="absolute rounded-sm"
+                    className="absolute rounded-full"
                     style={{ 
-                      width: location.coordinates.ring === 1 ? '10px' : location.coordinates.ring === 2 ? '8px' : '6px',
-                      height: location.coordinates.ring === 1 ? '10px' : location.coordinates.ring === 2 ? '8px' : '6px',
+                      width: location.coordinates.ring === 1 ? '14px' : location.coordinates.ring === 2 ? '12px' : '10px',
+                      height: location.coordinates.ring === 1 ? '14px' : location.coordinates.ring === 2 ? '12px' : '10px',
                       backgroundColor: getRingColor(location.coordinates.ring),
-                      boxShadow: `0 0 15px ${getRingColor(location.coordinates.ring)}`,
+                      boxShadow: `0 0 20px ${getRingColor(location.coordinates.ring)}`,
                     }}
                   />
                   <div 
-                    className="absolute rounded-sm border"
+                    className="absolute rounded-full border-2"
                     style={{ 
-                      width: location.coordinates.ring === 1 ? '18px' : location.coordinates.ring === 2 ? '14px' : '12px',
-                      height: location.coordinates.ring === 1 ? '18px' : location.coordinates.ring === 2 ? '14px' : '12px',
+                      width: location.coordinates.ring === 1 ? '24px' : location.coordinates.ring === 2 ? '20px' : '18px',
+                      height: location.coordinates.ring === 1 ? '24px' : location.coordinates.ring === 2 ? '20px' : '18px',
                       borderColor: getRingColor(location.coordinates.ring),
                       animation: 'pulse 2s ease-out infinite',
                     }}
                   />
                 </div>
 
-                {/* Terminal Tooltip */}
+                {/* Tooltip */}
                 {(hoveredLocation === location.id && activeLocation !== location.id) && (
                   <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 px-3 py-1.5 bg-black/90 backdrop-blur-sm border border-[#00d4ff] whitespace-nowrap z-10 rounded">
                     <div className="text-[#e8e8ec] font-mono text-xs">
@@ -296,72 +288,37 @@ export function WorldSection() {
               </div>
             ))}
 
-            {/* Data Connections */}
-            <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
-              {worldLocations.map((loc, i) => {
-                const nextLoc = worldLocations[(i + 1) % worldLocations.length]
-                return (
-                  <g key={`connection-${i}`}>
-                    <line
-                      x1={loc.coordinates.x}
-                      y1={loc.coordinates.y}
-                      x2={nextLoc.coordinates.x}
-                      y2={nextLoc.coordinates.y}
-                      stroke="#00d4ff"
-                      strokeWidth="0.6"
-                      strokeOpacity="0.3"
-                      strokeDasharray="2 3"
-                    />
-                    {/* Data flow animation */}
-                    <line
-                      x1={loc.coordinates.x}
-                      y1={loc.coordinates.y}
-                      x2={nextLoc.coordinates.x}
-                      y2={nextLoc.coordinates.y}
-                      stroke="#00d4ff"
-                      strokeWidth="1"
-                      strokeOpacity="0.1"
-                      className="animate-dash"
-                    />
-                  </g>
-                )
-              })}
-              {/* Core connections */}
-              <line x1="50" y1="40" x2="30" y2="20" stroke="#ff006e" strokeWidth="0.6" strokeOpacity="0.4" strokeDasharray="2 3" />
-              <line x1="50" y1="40" x2="70" y2="30" stroke="#9d4edd" strokeWidth="0.6" strokeOpacity="0.4" strokeDasharray="2 3" />
-            </svg>
+            {/* Corner Decorations */}
+            <div className="absolute top-4 left-4 w-8 h-8 border-t-2 border-l-2 border-[#00d4ff] z-30" />
+            <div className="absolute top-4 right-4 w-8 h-8 border-t-2 border-r-2 border-[#ff006e] z-30" />
+            <div className="absolute bottom-4 left-4 w-8 h-8 border-b-2 border-l-2 border-[#9d4edd] z-30" />
+            <div className="absolute bottom-4 right-4 w-8 h-8 border-b-2 border-r-2 border-[#00d4ff] z-30" />
 
-            {/* Corner Decorations - киберпанк */}
-            <div className="absolute top-4 left-4 w-8 h-8 border-t-2 border-l-2 border-[#00d4ff]" />
-            <div className="absolute top-4 right-4 w-8 h-8 border-t-2 border-r-2 border-[#ff006e]" />
-            <div className="absolute bottom-4 left-4 w-8 h-8 border-b-2 border-l-2 border-[#9d4edd]" />
-            <div className="absolute bottom-4 right-4 w-8 h-8 border-b-2 border-r-2 border-[#00d4ff]" />
-
-            {/* Map Title - Terminal style */}
-            <div className="absolute top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-black/80 backdrop-blur-sm border border-[#00d4ff]/50 rounded">
+            {/* Map Title */}
+            <div className="absolute top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-black/70 backdrop-blur-sm border border-[#00d4ff]/50 rounded z-30">
               <span className="font-mono text-[10px] text-[#00d4ff] tracking-wider">
                 {glitchText ? '> PROTOCOL_NETWORK_v2.4_ERR' : '> PROTOCOL_NETWORK_v2.4'}
               </span>
             </div>
 
-            {/* Legend - Cyberpunk style */}
-            <div className="absolute bottom-4 left-4 bg-black/80 backdrop-blur-sm rounded p-2 text-[10px] font-mono border border-[#00d4ff]/30">
+            {/* Legend */}
+            <div className="absolute bottom-4 left-4 bg-black/70 backdrop-blur-sm rounded p-2 text-[10px] font-mono border border-[#00d4ff]/30 z-30">
               <div className="flex items-center gap-3 mb-1">
-                <div className="w-2 h-2 rounded-sm bg-[#00d4ff]" />
+                <div className="w-2 h-2 rounded-full bg-[#00d4ff]" />
                 <span className="text-[#6b6b7b]">CORE_NODE</span>
               </div>
               <div className="flex items-center gap-3 mb-1">
-                <div className="w-2 h-2 rounded-sm bg-[#ff006e]" />
+                <div className="w-2 h-2 rounded-full bg-[#ff006e]" />
                 <span className="text-[#6b6b7b]">SECONDARY_NODE</span>
               </div>
               <div className="flex items-center gap-3">
-                <div className="w-2 h-2 rounded-sm bg-[#9d4edd]" />
+                <div className="w-2 h-2 rounded-full bg-[#9d4edd]" />
                 <span className="text-[#6b6b7b]">EDGE_NODE</span>
               </div>
             </div>
 
-            {/* Coordinates Display - Terminal */}
-            <div className="absolute bottom-4 right-4 font-mono text-[8px] text-[#00d4ff] bg-black/70 px-2 py-0.5 rounded border border-[#00d4ff]/30">
+            {/* Coordinates Display */}
+            <div className="absolute bottom-4 right-4 font-mono text-[8px] text-[#00d4ff] bg-black/70 px-2 py-0.5 rounded border border-[#00d4ff]/30 z-30">
               {hoveredLocation ? (
                 <span>
                   NODE_{worldLocations.find(l => l.id === hoveredLocation)?.coordinates.x}_{worldLocations.find(l => l.id === hoveredLocation)?.coordinates.y}
@@ -372,7 +329,7 @@ export function WorldSection() {
             </div>
           </div>
 
-          {/* Location Info Panel - Cyberpunk style */}
+          {/* Location Info Panel */}
           <div className="lg:w-80 space-y-4">
             {activeLocationData ? (
               <div className="p-6 bg-black/80 backdrop-blur-md border border-[#00d4ff]/40 rounded-xl shadow-[0_0_20px_rgba(0,212,255,0.2)]">
@@ -429,7 +386,7 @@ export function WorldSection() {
               </div>
             )}
 
-            {/* Location List - Terminal style */}
+            {/* Location List */}
             <div className="space-y-2 max-h-96 overflow-y-auto pr-1 custom-scroll">
               <div className="text-[8px] font-mono text-[#00d4ff] mb-2 px-2">
                 {worldLocations.length} NODES_ACTIVE
@@ -446,7 +403,7 @@ export function WorldSection() {
                 >
                   <div className="flex items-center gap-3">
                     <div 
-                      className="w-2 h-2 rounded-sm"
+                      className="w-2 h-2 rounded-full"
                       style={{ backgroundColor: getRingColor(location.coordinates.ring) }}
                     />
                     <span className="text-xs font-mono text-[#e8e8ec]">{location.name}</span>
@@ -460,15 +417,6 @@ export function WorldSection() {
       </div>
 
       <style jsx>{`
-        @keyframes scan {
-          0% { transform: translateY(0); }
-          100% { transform: translateY(100vh); }
-        }
-        
-        @keyframes dash {
-          to { stroke-dashoffset: -10; }
-        }
-        
         @keyframes glitch {
           0%, 100% { transform: skew(0deg, 0deg); opacity: 1; }
           10% { transform: skew(2deg, -1deg); opacity: 0.8; }
@@ -476,13 +424,9 @@ export function WorldSection() {
           30% { transform: skew(1deg, -2deg); opacity: 0.85; }
         }
         
-        .animate-scan {
-          animation: scan 8s linear infinite;
-        }
-        
-        .animate-dash {
-          stroke-dasharray: 4;
-          animation: dash 1s linear infinite;
+        @keyframes pulse {
+          0%, 100% { opacity: 0.6; transform: scale(1); }
+          50% { opacity: 0.2; transform: scale(1.2); }
         }
         
         .animate-glitch {
@@ -499,11 +443,6 @@ export function WorldSection() {
         .custom-scroll::-webkit-scrollbar-thumb {
           background: #ff006e;
           border-radius: 10px;
-        }
-        
-        @keyframes pulse {
-          0%, 100% { opacity: 0.6; transform: scale(1); }
-          50% { opacity: 0.2; transform: scale(1.2); }
         }
       `}</style>
     </section>

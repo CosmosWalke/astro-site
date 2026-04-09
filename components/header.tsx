@@ -7,6 +7,7 @@ import { TextScramble } from "@/components/ui/text-scramble"
 
 const navItems = [
   { label: 'Universe', href: '#universe' },
+  { label: 'World', href: '#world' },     // <-- ДОБАВИТЬ
   { label: 'Comic', href: '#comic' },
   { label: 'Products', href: '#products' },
   { label: 'Media', href: '#media' },
