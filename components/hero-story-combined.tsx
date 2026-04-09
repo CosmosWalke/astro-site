@@ -9,7 +9,7 @@ import { Play, ChevronLeft, ChevronRight } from 'lucide-react'
 import { TextScramble } from "@/components/ui/text-scramble"
 import { Starfield } from '@/components/ui/starfield-1'
 import SimpleGlobe from "@/components/ui/SimpleGlobe"
-import { WorldSection } from '@/components/WorldSection'
+
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger)
 }
@@ -472,26 +472,24 @@ export function HeroStoryCombined() {
     setActiveLocation(worldLocations[(mobileLocationIndex - 1 + worldLocations.length) % worldLocations.length].id)
   }
 
-// Эффект видимости World Panel — максимально строгий
-useEffect(() => {
-  if (!worldPanelRef.current) return;
+  // Эффект для отслеживания видимости панели (ДОБАВЛЕН)
+  useEffect(() => {
+    if (!worldPanelRef.current) return
+    
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          setIsWorldPanelVisible(entry.isIntersecting && entry.intersectionRatio > 0.3)
+        })
+      },
+      { threshold: 0.3 }
+    )
+    
+    observer.observe(worldPanelRef.current)
+    
+    return () => observer.disconnect()
+  }, [])
 
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        // Очень строгий порог — кнопка активна только когда панель реально видна
-        setIsWorldPanelVisible(entry.isIntersecting && entry.intersectionRatio >= 0.48);
-      });
-    },
-    {
-      threshold: [0.35, 0.48, 0.65],
-      rootMargin: isMobile ? "-90px 0px -130px 0px" : "-60px 0px -110px 0px"
-    }
-  );
-
-  observer.observe(worldPanelRef.current);
-  return () => observer.disconnect();
-}, [isMobile]);
   useEffect(() => {
     const checkDevice = () => {
       const width = window.innerWidth
@@ -796,7 +794,6 @@ useEffect(() => {
         end: 'bottom bottom',
         scrub: isMobile ? 1.6 : 2.0,
         pin: stickyRef.current,
-        pinType: "fixed",
         anticipatePin: 1,
         fastScrollEnd: true,
         preventOverlaps: true,
@@ -1322,14 +1319,10 @@ const calculateOptimalMove = () => {
 
           {/* WORLD SECTION - Адаптировано для мобильных */}
 <div
-
   ref={worldSectionRef} 
-  className={`absolute inset-0 z-[36] flex items-center justify-center ${
-    isWorldPanelVisible ? 'pointer-events-auto' : 'pointer-events-none'
-  } opacity-0`} 
+  className="absolute inset-0 z-[36] flex items-center justify-center pointer-events-auto opacity-0" 
   style={{ padding: isMobile ? '1rem' : '2rem' }}
 >
-
   <div className="w-full max-w-[1300px] h-full">
     <div className="py-4 md:py-8 px-4 md:px-6">
       <div ref={worldHeaderRef} className="text-center mb-8 md:mb-12 opacity-0 translate-y-10">
@@ -1448,48 +1441,45 @@ const calculateOptimalMove = () => {
        
 {/* Панель с описанием - адаптирована для мобильных */}
 
-{/* Панель с описанием - адаптирована для мобильных */}
 <div 
   ref={worldPanelRef} 
-  className={`w-full lg:w-80 space-y-3 md:space-y-4 transition-opacity duration-300 ${isWorldPanelVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+  className={`w-full lg:w-80 space-y-3 md:space-y-4 opacity-0`}
   style={isMobile ? { marginTop: '30%' } : { transform: 'translateY(-30%) translateX(3rem)' }}
 >
 
-{/* Кнопка EXPLORE MAP — с двойной защитой */}
-<div className={isWorldPanelVisible ? 'pointer-events-auto' : 'pointer-events-none'}>
-  <a 
-    href={isWorldPanelVisible ? "/galaxy-map-demo" : "#"}
-    target={isWorldPanelVisible ? "_blank" : undefined}
-    rel={isWorldPanelVisible ? "noopener noreferrer" : undefined}
-    onClick={(e) => {
-      if (!isWorldPanelVisible) {
-        e.preventDefault();
-        e.stopPropagation();
-        return false;
-      }
-    }}
-  >
-    <button 
-      disabled={!isWorldPanelVisible}
-      className={`w-full py-3 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 border text-sm font-medium tracking-wider
-        ${isWorldPanelVisible 
-          ? 'bg-gradient-to-r from-[#00d4ff]/10 to-[#ff006e]/10 border-[#00d4ff] hover:shadow-[0_0_25px_rgba(0,212,255,0.4)] active:scale-[0.97]' 
-          : 'border-[#1a1a24] bg-transparent opacity-30 cursor-default'
-        }`}
-    >
-      <svg className={`w-4 h-4 ${isWorldPanelVisible ? 'text-[#00d4ff]' : 'text-[#444]'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          <a 
+  href={isWorldPanelVisible ? "/galaxy-map-demo" : "#"}
+  target="_blank"
+  rel="noopener noreferrer"
+  className="block"
+  onClick={(e) => {
+    if (!isWorldPanelVisible) {
+      e.preventDefault()
+    }
+  }}
+  style={{ 
+    pointerEvents: isWorldPanelVisible ? 'auto' : 'none',
+    opacity: isWorldPanelVisible ? 1 : 0.5,
+    cursor: isWorldPanelVisible ? 'pointer' : 'default'
+  }}
+>
+  <button className="w-full py-2 md:py-2.5 bg-gradient-to-r from-[#00d4ff]/10 to-[#ff006e]/10 border border-[#00d4ff] rounded-lg hover:shadow-[0_0_20px_rgba(0,212,255,0.3)] transition-all duration-300 group">
+    <span className="flex items-center justify-center gap-2">
+      <svg className="w-3 h-3 md:w-3.5 md:h-3.5 text-[#00d4ff]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
       </svg>
-      <TextScramble 
-        text="EXPLORE MAP" 
-        className={`font-mono font-bold tracking-[0.1em] ${isWorldPanelVisible ? 'text-[#00d4ff]' : 'text-[#555]'}`} 
-      />
-      <svg className={`w-4 h-4 transition-transform ${isWorldPanelVisible ? 'group-hover:translate-x-1 text-[#00d4ff]' : 'text-[#444]'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+      <span className="flex items-center">
+        <TextScramble 
+          text="EXPLORE MAP" 
+          className="text-[10px] md:text-xs font-mono font-bold tracking-wider text-[#00d4ff] leading-none" 
+        />
+      </span>
+      <svg className="w-3 h-3 md:w-3.5 md:h-3.5 text-[#00d4ff] group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
       </svg>
-    </button>
-  </a>
-</div>
+    </span>
+  </button>
+</a>
           {activeLocationData ? (
             <div className="relative p-3 md:p-6 bg-[#0a0a0f]/80 border border-[#1a1a24] rounded-xl transition-all duration-300">
               {/* Навигация стрелками ТОЛЬКО для мобильных */}
