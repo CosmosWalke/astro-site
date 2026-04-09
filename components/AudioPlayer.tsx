@@ -24,6 +24,31 @@ export function AudioPlayer() {
     return () => window.removeEventListener('resize', checkMobile)
   }, [])
 
+  // Останавливаем музыку при уходе с вкладки/сворачивании браузера
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        // Вкладка скрыта (пользователь ушел или свернул браузер)
+        if (audioRef.current && isPlaying) {
+          audioRef.current.pause()
+          console.log('Tab hidden - music paused')
+        }
+      } else {
+        // Вкладка снова активна
+        if (audioRef.current && isPlaying && isSoundEnabled) {
+          audioRef.current.play().catch(e => console.log('Resume play failed:', e))
+          console.log('Tab active - music resumed')
+        }
+      }
+    }
+
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
+    }
+  }, [isPlaying, isSoundEnabled])
+
   const enableSound = () => {
     if (audioRef.current && !isSoundEnabled) {
       audioRef.current.volume = 0.07
@@ -108,7 +133,6 @@ export function AudioPlayer() {
       setShowVolumeControl(false)
     } else {
       setShowVolumeControl(true)
-      // Автоматически скрываем через 3 секунды
       setTimeout(() => {
         setShowVolumeControl(false)
       }, 3000)
@@ -126,7 +150,6 @@ export function AudioPlayer() {
     }
   }, [])
 
-  // Определяем, показывать ли регулятор громкости
   const shouldShowVolume = isMobile 
     ? showVolumeControl && isSoundEnabled 
     : isHovered && isSoundEnabled

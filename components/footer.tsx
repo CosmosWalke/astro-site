@@ -10,12 +10,18 @@ if (typeof window !== 'undefined') {
 
 const footerLinks = {
   discover: [
-    { label: 'Story', href: '#story' },
-    { label: 'Journal', href: '#journal' },
+    { label: 'Universe', href: '#universe' },
+    { label: 'Map', href: '#world' },       
+    { label: 'Cards', href: '#cards' }, 
+    { label: 'Comic', href: '#comic' },
+    { label: 'Products', href: '#products' },
     { label: 'Media', href: '#media' },
-    { label: 'Gallery', href: '#gallery' },
-    { label: 'About', href: '#about' },
-    { label: 'Careers', href: '#careers' },
+  ],
+  community: [
+    { label: 'Telegram', href: 'https://t.me/ваш_канал', external: true },
+    { label: 'Instagram', href: 'https://instagram.com/ваш_аккаунт', external: true },
+    { label: 'Discord', href: 'https://discord.gg/ваш_сервер', external: true },
+    { label: 'Newsletter', href: '#newsletter', external: false },
   ],
   legal: [
     { label: 'Privacy Policy', href: '#privacy' },
@@ -28,10 +34,27 @@ export function Footer() {
   const footerRef = useRef<HTMLElement>(null)
   const contentRef = useRef<HTMLDivElement>(null)
 
+  const smoothScrollTo = (elementId: string) => {
+    const element = document.getElementById(elementId)
+    if (element) {
+      const headerOffset = 80
+      const elementPosition = element.getBoundingClientRect().top
+      const offsetPosition = elementPosition + window.pageYOffset - headerOffset
+      window.scrollTo({ top: offsetPosition, behavior: 'smooth' })
+    }
+  }
+
+  const handleLinkClick = (href: string, external?: boolean) => {
+    if (external) {
+      window.open(href, '_blank', 'noopener noreferrer')
+    } else {
+      smoothScrollTo(href.replace('#', ''))
+    }
+  }
+
   useEffect(() => {
     if (!footerRef.current || !contentRef.current) return
 
-    // Parallax effect for footer content
     gsap.to(contentRef.current, {
       yPercent: -10,
       ease: 'none',
@@ -49,15 +72,15 @@ export function Footer() {
   }, [])
 
   return (
-    <footer ref={footerRef} className="relative">
-      {/* Reveal Spacer - This creates the reveal effect */}
-      <div className="h-screen bg-transparent pointer-events-none" />
+    <footer ref={footerRef} className="relative z-0">
+      {/* Reveal Spacer - создает пространство для появления футера */}
+      <div className="h-screen bg-transparent" />
       
-      {/* Fixed Footer Content */}
-      <div className="fixed bottom-0 left-0 right-0 bg-[#050508] -z-10">
+      {/* Fixed Footer Content - прижат к низу, но не перекрывает клики выше */}
+      <div className="fixed bottom-0 left-0 right-0 bg-[#050508] pointer-events-none">
         <div 
           ref={contentRef}
-          className="min-h-screen flex flex-col justify-end py-16 px-4 md:px-8"
+          className="min-h-screen flex flex-col justify-end py-16 px-4 md:px-8 pointer-events-auto"
         >
           {/* Large Logo */}
           <div className="max-w-7xl mx-auto w-full mb-16">
@@ -65,11 +88,9 @@ export function Footer() {
               <h2 className="text-[15vw] md:text-[20vw] font-bold text-[#1a1a24] leading-none tracking-tight select-none">
                 ASTRO
               </h2>
-              {/* Glowing overlay text */}
               <h2 className="absolute inset-0 text-[15vw] md:text-[20vw] font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#00d4ff]/20 to-[#ff6b35]/20 leading-none tracking-tight select-none">
                 ASTRO
               </h2>
-              {/* Scanlines over text */}
               <div className="absolute inset-0 opacity-30 pointer-events-none">
                 <div className="w-full h-full bg-[repeating-linear-gradient(0deg,transparent,transparent_2px,rgba(0,0,0,0.1)_2px,rgba(0,0,0,0.1)_4px)]" />
               </div>
@@ -78,7 +99,7 @@ export function Footer() {
 
           {/* Footer Content Grid */}
           <div className="max-w-7xl mx-auto w-full">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 mb-12">
               {/* Discover Links */}
               <div>
                 <h3 className="font-mono text-xs text-[#00d4ff] tracking-[0.2em] mb-4">
@@ -87,12 +108,36 @@ export function Footer() {
                 <ul className="space-y-2">
                   {footerLinks.discover.map((link) => (
                     <li key={link.label}>
-                      <a 
-                        href={link.href}
-                        className="text-sm text-[#6b6b7b] hover:text-[#e8e8ec] transition-colors duration-300"
+                      <button 
+                        onClick={() => smoothScrollTo(link.href.replace('#', ''))}
+                        className="text-sm text-[#6b6b7b] hover:text-[#e8e8ec] transition-colors duration-300 cursor-pointer"
                       >
                         {link.label}
-                      </a>
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Community Links */}
+              <div>
+                <h3 className="font-mono text-xs text-[#00d4ff] tracking-[0.2em] mb-4">
+                  COMMUNITY
+                </h3>
+                <ul className="space-y-2">
+                  {footerLinks.community.map((link) => (
+                    <li key={link.label}>
+                      <button 
+                        onClick={() => handleLinkClick(link.href, link.external)}
+                        className="text-sm text-[#6b6b7b] hover:text-[#e8e8ec] transition-colors duration-300 cursor-pointer flex items-center gap-2"
+                      >
+                        {link.label}
+                        {link.external && (
+                          <svg className="w-3 h-3 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                          </svg>
+                        )}
+                      </button>
                     </li>
                   ))}
                 </ul>
@@ -104,9 +149,7 @@ export function Footer() {
                   MORE DETAILS
                 </h3>
                 <div className="space-y-4">
-                  <p className="text-sm text-[#6b6b7b]">
-                    Contact us at
-                  </p>
+                  <p className="text-sm text-[#6b6b7b]">Contact us at</p>
                   <a 
                     href="mailto:hello@astroverse.com"
                     className="block text-[#e8e8ec] hover:text-[#00d4ff] transition-colors duration-300"
@@ -128,7 +171,9 @@ export function Footer() {
                   BUY ON
                 </h3>
                 <a 
-                  href="#opensea"
+                  href="https://opensea.io"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="group inline-flex items-center gap-3 p-4 bg-[#0a0a0f] border border-[#1a1a24] hover:border-[#00d4ff] transition-colors duration-300"
                 >
                   <div className="w-8 h-8 bg-[#00d4ff]/10 rounded-full flex items-center justify-center">
@@ -158,26 +203,23 @@ export function Footer() {
 
             {/* Bottom Bar */}
             <div className="flex flex-col md:flex-row justify-between items-center gap-4 pt-8 border-t border-[#1a1a24]">
-              {/* Legal Links */}
               <div className="flex flex-wrap justify-center gap-4 text-xs text-[#6b6b7b]">
                 {footerLinks.legal.map((link, index) => (
                   <span key={link.label} className="flex items-center gap-4">
-                    <a 
-                      href={link.href}
-                      className="hover:text-[#e8e8ec] transition-colors duration-300"
+                    <button 
+                      onClick={() => smoothScrollTo(link.href.replace('#', ''))}
+                      className="hover:text-[#e8e8ec] transition-colors duration-300 cursor-pointer"
                     >
                       {link.label}
-                    </a>
+                    </button>
                     {index < footerLinks.legal.length - 1 && (
                       <span className="hidden md:inline text-[#2a2a38]">|</span>
                     )}
                   </span>
                 ))}
               </div>
-
-              {/* Copyright */}
               <div className="text-xs text-[#6b6b7b]">
-                &copy; 2024 ASTRO Protocol. All rights reserved.
+                &copy; 2026 ASTRO Protocol. All rights reserved.
               </div>
             </div>
           </div>
@@ -185,13 +227,8 @@ export function Footer() {
 
         {/* Background Effects */}
         <div className="absolute inset-0 pointer-events-none">
-          {/* Grid */}
           <div className="absolute inset-0 grid-pattern opacity-10" />
-          
-          {/* Gradient overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-[#050508] via-transparent to-transparent" />
-          
-          {/* Decorative lines */}
           <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-[#00d4ff]/30 to-transparent" />
         </div>
       </div>
