@@ -8,6 +8,8 @@ import { HeroStoryCombined } from '@/components/hero-story-combined'
 import { ComicSection } from '@/components/comic-section'
 import { ProjectSection } from '@/components/project-section'
 import { FactionsSection } from '@/components/factions-section'
+import { CardsSection } from '@/components/CardsSection'
+import { MapSection } from '@/components/MapSection'  // Убедитесь, что путь правильный
 import { GallerySection } from '@/components/gallery-section'
 import { Footer } from '@/components/footer'
 import { ScrollProgress } from '@/components/ScrollProgress'
@@ -37,11 +39,19 @@ export default function Home() {
         <Header />
 
         <div className="relative z-10 bg-[#050508]">
-          {/* Universe Section - с ID на обертке */}
+          {/* Universe Section */}
           <div id="universe" className="relative">
             <HeroStoryCombined />
           </div>
 
+          {/* World/Map Section - после Universe, перед Comic */}
+<div id="world" className="relative">
+  <MapSection />
+</div>
+ {/* Card section */}
+<div id="cards" className="relative">
+  <CardsSection />
+</div>
           {/* Comic Section */}
           <div id="comic" className="relative">
             <ComicSection />

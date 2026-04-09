@@ -14,72 +14,6 @@ if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger)
 }
 
-const worldLocations = [
-  {
-    id: 'NEXUS',
-    name: 'The Nexus',
-    description: 'Central hub of the Protocol. All data flows through this ancient structure.',
-    coordinates: { x: 50, y: 40 },
-    type: 'CORE',
-    status: 'ONLINE'
-  },
-  {
-    id: 'CITADEL',
-    name: 'Northern Citadel',
-    description: 'A fortress of ice and steel. Home to the Vanguard training grounds.',
-    coordinates: { x: 30, y: 20 },
-    type: 'KEEP',
-    status: 'ONLINE'
-  },
-  {
-    id: 'ARCHIVE',
-    name: 'The Archive',
-    description: 'Repository of all human knowledge. Guarded by the Scribes.',
-    coordinates: { x: 70, y: 30 },
-    type: 'VAULT',
-    status: 'SECURE'
-  },
-  {
-    id: 'WASTELAND',
-    name: 'Eastern Wasteland',
-    description: 'Dangerous territory filled with remnants of the old world.',
-    coordinates: { x: 80, y: 60 },
-    type: 'ZONE',
-    status: 'HOSTILE'
-  },
-  {
-    id: 'FORGE',
-    name: 'The Forge',
-    description: 'Industrial center where the Architects create and innovate.',
-    coordinates: { x: 20, y: 65 },
-    type: 'FACILITY',
-    status: 'ACTIVE'
-  },
-  {
-    id: 'HAVEN',
-    name: 'Southern Haven',
-    description: 'A sanctuary for civilians. The last bastion of normal life.',
-    coordinates: { x: 55, y: 75 },
-    type: 'SETTLEMENT',
-    status: 'PROTECTED'
-  }
-]
-
-const getStatusColor = (status: string) => {
-  switch (status) {
-    case 'ONLINE':
-    case 'ACTIVE':
-      return '#00d4ff'
-    case 'SECURE':
-    case 'PROTECTED':
-      return '#14f195'
-    case 'HOSTILE':
-      return '#ff6b35'
-    default:
-      return '#6b6b7b'
-  }
-}
-
 const panoramaImages = {
   desktop: [
     '/image/pan1.webp',
@@ -384,9 +318,8 @@ export function HeroStoryCombined() {
   const headingRef = useRef<HTMLDivElement>(null)
   const trailerCardRef = useRef<HTMLDivElement>(null)
   const thumbnailFrameRef = useRef<HTMLDivElement>(null)
-  const overlayFrameRef = useRef<HTMLDivElement>(null)
-  const textOverlayFrameRef = useRef<HTMLDivElement>(null) 
   const leftContentRef = useRef<HTMLDivElement>(null)
+  
   
   // Flip card refs
   const flipCardContainerRef = useRef<HTMLDivElement>(null)
@@ -424,27 +357,14 @@ export function HeroStoryCombined() {
   const img4WrapperRef = useRef<HTMLDivElement>(null)
   const img5WrapperRef = useRef<HTMLDivElement>(null)
   
-  const frameContainerRef = useRef<HTMLDivElement>(null)
-  const frameWrapperRef = useRef<HTMLDivElement>(null)
-  const frameCardRef = useRef<HTMLDivElement>(null)
-  
   const gradient1Ref = useRef<HTMLDivElement>(null)
   const gradient2Ref = useRef<HTMLDivElement>(null)
-  
-  const worldSectionRef = useRef<HTMLDivElement>(null)
-  const worldHeaderRef = useRef<HTMLDivElement>(null)
-  const worldMapRef = useRef<HTMLDivElement>(null)
-  const worldPanelRef = useRef<HTMLDivElement>(null)
   
   const cardsSectionRef = useRef<HTMLDivElement>(null)
   const splitCardsRef = useRef<(HTMLDivElement | null)[]>([])
   const [hoveredCard, setHoveredCard] = useState<number | null>(null)
   const [activeCardIndex, setActiveCardIndex] = useState<number>(0)
   const [mobileCardIndex, setMobileCardIndex] = useState<number>(0)
-  
-  const [activeLocation, setActiveLocation] = useState<string | null>(null)
-  const [hoveredLocation, setHoveredLocation] = useState<string | null>(null)
-  const [mobileLocationIndex, setMobileLocationIndex] = useState<number>(0)
   
   const [framePos, setFramePos] = useState({ x: 100, y: 290, width: 180, height: 225 })
   const [panoramaMoveValue, setPanoramaMoveValue] = useState('-40vh')
@@ -457,38 +377,6 @@ export function HeroStoryCombined() {
   const [loadingProgress, setLoadingProgress] = useState(0)
   const [loadingText, setLoadingText] = useState('// initializing')
   const loadingContainerRef = useRef<HTMLDivElement>(null)
-
-  // Состояние для видимости панели (ДОБАВЛЕНО)
-  const [isWorldPanelVisible, setIsWorldPanelVisible] = useState(false)
-
-  // Функции для переключения локаций на мобильных
-  const nextMobileLocation = () => {
-    setMobileLocationIndex((prev) => (prev + 1) % worldLocations.length)
-    setActiveLocation(worldLocations[(mobileLocationIndex + 1) % worldLocations.length].id)
-  }
-
-  const prevMobileLocation = () => {
-    setMobileLocationIndex((prev) => (prev - 1 + worldLocations.length) % worldLocations.length)
-    setActiveLocation(worldLocations[(mobileLocationIndex - 1 + worldLocations.length) % worldLocations.length].id)
-  }
-
-  // Эффект для отслеживания видимости панели (ДОБАВЛЕН)
-  useEffect(() => {
-    if (!worldPanelRef.current) return
-    
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          setIsWorldPanelVisible(entry.isIntersecting && entry.intersectionRatio > 0.3)
-        })
-      },
-      { threshold: 0.3 }
-    )
-    
-    observer.observe(worldPanelRef.current)
-    
-    return () => observer.disconnect()
-  }, [])
 
   useEffect(() => {
     const checkDevice = () => {
@@ -754,7 +642,6 @@ useEffect(() => {
   }
 
   // ОСНОВНОЙ GSAP useEffect с masterTl
-// ОСНОВНОЙ GSAP useEffect с masterTl
 useEffect(() => {
   const ctx = gsap.context(() => {
     if (!containerRef.current || !heroImageRef.current || !flipCardWrapperRef.current) return
@@ -777,30 +664,25 @@ useEffect(() => {
     gsap.set(text2Ref.current, { opacity: 0, y: 80 })
     gsap.set(uiPanelRef.current, { opacity: 0, x: 50 })
     gsap.set(keeperSymbolRef.current, { opacity: 0, scale: 0.3 })
-    gsap.set(frameContainerRef.current, { opacity: 0 })
-    gsap.set(frameWrapperRef.current, { opacity: 0, scale: 0.8 })
-    gsap.set(worldSectionRef.current, { opacity: 0 })
-    gsap.set(worldHeaderRef.current, { opacity: 0, y: 40 })
-    gsap.set(worldMapRef.current, { opacity: 0, scale: 0.95 })
-    gsap.set(worldPanelRef.current, { opacity: 0, x: 50 })
     gsap.set(cardsSectionRef.current, { opacity: 0, pointerEvents: 'none' })
     gsap.set(gradient1Ref.current, { opacity: 0 })
     gsap.set(gradient2Ref.current, { opacity: 0 })
     
-    const masterTl = gsap.timeline({
-      scrollTrigger: {
-        trigger: containerRef.current,
-        start: 'top top',
-        end: 'bottom bottom',
-        scrub: isMobile ? 1.6 : 2.0,
-        pin: stickyRef.current,
-        anticipatePin: 1,
-        fastScrollEnd: true,
-        preventOverlaps: true,
-        invalidateOnRefresh: true,
-      }
-    });
-  
+// В useEffect с masterTl
+const masterTl = gsap.timeline({
+  scrollTrigger: {
+    trigger: containerRef.current,
+    start: "top top",
+    end: () => `+=${window.innerHeight * (isMobile ? 2.85 : 12)}`,// меняем здесь для плавности панорамы
+    scrub: isMobile ? 1.65 : 2.15,
+    pin: stickyRef.current,
+    anticipatePin: 1,
+    fastScrollEnd: true,
+    preventOverlaps: true,
+    invalidateOnRefresh: true,
+  }
+});
+
     masterTl.to(heroTextRef.current, { opacity: 0, scale: 0.95, duration: 0.02 }, 0 + startDelay)
     masterTl.to(headingRef.current, { opacity: 1, y: 0, duration: 0.02 }, 0.01 + startDelay)
     masterTl.to(leftContentRef.current, { opacity: 1, y: 0, duration: 0.02 }, 0.02 + startDelay)
@@ -808,8 +690,6 @@ useEffect(() => {
     // ВСЕ ЭЛЕМЕНТЫ ПОЯВЛЯЮТСЯ ОДНОВРЕМЕННО на 0.02 + startDelay
     masterTl.to(trailerCardRef.current, { opacity: 1, x: 0, duration: 0.02 }, 0.02 + startDelay)
     masterTl.to(flipCardContainerRef.current, { opacity: 1, scale: 1, duration: 0.02 }, 0.02 + startDelay)
-    masterTl.to(overlayFrameRef.current, { opacity: 1, duration: 0.02 }, 0.02 + startDelay)
-    masterTl.to(textOverlayFrameRef.current, { opacity: 1, duration: 0.02 }, 0.02 + startDelay)
 
     // Анимация сжатия hero ТОЛЬКО ДЛЯ ДЕСКТОПА
     if (!isMobile) {
@@ -823,7 +703,6 @@ useEffect(() => {
         ease: 'power2.inOut'
       }, 0.01 + startDelay)
     }
-    // НА МОБИЛЬНЫХ hero ОСТАЕТСЯ НА МЕСТЕ
     
     // НА МОБИЛЬНЫХ НЕ СКРЫВАЕМ trailerCardRef
     if (!isMobile) {
@@ -844,7 +723,7 @@ useEffect(() => {
       gsap.set(panoramaRef.current, { opacity: 0, visibility: 'hidden' })
       gsap.set(flipCardWrapperRef.current, { width: 140, height: 200 })
       
-      masterTl.to([overlayFrameRef.current, textOverlayFrameRef.current, trailerCardRef.current], {
+      masterTl.to([trailerCardRef.current], {
         opacity: 0,
         duration: 0.01,
         ease: 'none'
@@ -890,7 +769,7 @@ useEffect(() => {
       gsap.set(panoramaRef.current, { opacity: 0, visibility: 'hidden' })
       gsap.set(flipCardWrapperRef.current, { width: 220, height: 320 })
       
-      masterTl.to([overlayFrameRef.current, textOverlayFrameRef.current], {
+      masterTl.to([], {
         opacity: 0,
         duration: 0.01,
         ease: 'none'
@@ -936,22 +815,22 @@ useEffect(() => {
     }
 
     masterTl.to(panoramaInnerRef.current, { 
-  y: panoramaMoveValue, 
-  duration: isMobile ? 0.15 : 0.3,  // для десктопа 0.4, для мобильных 0.25
-  ease: 'none' 
-}, isMobile ? 0.35 + startDelay : 0.22 + startDelay)  // для мобильных старт позже
+      y: panoramaMoveValue, 
+      duration: isMobile ? 0.15 : 0.3,
+      ease: 'none' 
+    }, isMobile ? 0.35 + startDelay : 0.22 + startDelay)
 
- masterTl.eventCallback('onUpdate', () => {
-  const totalProgress = masterTl.progress()
-  const startPanProgress = isMobile ? 0.35 : 0.22  // для мобильных старт позже
-  const endPanProgress = isMobile ? 0.71 : 0.58    // для мобильных конец позже
-  
-  if (totalProgress >= (startPanProgress + startDelay) && totalProgress <= (endPanProgress + startDelay)) {
-    const divider = endPanProgress - startPanProgress
-    const panoramaProgress = (totalProgress - (startPanProgress + startDelay)) / divider
-    updatePanoramaProgress(panoramaProgress)
-  }
-})
+    masterTl.eventCallback('onUpdate', () => {
+      const totalProgress = masterTl.progress()
+      const startPanProgress = isMobile ? 0.35 : 0.22
+      const endPanProgress = isMobile ? 0.71 : 0.58
+      
+      if (totalProgress >= (startPanProgress + startDelay) && totalProgress <= (endPanProgress + startDelay)) {
+        const divider = endPanProgress - startPanProgress
+        const panoramaProgress = (totalProgress - (startPanProgress + startDelay)) / divider
+        updatePanoramaProgress(panoramaProgress)
+      }
+    })
 
     masterTl.to({}, { duration: 0.02 }, 0.62 + startDelay)
     masterTl.to(keeperSymbolRef.current, { opacity: 1, scale: 1, duration: 0.12, ease: 'back.out(0.8)', clearProps: 'all' }, 0.58 + startDelay)
@@ -969,26 +848,25 @@ useEffect(() => {
       rotateY: isMobile ? -15 : -35,
       rotateX: isMobile ? 3 : 8,
       rotateZ: isMobile ? -2 : -4,
-       duration: isMobile ? 0.04 : 0.04,  // для мобильных увеличил с 0.04 до 0.12
+      duration: isMobile ? 0.04 : 0.04,
       ease: 'power2.inOut'
     }, 0.63 + startDelay)
     
     masterTl.to(panoramaRef.current, { rotateY: -90, duration: 0.02, ease: 'power2.in' }, 0.65 + startDelay)
     masterTl.to(panoramaRef.current, { opacity: 0, duration: 0.01 }, 0.67 + startDelay)
 
-    masterTl.to(frameContainerRef.current, { opacity: 1, duration: 0.02 }, 0.68 + startDelay)
-    masterTl.to(frameWrapperRef.current, { opacity: 1, scale: 1, duration: 0.02, ease: 'power2.out' }, 0.68 + startDelay)
-    masterTl.to(worldSectionRef.current, { opacity: 1, duration: 0.02 }, 0.70 + startDelay)
-    masterTl.to(worldHeaderRef.current, { opacity: 1, y: 0, duration: 0.03, ease: 'power2.out' }, 0.71 + startDelay)
-    masterTl.to(worldMapRef.current, { opacity: 1, scale: 1, duration: 0.04, ease: 'back.out(0.8)' }, 0.73 + startDelay)
-    masterTl.to(worldPanelRef.current, { opacity: 1, x: 0, duration: 0.04, ease: 'power2.out' }, 0.74 + startDelay)
+   // УБИРАЕМ лишнюю задержку и СРАЗУ показываем Map секцию
+masterTl.call(() => {
+  const mapSection = document.getElementById('world')
+  if (mapSection) {
+    mapSection.style.opacity = '1'
+    mapSection.style.visibility = 'visible'
+    mapSection.style.transform = 'scale(1)'
+  }
+}, [], 0.35 + startDelay)  // СРАЗУ после панорамы
 
-    masterTl.to(gradient1Ref.current, { opacity: 1, duration: 0.08, ease: 'power2.out' }, 0.76 + startDelay)
-    masterTl.to(gradient2Ref.current, { opacity: 1, duration: 0.05, ease: 'power2.out' }, 0.83 + startDelay)
-    masterTl.to(worldSectionRef.current, { opacity: 0, duration: 0.03 }, 0.86 + startDelay)
-    masterTl.to(frameContainerRef.current, { opacity: 0, duration: 0.03 }, 0.86 + startDelay)
-    masterTl.set(cardsSectionRef.current, { opacity: 1, pointerEvents: 'auto' }, 0.89 + startDelay)
-    masterTl.to([gradient1Ref.current, gradient2Ref.current], { opacity: 0, duration: 0.04 }, 0.90 + startDelay)
+   // masterTl.set(cardsSectionRef.current, { opacity: 1, pointerEvents: 'auto' }, 0.89 + startDelay)
+   // masterTl.to([gradient1Ref.current, gradient2Ref.current], { opacity: 0, duration: 0.04 }, 0.90 + startDelay)
 
     if (!isMobile) {
       const cardRanges = [
@@ -1012,7 +890,7 @@ useEffect(() => {
         }
       }, [], 1.02 + startDelay)
     }
-
+ScrollTrigger.refresh();
   }, containerRef)
 
   return () => ctx.revert()
@@ -1160,45 +1038,6 @@ const calculateOptimalMove = () => {
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, [isMobile, isLowEnd]);
 
-  useEffect(() => {
-    if (overlayFrameRef.current) {
-      overlayFrameRef.current.style.width = `${framePos.width}px`
-      overlayFrameRef.current.style.height = `${framePos.height}px`
-      overlayFrameRef.current.style.left = `${framePos.x}px`
-      overlayFrameRef.current.style.top = `${framePos.y}px`
-    }
-  }, [framePos])
-
-  useEffect(() => {
-    const updateOverlayPositions = () => {
-      if (overlayFrameRef.current) {
-        overlayFrameRef.current.style.width = `${framePos.width}px`
-        overlayFrameRef.current.style.height = `${framePos.height}px`
-        overlayFrameRef.current.style.left = `${framePos.x}px`
-        overlayFrameRef.current.style.top = `${framePos.y}px`
-      }
-      
-      if (textOverlayFrameRef.current) {
-        if (isMobile) {
-          textOverlayFrameRef.current.style.left = `90px`
-          textOverlayFrameRef.current.style.top = `90px`
-        } else {
-          textOverlayFrameRef.current.style.left = `${framePos.x + framePos.width - 640}px`
-          textOverlayFrameRef.current.style.top = `${framePos.y + (framePos.height / 2) - 80}px`
-        }
-      }
-    }
-    
-    updateOverlayPositions()
-    window.addEventListener('resize', updateOverlayPositions)
-    
-    return () => window.removeEventListener('resize', updateOverlayPositions)
-  }, [framePos, isMobile])
-  
-  const activeLocationData = activeLocation 
-    ? worldLocations.find(l => l.id === activeLocation)
-    : null
-
   const cardColors = [
     { glow: '#00d4ff', glowRgb: '0, 212, 255', x: isMobile ? 0 : -480, title: 'The Nexus Walker', id: 'NW-001', video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4' },
     { glow: '#9945ff', glowRgb: '153, 69, 255', x: isMobile ? 0 : -160, title: 'Crystal Guardian', id: 'CG-002', video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4' },
@@ -1283,9 +1122,11 @@ const calculateOptimalMove = () => {
         </div>
       )}
 
-      <div
-      //id="universe"
-      ref={containerRef} className="relative bg-[#050508]" style={{ height: isMobile ? '350vh' : '800vh' }}>
+<div
+  ref={containerRef} 
+  className="relative bg-[#050508] min-h-screen"   // ← лучше так
+   style={{ height: isMobile ? '350vh' : '750vh' }}  // ← убери или закомментируй
+>
         <div 
           ref={stickyRef} 
           className="h-screen w-full overflow-hidden"
@@ -1295,512 +1136,6 @@ const calculateOptimalMove = () => {
           <div ref={gradient1Ref} className="absolute inset-0 z-[30] pointer-events-none opacity-0" style={{ background: 'rgb(88, 28, 135)' }} />
           <div ref={gradient2Ref} className="absolute inset-0 z-[31] pointer-events-none opacity-0" style={{ background: 'rgb(5, 5, 8)' }} />
 
-          <div ref={frameContainerRef} className="absolute inset-0 z-[35] pointer-events-none flex items-center justify-center opacity-0" style={{ perspective: '1200px', perspectiveOrigin: '50% 50%' }}>
-            <div ref={frameWrapperRef} className="relative will-change-transform origin-center opacity-0" style={{ width: 'min(90vw, 1400px)', height: 'min(85vh, 800px)', transformStyle: 'preserve-3d' }}>
-              <div ref={frameCardRef} className="relative w-full h-full will-change-transform" style={{ transformStyle: 'preserve-3d' }}>
-                <div className="absolute inset-0 rounded-3xl overflow-hidden" style={{ backfaceVisibility: 'hidden', background: 'rgba(5, 5, 8, 0.7)', backdropFilter: 'blur(2px)', border: '2px solid rgba(0, 212, 255, 0.4)', boxShadow: '0 0 60px rgba(0, 212, 255, 0.25), inset 0 0 40px rgba(0, 212, 255, 0.08)' }}>
-                  <div className="absolute top-6 left-6 w-12 h-12 border-t-2 border-l-2 border-[#00d4ff]" />
-                  <div className="absolute top-6 right-6 w-12 h-12 border-t-2 border-r-2 border-[#00d4ff]" />
-                  <div className="absolute bottom-6 left-6 w-12 h-12 border-b-2 border-l-2 border-[#00d4ff]" />
-                  <div className="absolute bottom-6 right-6 w-12 h-12 border-b-2 border-r-2 border-[#00d4ff]" />
-                  <div className="absolute inset-2 rounded-2xl border border-[#00d4ff]/20" />
-                  <div className="absolute inset-0 bg-gradient-to-br from-[#00d4ff]/5 via-transparent to-[#ff6b35]/5" />
-                </div>
-                <div className="absolute inset-0 rounded-3xl overflow-hidden" style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)', background: 'rgba(5, 5, 8, 0.7)', backdropFilter: 'blur(2px)', border: '2px solid rgba(0, 212, 255, 0.4)', boxShadow: '0 0 60px rgba(0, 212, 255, 0.25)' }}>
-                  <div className="absolute top-6 left-6 w-12 h-12 border-t-2 border-l-2 border-[#00d4ff]" />
-                  <div className="absolute top-6 right-6 w-12 h-12 border-t-2 border-r-2 border-[#00d4ff]" />
-                  <div className="absolute bottom-6 left-6 w-12 h-12 border-b-2 border-l-2 border-[#00d4ff]" />
-                  <div className="absolute bottom-6 right-6 w-12 h-12 border-b-2 border-r-2 border-[#00d4ff]" />
-                  <div className="absolute inset-2 rounded-2xl border border-[#00d4ff]/20" />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* WORLD SECTION - Адаптировано для мобильных */}
-<div
-  ref={worldSectionRef} 
-  className="absolute inset-0 z-[36] flex items-center justify-center pointer-events-auto opacity-0" 
-  style={{ padding: isMobile ? '1rem' : '2rem' }}
->
-  <div className="w-full max-w-[1300px] h-full">
-    <div className="py-4 md:py-8 px-4 md:px-6">
-      <div ref={worldHeaderRef} className="text-center mb-8 md:mb-12 opacity-0 translate-y-10">
-        <div className="flex items-center gap-2 md:gap-4 mb-4 md:mb-6 justify-center">
-          <div className="h-px w-8 md:w-16 bg-gradient-to-r from-transparent to-[#00d4ff]/50" />
-          <span className="font-mono text-[10px] md:text-xs text-[#00d4ff] tracking-[0.2em] md:tracking-[0.3em]">
-            &gt; SECTION_003
-          </span>
-          <div className="h-px w-8 md:w-16 bg-gradient-to-l from-transparent to-[#00d4ff]/50" />
-        </div>
-        <h2 className="text-3xl md:text-5xl lg:text-7xl font-bold">
-          <span className="text-[#e8e8ec]">The </span>
-          <span className="text-[#00d4ff]">World</span>
-        </h2>
-        <p className="text-center text-[#6b6b7b] text-xs md:text-sm mt-2 md:mt-4 max-w-md mx-auto">
-          Explore the territories under the Protocol&apos;s protection
-        </p>
-      </div>
-      
-      <div className="flex flex-col lg:flex-row gap-4 md:gap-6 w-full items-start">
-        {/* КАРТА - всегда видна */}
-        <div 
-          ref={worldMapRef}
-          className="relative flex-1 w-full bg-[#0a0a0f]/80 border border-[#1a1a24] overflow-hidden rounded-xl opacity-0 scale-95"
-          style={{ minHeight: isMobile ? '400px' : '450px' }}
-        >
-          {/* Фоновое изображение map.webp */}
-          <div className="absolute inset-0 w-full h-full">
-            <img 
-              src="/image/map.webp"
-              alt="World Map Background"
-              className="w-full h-full object-cover opacity-70"
-            />
-            <div className="absolute inset-0 bg-black/20" />
-          </div>
-
-          {/* Линии между точками - адаптированы для мобильных */}
-          <svg className="absolute inset-0 w-full h-full z-10 pointer-events-none" viewBox="0 0 100 100" preserveAspectRatio="none">
-            {worldLocations.map((loc, i) => {
-              const nextLoc = worldLocations[(i + 1) % worldLocations.length]
-              return (
-                <g key={`line-${i}`}>
-                  <line
-                    x1={loc.coordinates.x}
-                    y1={loc.coordinates.y}
-                    x2={nextLoc.coordinates.x}
-                    y2={nextLoc.coordinates.y}
-                    stroke="#00d4ff"
-                    strokeWidth={isMobile ? "0.8" : "0.6"}
-                    strokeOpacity="0.5"
-                    strokeDasharray="3 3"
-                  />
-                </g>
-              )
-            })}
-            <line x1="50" y1="40" x2="30" y2="20" stroke="#ff006e" strokeWidth={isMobile ? "0.8" : "0.6"} strokeOpacity="0.5" strokeDasharray="3 3" />
-            <line x1="50" y1="40" x2="70" y2="30" stroke="#9d4edd" strokeWidth={isMobile ? "0.8" : "0.6"} strokeOpacity="0.5" strokeDasharray="3 3" />
-            <line x1="50" y1="40" x2="80" y2="60" stroke="#00d4ff" strokeWidth={isMobile ? "0.8" : "0.6"} strokeOpacity="0.5" strokeDasharray="3 3" />
-            <line x1="50" y1="40" x2="20" y2="65" stroke="#ff006e" strokeWidth={isMobile ? "0.8" : "0.6"} strokeOpacity="0.5" strokeDasharray="3 3" />
-            <line x1="50" y1="40" x2="55" y2="75" stroke="#9d4edd" strokeWidth={isMobile ? "0.8" : "0.6"} strokeOpacity="0.5" strokeDasharray="3 3" />
-          </svg>
-
-          {/* Точки (маркеры) - всегда видны */}
-          {worldLocations.map((location) => (
-            <div
-              key={location.id}
-              className="absolute transform -translate-x-1/2 -translate-y-1/2 cursor-pointer group z-20"
-              style={{
-                left: `${location.coordinates.x}%`,
-                top: `${location.coordinates.y}%`
-              }}
-              onClick={() => setActiveLocation(activeLocation === location.id ? null : location.id)}
-              onMouseEnter={() => setHoveredLocation(location.id)}
-              onMouseLeave={() => setHoveredLocation(null)}
-            >
-              <div 
-                className="absolute inset-0 rounded-full animate-ping opacity-30"
-                style={{ backgroundColor: getStatusColor(location.status), animationDuration: '2s' }}
-              />
-              <div 
-                className={`relative w-3 h-3 md:w-4 md:h-4 rounded-full border-2 transition-all duration-300 ${
-                  activeLocation === location.id ? 'scale-150' : 'group-hover:scale-125'
-                }`}
-                style={{ 
-                  borderColor: getStatusColor(location.status),
-                  backgroundColor: activeLocation === location.id ? getStatusColor(location.status) : 'transparent'
-                }}
-              />
-              {(hoveredLocation === location.id && activeLocation !== location.id && !isMobile) && (
-                <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 px-2 py-1 bg-[#0a0a0f] border border-[#1a1a24] whitespace-nowrap z-10 rounded">
-                  <div className="text-xs font-medium text-[#e8e8ec]">{location.name}</div>
-                  <div className="text-xs font-mono" style={{ color: getStatusColor(location.status) }}>{location.status}</div>
-                </div>
-              )}
-            </div>
-          ))}
-
-          {/* Corner Decorations */}
-          <div className="absolute top-2 left-2 md:top-4 md:left-4 w-4 h-4 md:w-8 md:h-8 border-t-2 border-l-2 border-[#00d4ff]/50" />
-          <div className="absolute top-2 right-2 md:top-4 md:right-4 w-4 h-4 md:w-8 md:h-8 border-t-2 border-r-2 border-[#00d4ff]/50" />
-          <div className="absolute bottom-2 left-2 md:bottom-4 md:left-4 w-4 h-4 md:w-8 md:h-8 border-b-2 border-l-2 border-[#00d4ff]/50" />
-          <div className="absolute bottom-2 right-2 md:bottom-4 md:right-4 w-4 h-4 md:w-8 md:h-8 border-b-2 border-r-2 border-[#00d4ff]/50" />
-          
-          <div className="absolute top-2 left-1/2 -translate-x-1/2 px-2 md:px-4 py-0.5 md:py-1 bg-[#050508]/80 rounded-full whitespace-nowrap">
-            <span className="font-mono text-[8px] md:text-xs text-[#00d4ff]">PROTOCOL NETWORK MAP v2.4</span>
-          </div>
-          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 font-mono text-[8px] md:text-xs text-[#6b6b7b] whitespace-nowrap">
-            {hoveredLocation ? (
-              <span>X: {worldLocations.find(l => l.id === hoveredLocation)?.coordinates.x} | Y: {worldLocations.find(l => l.id === hoveredLocation)?.coordinates.y}</span>
-            ) : (
-              <span>HOVER TO VIEW COORDINATES</span>
-            )}
-          </div>
-        </div>
-
-       
-{/* Панель с описанием - адаптирована для мобильных */}
-
-<div 
-  ref={worldPanelRef} 
-  className={`w-full lg:w-80 space-y-3 md:space-y-4 opacity-0`}
-  style={isMobile ? { marginTop: '30%' } : { transform: 'translateY(-30%) translateX(3rem)' }}
->
-
-          <a 
-  href={isWorldPanelVisible ? "/galaxy-map-demo" : "#"}
-  target="_blank"
-  rel="noopener noreferrer"
-  className="block"
-  onClick={(e) => {
-    if (!isWorldPanelVisible) {
-      e.preventDefault()
-    }
-  }}
-  style={{ 
-    pointerEvents: isWorldPanelVisible ? 'auto' : 'none',
-    opacity: isWorldPanelVisible ? 1 : 0.5,
-    cursor: isWorldPanelVisible ? 'pointer' : 'default'
-  }}
->
-  <button className="w-full py-2 md:py-2.5 bg-gradient-to-r from-[#00d4ff]/10 to-[#ff006e]/10 border border-[#00d4ff] rounded-lg hover:shadow-[0_0_20px_rgba(0,212,255,0.3)] transition-all duration-300 group">
-    <span className="flex items-center justify-center gap-2">
-      <svg className="w-3 h-3 md:w-3.5 md:h-3.5 text-[#00d4ff]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-      </svg>
-      <span className="flex items-center">
-        <TextScramble 
-          text="EXPLORE MAP" 
-          className="text-[10px] md:text-xs font-mono font-bold tracking-wider text-[#00d4ff] leading-none" 
-        />
-      </span>
-      <svg className="w-3 h-3 md:w-3.5 md:h-3.5 text-[#00d4ff] group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-      </svg>
-    </span>
-  </button>
-</a>
-          {activeLocationData ? (
-            <div className="relative p-3 md:p-6 bg-[#0a0a0f]/80 border border-[#1a1a24] rounded-xl transition-all duration-300">
-              {/* Навигация стрелками ТОЛЬКО для мобильных */}
-              {isMobile && (
-                <>
-                  <button
-                    onClick={prevMobileLocation}
-                    className="absolute left-2 top-1/2 -translate-y-1/2 w-7 h-7 bg-[#0a0a0f] border border-[#1a1a24] rounded-full flex items-center justify-center z-10 hover:border-[#00d4ff] transition-colors"
-                  >
-                    <ChevronLeft className="w-4 h-4 text-[#00d4ff]" />
-                  </button>
-                  <button
-                    onClick={nextMobileLocation}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 bg-[#0a0a0f] border border-[#1a1a24] rounded-full flex items-center justify-center z-10 hover:border-[#00d4ff] transition-colors"
-                  >
-                    <ChevronRight className="w-4 h-4 text-[#00d4ff]" />
-                  </button>
-                </>
-              )}
-
-              {/* Индикатор номера (только для мобильных) */}
-              {isMobile && (
-                <div className="absolute top-2 right-2 text-[8px] font-mono text-[#00d4ff] bg-black/50 px-2 py-0.5 rounded">
-                  {mobileLocationIndex + 1}/{worldLocations.length}
-                </div>
-              )}
-
-              <div className="flex items-center justify-between mb-2 md:mb-4">
-                <span 
-                  className="px-1.5 py-0.5 md:px-2 md:py-1 text-[8px] md:text-xs font-mono rounded" 
-                  style={{ backgroundColor: `${getStatusColor(activeLocationData.status)}20`, color: getStatusColor(activeLocationData.status) }}
-                >
-                  {activeLocationData.type}
-                </span>
-                <span className="text-[8px] md:text-xs font-mono" style={{ color: getStatusColor(activeLocationData.status) }}>
-                  {activeLocationData.status}
-                </span>
-              </div>
-              <h3 className="text-base md:text-xl font-bold text-[#e8e8ec] mb-1 md:mb-2 pr-8 md:pr-0">{activeLocationData.name}</h3>
-              <p className="text-xs md:text-sm text-[#6b6b7b] mb-2 md:mb-4">{activeLocationData.description}</p>
-              <div className="pt-2 md:pt-4 border-t border-[#1a1a24]">
-                <div className="flex justify-between text-[8px] md:text-xs font-mono">
-                  <span className="text-[#6b6b7b]">COORDINATES</span>
-                  <span className="text-[#00d4ff]">{activeLocationData.coordinates.x}, {activeLocationData.coordinates.y}</span>
-                </div>
-              </div>
-              <button className="w-full mt-2 md:mt-4 py-1.5 md:py-2 border border-[#2a2a38] hover:border-[#00d4ff] text-xs md:text-sm font-medium text-[#e8e8ec] transition-colors duration-300 rounded">
-                View Full Details
-              </button>
-            </div>
-          ) : (
-            <div className="relative p-3 md:p-6 bg-[#0a0a0f]/80 border border-[#1a1a24] text-center rounded-xl">
-              <div className="text-[#6b6b7b] text-xs md:text-sm mb-2">Select a location on the map</div>
-              <div className="font-mono text-[10px] md:text-xs text-[#00d4ff]">{worldLocations.length} LOCATIONS AVAILABLE</div>
-              
-              {/* Кнопки выбора локации на мобильных */}
-              {isMobile && (
-                <div className="flex justify-center gap-4 mt-4">
-                  <button
-                    onClick={prevMobileLocation}
-                    className="px-4 py-1 border border-[#00d4ff] rounded text-xs text-[#00d4ff] hover:bg-[#00d4ff]/10"
-                  >
-                    Previous
-                  </button>
-                  <button
-                    onClick={nextMobileLocation}
-                    className="px-4 py-1 border border-[#00d4ff] rounded text-xs text-[#00d4ff] hover:bg-[#00d4ff]/10"
-                  >
-                    Next
-                  </button>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Список локаций - только для десктопа */}
-          {!isMobile && (
-            <div className="space-y-2 max-h-[300px] md:max-h-[400px] overflow-y-auto pr-1">
-              <div className="text-[8px] font-mono text-[#00d4ff] mb-2 px-2">
-                {worldLocations.length} NODES_ACTIVE
-              </div>
-              {worldLocations.map((location) => (
-                <button
-                  key={location.id}
-                  onClick={() => setActiveLocation(activeLocation === location.id ? null : location.id)}
-                  className={`w-full flex items-center justify-between p-2 md:p-3 border transition-all duration-300 rounded ${
-                    activeLocation === location.id ? 'bg-[#0a0a0f] border-[#00d4ff]' : 'bg-transparent border-[#1a1a24] hover:border-[#2a2a38]'
-                  }`}
-                >
-                  <div className="flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full" style={{ backgroundColor: getStatusColor(location.status) }} />
-                    <span className="text-xs md:text-sm text-[#e8e8ec]">{location.name}</span>
-                  </div>
-                  <span className="text-[8px] md:text-[10px] font-mono text-[#6b6b7b]">{location.id}</span>
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-          {/* CARDS SECTION */}
-          <div ref={cardsSectionRef} className="absolute inset-0 z-[100] bg-[#050508] opacity-0 pointer-events-none">
-            <div className="w-full h-full flex flex-col items-center justify-center px-4">
-              
-              {isMobile ? (
-                <>
-                  <div className="text-center mb-6">
-                    <span className="font-mono text-[10px] text-[#00d4ff] tracking-wider">CHARACTERS</span>
-                    <h3 className="text-lg font-bold text-[#e8e8ec] mt-1">Choose Your Path</h3>
-                  </div>
-                  
-                  <div 
-                    className="relative"
-                    onTouchStart={() => {
-                      setIsAutoPlaying(false);
-                      setTimeout(() => setIsAutoPlaying(true), 10000);
-                    }}
-                  >
-                    <div
-                      className="rounded-2xl overflow-hidden transition-all duration-500"
-                      style={{
-                        width: cardWidth,
-                        height: cardHeight,
-                        border: `2px solid ${cardColors[mobileCardIndex].glow}`,
-                        boxShadow: `0 0 30px ${cardColors[mobileCardIndex].glow}`,
-                      }}
-                    >
-                      <video
-                        src={cardColors[mobileCardIndex].video}
-                        autoPlay
-                        loop
-                        muted
-                        playsInline
-                        className="w-full h-full object-cover"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-[#050508] via-[#050508]/40 to-transparent" />
-                      
-                      <div 
-                        className="absolute inset-0 opacity-20"
-                        style={{ background: `radial-gradient(circle at center, ${cardColors[mobileCardIndex].glow}40 0%, transparent 80%)` }}
-                      />
-                      
-                      <div className="absolute top-3 left-3 w-5 h-5 border-t-2 border-l-2" style={{ borderColor: cardColors[mobileCardIndex].glow }} />
-                      <div className="absolute top-3 right-3 w-5 h-5 border-t-2 border-r-2" style={{ borderColor: cardColors[mobileCardIndex].glow }} />
-                      <div className="absolute bottom-3 left-3 w-5 h-5 border-b-2 border-l-2" style={{ borderColor: cardColors[mobileCardIndex].glow }} />
-                      <div className="absolute bottom-3 right-3 w-5 h-5 border-b-2 border-r-2" style={{ borderColor: cardColors[mobileCardIndex].glow }} />
-                      
-                      <div className="absolute bottom-5 left-5 right-5">
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className="text-[9px] font-mono text-[#ff6b35]">ID:</span>
-                          <span className="text-[9px] font-mono" style={{ color: cardColors[mobileCardIndex].glow }}>{cardColors[mobileCardIndex].id}</span>
-                        </div>
-                        <div className="text-base font-bold text-[#e8e8ec] tracking-wide">{cardColors[mobileCardIndex].title}</div>
-                        <div className="w-8 h-px bg-gradient-to-r from-[#00d4ff] to-transparent mt-2" />
-                      </div>
-                    </div>
-                    
-                    {!isAutoPlaying && (
-                      <div className="absolute top-3 right-12 bg-black/50 text-white text-[10px] px-2 py-1 rounded-full font-mono">
-                        PAUSED
-                      </div>
-                    )}
-                    
-                    <button
-                      onClick={() => {
-                        prevMobileCard();
-                        setIsAutoPlaying(false);
-                        setTimeout(() => setIsAutoPlaying(true), 10000);
-                      }}
-                      className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-10 w-8 h-8 bg-[#0a0a0f] border border-[#1a1a24] rounded-full flex items-center justify-center"
-                    >
-                      <ChevronLeft className="w-4 h-4 text-[#00d4ff]" />
-                    </button>
-                    
-                    <button
-                      onClick={() => {
-                        nextMobileCard();
-                        setIsAutoPlaying(false);
-                        setTimeout(() => setIsAutoPlaying(true), 10000);
-                      }}
-                      className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-10 w-8 h-8 bg-[#0a0a0f] border border-[#1a1a24] rounded-full flex items-center justify-center"
-                    >
-                      <ChevronRight className="w-4 h-4 text-[#00d4ff]" />
-                    </button>
-                    
-                    <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 flex gap-2">
-                      {cardColors.map((_, idx) => (
-                        <button
-                          key={idx}
-                          onClick={() => {
-                            setMobileCardIndex(idx);
-                            setIsAutoPlaying(false);
-                            setTimeout(() => setIsAutoPlaying(true), 10000);
-                          }}
-                          className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                            idx === mobileCardIndex ? 'w-4 bg-[#00d4ff]' : 'bg-[#2a2a3a]'
-                          }`}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                  
-                  <button
-                    className="mt-12 relative px-6 py-2 rounded-full text-xs font-bold tracking-wider uppercase transition-all duration-300"
-                    style={{
-                      background: `linear-gradient(135deg, ${cardColors[mobileCardIndex].glow}20, ${cardColors[mobileCardIndex].glow}05)`,
-                      border: `1px solid ${cardColors[mobileCardIndex].glow}`,
-                      color: cardColors[mobileCardIndex].glow,
-                      boxShadow: `0 0 15px ${cardColors[mobileCardIndex].glow}60`,
-                    }}
-                  >
-                    Explore
-                  </button>
-                </>
-              ) : (
-                <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center">
-                  {cardColors.map((cardColor, i) => {
-                    const isActive = hoveredCard !== null ? hoveredCard === i : activeCardIndex === i
-                    return (
-                      <div
-                        key={i}
-                        ref={el => { splitCardsRef.current[i] = el }}
-                        className="absolute cursor-pointer"
-                        style={{
-                          width: cardWidth,
-                          height: cardHeight,
-                          transform: `translateX(${cardColor.x}px) ${isActive ? 'scale(1.1)' : 'scale(1)'}`,
-                          transition: 'transform 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1)',
-                          zIndex: isActive ? 110 : 5,
-                          willChange: 'transform'
-                        }}
-                        onMouseEnter={() => {
-                          setHoveredCard(i)
-                          setActiveCardIndex(i)
-                        }}
-                        onMouseLeave={() => setHoveredCard(null)}
-                      >
-                        <div 
-                          className="relative w-full h-full rounded-2xl overflow-hidden transition-all duration-500"
-                          style={{
-                            border: `2px solid ${isActive ? cardColor.glow : `rgba(${cardColor.glowRgb}, 0.2)`}`,
-                            boxShadow: isActive 
-                              ? `0 0 60px ${cardColor.glow}, 0 0 120px ${cardColor.glow}80, inset 0 0 40px ${cardColor.glow}40` 
-                              : '0 10px 40px rgba(0, 0, 0, 0.4)',
-                            transition: 'all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1)'
-                          }}
-                        >
-                          {isActive ? (
-                            <video
-                              src={cardColor.video}
-                              autoPlay
-                              loop
-                              muted
-                              playsInline
-                              className="w-full h-full object-cover"
-                            />
-                          ) : (
-                            <img
-                              src={`https://images.unsplash.com/photo-${i === 0 ? '1507003211169-0a1dd7228f2d' : i === 1 ? '1534528741775-53994a69daeb' : i === 2 ? '1531746020798-e6953c6e8e04' : '1534447677768-be436bb09401'}?w=560&h=1040&fit=crop`}
-                              alt="Character Card"
-                              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                            />
-                          )}
-                          
-                          <div className="absolute inset-0 bg-gradient-to-t from-[#050508] via-[#050508]/40 to-transparent" />
-                          
-                          {isActive && (
-                            <div 
-                              className="absolute inset-0 opacity-30"
-                              style={{ background: `radial-gradient(circle at center, ${cardColor.glow}40 0%, transparent 80%)` }}
-                            />
-                          )}
-                          
-                          <div className="absolute top-3 left-3 w-5 h-5 border-t-2 border-l-2 transition-all duration-300" style={{ borderColor: isActive ? cardColor.glow : `rgba(${cardColor.glowRgb}, 0.5)` }} />
-                          <div className="absolute top-3 right-3 w-5 h-5 border-t-2 border-r-2 transition-all duration-300" style={{ borderColor: isActive ? cardColor.glow : `rgba(${cardColor.glowRgb}, 0.5)` }} />
-                          <div className="absolute bottom-3 left-3 w-5 h-5 border-b-2 border-l-2 transition-all duration-300" style={{ borderColor: isActive ? cardColor.glow : `rgba(${cardColor.glowRgb}, 0.5)` }} />
-                          <div className="absolute bottom-3 right-3 w-5 h-5 border-b-2 border-r-2 transition-all duration-300" style={{ borderColor: isActive ? cardColor.glow : `rgba(${cardColor.glowRgb}, 0.5)` }} />
-                          
-                          <div className="absolute bottom-5 left-5 right-5">
-                            <div className="flex items-center gap-2 mb-1">
-                              <span className="text-[9px] font-mono tracking-wider text-[#ff6b35]">ID:</span>
-                              <span className="text-[9px] font-mono" style={{ color: cardColor.glow }}>{cardColor.id}</span>
-                            </div>
-                            <div className="text-sm font-bold text-[#e8e8ec] tracking-wide">{cardColor.title}</div>
-                            <div className="w-8 h-px bg-gradient-to-r from-[#00d4ff] to-transparent mt-2" />
-                          </div>
-                        </div>
-                        
-                        <div 
-                          className="absolute -bottom-12 left-1/2 transition-all duration-500"
-                          style={{
-                            opacity: isActive ? 1 : 0,
-                            transform: `translateX(-50%) translateY(${isActive ? '0' : '10px'})`,
-                            transitionDelay: isActive ? '0.2s' : '0s'
-                          }}
-                        >
-                          <button
-                            className="group relative px-6 py-2 rounded-full text-xs font-bold tracking-wider uppercase transition-all duration-300 hover:scale-105 overflow-hidden"
-                            style={{
-                              background: `linear-gradient(135deg, ${cardColor.glow}20, ${cardColor.glow}05)`,
-                              border: `1px solid ${cardColor.glow}`,
-                              color: cardColor.glow,
-                              boxShadow: `0 0 15px ${cardColor.glow}60`,
-                              backdropFilter: 'blur(4px)'
-                            }}
-                          >
-                            <span className="relative z-10">Explore</span>
-                          </button>
-                        </div>
-                      </div>
-                    )
-                  })}
-                </div>
-              )}
-            </div>
-          </div>
-          
           {/* PANORAMA */}
           <div ref={panoramaRef} className="absolute inset-0 z-10 overflow-hidden">
             <div ref={panoramaInnerRef} className="absolute top-0 left-0 w-full" style={{ height: 'auto' }}>
@@ -2085,12 +1420,12 @@ const calculateOptimalMove = () => {
       }}
       onClick={() => {
         // Открыть видео в модальном окне или перейти по ссылке
-        window.open('https://your-video-link.com', '_blank')
+       // window.open('https://your-video-link.com', '_blank')
       }}
     >
       {/* Миниатюра трейлера */}
       <img 
-        src="/image/comingsoon.webp"  // <-- УКАЖИТЕ ПУТЬ К ВАШЕЙ МИНИАТЮРЕ
+        src="/image/comingsoon.webp"
         alt="Trailer thumbnail"
         className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
       />
@@ -2109,7 +1444,7 @@ const calculateOptimalMove = () => {
     {!isMobile && (
       <div className="flex gap-3 mt-4">
         <button 
-          onClick={() => window.open('https://your-video-link.com', '_blank')}
+         // onClick={() => window.open('https://your-video-link.com', '_blank')}
           className="px-6 py-2.5 bg-[#00d4ff] hover:bg-[#00b8e0] text-[#050508] rounded-lg text-sm font-medium transition-colors"
         >
           Watch Now
@@ -2128,7 +1463,6 @@ const calculateOptimalMove = () => {
 
           {/* HERO IMAGE */}
           <div
-         // id="universe" 
             ref={heroImageRef}
             className="absolute z-25 overflow-hidden"
             style={{
@@ -2190,64 +1524,6 @@ const calculateOptimalMove = () => {
                   <div className="w-1.5 h-3 bg-[#00d4ff] rounded-full animate-pulse" />
                 </div>
               </div>
-            </div>
-          </div>
-          
-          {/* РАМКА-ОВЕРЛЕЙ */}
-          <div
-            ref={overlayFrameRef}
-            className="absolute z-[100] pointer-events-none"
-            style={{
-              opacity: 0,
-              position: 'absolute',
-              width: framePos.width,
-              height: framePos.height,
-              left: framePos.x,
-              top: framePos.y,
-            }}
-          >
-            <div className="relative w-full h-full rounded-xl overflow-hidden">
-              <div className="absolute top-2 left-2 w-4 h-4 border-t-2 border-l-2 border-[#00d4ff]" />
-              <div className="absolute top-2 right-2 w-4 h-4 border-t-2 border-r-2 border-[#00d4ff]" />
-              <div className="absolute bottom-2 left-2 w-4 h-4 border-b-2 border-l-2 border-[#00d4ff]" />
-              <div className="absolute bottom-2 right-2 w-4 h-4 border-b-2 border-r-2 border-[#00d4ff]" />
-            </div>
-          </div>
-
-          {/* ТЕКСТОВАЯ РАМКА-ОВЕРЛЕЙ */}
-          <div
-            ref={textOverlayFrameRef}
-            className="absolute z-[100] pointer-events-none"
-            style={{
-              opacity: 0,
-              position: 'absolute',
-            }}
-          >
-            <div
-              style={{
-                position: 'relative',
-                width: isMobile ? '250px' : '180px',
-                height: isMobile ? '150px' : '150px',
-                marginBottom: '16px',
-              }}
-            >
-              <div className="relative w-full h-full">
-                <div className="absolute top-2 left-2 w-4 h-4 border-t-2 border-l-2 border-[#00d4ff]" />
-                <div className="absolute top-2 right-2 w-4 h-4 border-t-2 border-r-2 border-[#00d4ff]" />
-                <div className="absolute bottom-2 left-2 w-4 h-4 border-b-2 border-l-2 border-[#00d4ff]" />
-                <div className="absolute bottom-2 right-2 w-4 h-4 border-b-2 border-r-2 border-[#00d4ff]" />
-              </div>
-            </div>
-            
-            <div 
-              className="text-sm text-[#FFFFFF] leading-relaxed"
-              style={{
-                maxWidth: isMobile ? '350px' : '180px',
-                fontSize: isMobile ? '16px' : '14px',
-                marginLeft: isMobile ? '-40px' : '0',
-              }}
-            >
-              A mysterious cosmic phenomenon connecting minds across the galaxy and awakening ancient powers. 
             </div>
           </div>
           

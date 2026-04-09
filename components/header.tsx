@@ -7,6 +7,8 @@ import { TextScramble } from "@/components/ui/text-scramble"
 
 const navItems = [
   { label: 'Universe', href: '#universe' },
+  { label: 'Map', href: '#world' },        // <-- Map вместо World
+   { label: 'Cards', href: '#cards' }, 
   { label: 'Comic', href: '#comic' },
   { label: 'Products', href: '#products' },
   { label: 'Media', href: '#media' },
@@ -109,12 +111,14 @@ export function Header() {
   // Определение активной секции при скролле
   useEffect(() => {
     const handleScrollDetection = () => {
-      const sections = [
-        { id: 'universe', element: document.getElementById('universe') },
-        { id: 'comic', element: document.getElementById('comic') },
-        { id: 'products', element: document.getElementById('products') },
-        { id: 'media', element: document.getElementById('media') }
-      ]
+  const sections = [
+    { id: 'universe', element: document.getElementById('universe') },
+    { id: 'world', element: document.getElementById('world') },    // <-- ДОБАВИТЬ
+    { id: 'cards', element: document.getElementById('cards') },    // <-- ДОБАВИТЬ
+    { id: 'comic', element: document.getElementById('comic') },
+    { id: 'products', element: document.getElementById('products') },
+    { id: 'media', element: document.getElementById('media') }
+  ]
 
       const scrollPosition = window.scrollY + 200
 
@@ -286,24 +290,24 @@ export function Header() {
                     }}
                     className={`menu-item group relative py-4 px-8 cursor-pointer ${isScrolling ? 'pointer-events-none opacity-50' : ''}`}
                   >
-                    {isActive ? (
-                      <div className="relative inline-block">
-                        <span 
-                          className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-wide 
-                                     bg-[#39ff14] text-black px-10 py-4 rounded-r-3xl inline-block"
-                        >
-                          {item.label.toUpperCase()}
-                        </span>
-                        <span className="absolute -top-3 -right-3 text-xs font-mono bg-black text-[#39ff14] px-3 py-1 tracking-[2px] border border-[#39ff14]/50">
-                          PAGE 00{index + 1}
-                        </span>
-                      </div>
-                    ) : (
-                      <TextScramble 
-                        text={item.label.toUpperCase()} 
-                        className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-wide text-white group-hover:text-[#00d4ff] transition-colors duration-300"
-                      />
-                    )}
+{isActive ? (
+  <div className="relative inline-block">
+    <span 
+      className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-wide 
+                 bg-[#39ff14] text-black px-8 py-3 rounded-r-3xl inline-block"
+    >
+      {item.label.toUpperCase()}
+    </span>
+    <span className="absolute -top-2 -right-2 text-[9px] font-mono bg-black text-[#39ff14] px-2 py-0.5 tracking-[2px] border border-[#39ff14]/50">
+      PAGE 00{index + 1}
+    </span>
+  </div>
+) : (
+  <TextScramble 
+    text={item.label.toUpperCase()} 
+    className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-wide text-white group-hover:text-[#00d4ff] transition-colors duration-300"
+  />
+)}
 
                     <span className="absolute -left-8 top-1/2 -translate-y-1/2 text-sm font-mono text-[#6b6b7b] group-hover:text-[#00d4ff] transition-colors duration-300">
                       0{index + 1}
