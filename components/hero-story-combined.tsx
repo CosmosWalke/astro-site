@@ -1312,15 +1312,20 @@ const calculateOptimalMove = () => {
               </div>
             </div>
 
-            <div
-              ref={keeperSymbolRef}
-              className="absolute inset-0 flex items-center justify-center z-30 pointer-events-none"
-            >
-              <svg width={isMobile ? "80" : "200"} height={isMobile ? "120" : "300"} viewBox="0 0 100 150" className="text-white opacity-80">
-                <path d="M50 0 L50 45 M50 105 L50 150 M0 75 L45 75 M55 75 L100 75" stroke="currentColor" strokeWidth={isMobile ? 5 : 8} fill="none" />
-                <rect x="35" y="60" width="30" height="30" fill="none" stroke="currentColor" strokeWidth={isMobile ? 5 : 8} />
-              </svg>
-            </div>
+<div
+  ref={keeperSymbolRef}
+  className="absolute inset-0 flex items-center justify-center z-30 pointer-events-none"
+>
+  <img 
+    src="/image/A1.png"
+    alt="Symbol"
+    className="opacity-80"
+    style={{
+      width: isMobile ? '80px' : '200px',
+      height: 'auto'
+    }}
+  />
+</div>
           </div>
 
           {/* CONTENT LAYER */}
