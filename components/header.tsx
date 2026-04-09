@@ -4,7 +4,8 @@ import { useState, useEffect, useRef } from 'react'
 import { gsap } from 'gsap'
 import { Menu, X } from 'lucide-react'
 import { TextScramble } from "@/components/ui/text-scramble"
-
+import { BackToShipButton } from "@/components/ui/back-to-ship-button";
+import AstraButton from "@/components/ui/astra-button";
 const navItems = [
   { label: 'Universe', href: '#universe' },
   { label: 'Map', href: '#world' },
@@ -252,12 +253,12 @@ export function Header() {
               </a>
             </div>
 
-            <a 
-              href="/"
-              className="px-4 py-2 bg-[#00d4ff] text-black rounded-full text-sm font-mono hover:shadow-[0_0_15px_#00d4ff] transition-all"
-            >
-              BACK TO SHIP
-            </a>
+<AstraButton 
+  label="BACK TO SHIP" 
+  onClick={() => {
+    window.location.href = "/";
+  }}
+/>
 
             <nav className="hidden lg:flex items-center gap-1">
               {navItems.map((item, index) => {
