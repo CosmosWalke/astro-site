@@ -12,8 +12,8 @@ interface SimpleGlobeProps {
   globeSpeed?: number
   satellite?: boolean
   satelliteSpeed?: number
-  appearDelay?: number // Задержка перед появлением в мс
-  glitchInterval?: number // Интервал между глитчами в мс (0 = отключено)
+  appearDelay?: number
+  glitchInterval?: number
 }
 
 export default function SimpleGlobe({ 
@@ -34,8 +34,7 @@ export default function SimpleGlobe({
   const satelliteRotationRef = useRef(0)
   const animationRef = useRef<number | undefined>(undefined)
   const [isVisible, setIsVisible] = useState(false)
-  const [glitchIntensity, setGlitchIntensity] = useState(0)
-  const [glitchOffset, setGlitchOffset] = useState({ x: 0, y: 0 })
+  const [glitchActive, setGlitchActive] = useState(false)
   const periodicGlitchRef = useRef<NodeJS.Timeout | null>(null)
   
   const satellitePointsRef = useRef<Array<{
@@ -47,45 +46,29 @@ export default function SimpleGlobe({
 
   // Функция запуска глитча
   const startGlitch = () => {
-    let glitchFrames = 0
-    const glitchTimer = setInterval(() => {
-      if (glitchFrames < 12) {
-        setGlitchIntensity(Math.random() * 0.8 + 0.2)
-        setGlitchOffset({
-          x: (Math.random() - 0.5) * 12,
-          y: (Math.random() - 0.5) * 6
-        })
-        glitchFrames++
-      } else {
-        clearInterval(glitchTimer)
-        setGlitchIntensity(0)
-        setGlitchOffset({ x: 0, y: 0 })
-      }
-    }, 50)
+    setGlitchActive(true)
+    setTimeout(() => {
+      setGlitchActive(false)
+    }, 150)
   }
 
-  // Эффект появления с задержкой (глитч при старте)
+  // Эффект появления
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsVisible(true)
       startGlitch()
     }, appearDelay)
-    
     return () => clearTimeout(timer)
   }, [appearDelay])
 
   // Периодический глитч
   useEffect(() => {
     if (!isVisible || glitchInterval === 0) return
-    
     periodicGlitchRef.current = setInterval(() => {
       startGlitch()
     }, glitchInterval)
-    
     return () => {
-      if (periodicGlitchRef.current) {
-        clearInterval(periodicGlitchRef.current)
-      }
+      if (periodicGlitchRef.current) clearInterval(periodicGlitchRef.current)
     }
   }, [isVisible, glitchInterval])
 
@@ -120,14 +103,9 @@ export default function SimpleGlobe({
       const points: Array<{
         x: number, y: number, opacity: number, targetOpacity: number
       }> = []
-      
       for (let lon = -180; lon <= 180; lon += 12) {
         for (let lat = -75; lat <= 75; lat += 12) {
-          points.push({
-            x: 0, y: 0,
-            opacity: 1,
-            targetOpacity: 1
-          })
+          points.push({ x: 0, y: 0, opacity: 1, targetOpacity: 1 })
         }
       }
       return points
@@ -135,10 +113,7 @@ export default function SimpleGlobe({
 
     satellitePointsRef.current = generateSatellitePoints()
 
-    const drawGlobe = (x: number, y: number, radius: number, baseColor: string, rotation: number, opacity: number = 1) => {
-      ctx.save()
-      ctx.globalAlpha = opacity
-      
+    const drawGlobe = (x: number, y: number, radius: number, baseColor: string, rotation: number) => {
       ctx.beginPath()
       ctx.arc(x, y, radius + 2, 0, 2 * Math.PI)
       ctx.fillStyle = `${baseColor}10`
@@ -156,7 +131,6 @@ export default function SimpleGlobe({
         const lat = (i / 90) * Math.PI / 2
         const yOffset = Math.sin(lat) * radius
         const circleRadius = Math.cos(lat) * radius
-        
         ctx.beginPath()
         ctx.ellipse(x, y + yOffset, circleRadius, circleRadius * 0.4, 0, 0, 2 * Math.PI)
         ctx.strokeStyle = `${baseColor}80`
@@ -166,25 +140,18 @@ export default function SimpleGlobe({
 
       for (let i = -180; i <= 180; i += 45) {
         const angle = (i + rotation) * Math.PI / 180
-        
         ctx.beginPath()
         for (let lat = -85; lat <= 85; lat += 5) {
           const phi = lat * Math.PI / 180
           const xPos = x + Math.cos(phi) * Math.cos(angle) * radius
           const yPos = y + Math.sin(phi) * radius
-          
-          if (lat === -85) {
-            ctx.moveTo(xPos, yPos)
-          } else {
-            ctx.lineTo(xPos, yPos)
-          }
+          if (lat === -85) ctx.moveTo(xPos, yPos)
+          else ctx.lineTo(xPos, yPos)
         }
         ctx.strokeStyle = `${baseColor}80`
         ctx.lineWidth = 0.6
         ctx.stroke()
       }
-      
-      ctx.restore()
     }
 
     const updateSatellitePoints = (
@@ -195,42 +162,30 @@ export default function SimpleGlobe({
       z: number
     ) => {
       let pointIndex = 0
-
       for (let lon = -180; lon <= 180; lon += 12) {
         for (let lat = -75; lat <= 75; lat += 12) {
           if (pointIndex >= satellitePointsRef.current.length) continue
-
           const point = satellitePointsRef.current[pointIndex]
-
           const rotAngle = satRotation * Math.PI / 180
           const cosRot = Math.cos(rotAngle)
           const sinRot = Math.sin(rotAngle)
-
           const lonRad = lon * Math.PI / 180
           const latRad = lat * Math.PI / 180
-
           const baseX = Math.cos(latRad) * Math.cos(lonRad)
           const baseY = Math.sin(latRad)
-
           const rotatedX = baseX * cosRot - baseY * sinRot
           const rotatedY = baseX * sinRot + baseY * cosRot
-
           const x = satCenterX + rotatedX * satRadius
           const y = satCenterY + rotatedY * satRadius
-
           point.x = x
           point.y = y
-
           const dx = x - centerX
           const dy = y - centerY
           const distanceSquared = dx * dx + dy * dy
           const intersectsGlobe = distanceSquared < globeRadius * globeRadius
-
           const isBehind = intersectsGlobe && z > 0
-
           point.targetOpacity = isBehind ? 0.2 : 1.0
           point.opacity = point.opacity * 0.88 + point.targetOpacity * 0.12
-
           pointIndex++
         }
       }
@@ -242,13 +197,12 @@ export default function SimpleGlobe({
       satRadius: number,
       baseColor: string,
       satRotation: number,
-      z: number,
-      opacity: number = 1
+      z: number
     ) => {
       const baseOpacity = 0.5 + (z + 1) * 0.25
       const avgPointOpacity = satellitePointsRef.current.reduce((sum, p) => sum + p.opacity, 0) / 
                               satellitePointsRef.current.length
-      const finalOpacity = baseOpacity * avgPointOpacity * opacity
+      const finalOpacity = baseOpacity * avgPointOpacity
 
       ctx.save()
       ctx.globalAlpha = 0.18 * finalOpacity
@@ -262,7 +216,6 @@ export default function SimpleGlobe({
         const lat = (i / 90) * Math.PI / 2
         const yOffset = Math.sin(lat) * satRadius
         const circleRadius = Math.cos(lat) * satRadius
-        
         ctx.beginPath()
         ctx.ellipse(satCenterX, satCenterY + yOffset, circleRadius, circleRadius * 0.4, 0, 0, 2 * Math.PI)
         ctx.strokeStyle = `${baseColor}${Math.floor(128 * finalOpacity).toString(16).padStart(2, '0')}`
@@ -272,18 +225,13 @@ export default function SimpleGlobe({
 
       for (let i = -180; i <= 180; i += 45) {
         const angle = (i + satRotation) * Math.PI / 180
-        
         ctx.beginPath()
         for (let lat = -85; lat <= 85; lat += 5) {
           const phi = lat * Math.PI / 180
           const xPos = satCenterX + Math.cos(phi) * Math.cos(angle) * satRadius
           const yPos = satCenterY + Math.sin(phi) * satRadius
-          
-          if (lat === -85) {
-            ctx.moveTo(xPos, yPos)
-          } else {
-            ctx.lineTo(xPos, yPos)
-          }
+          if (lat === -85) ctx.moveTo(xPos, yPos)
+          else ctx.lineTo(xPos, yPos)
         }
         ctx.strokeStyle = `${baseColor}${Math.floor(128 * finalOpacity).toString(16).padStart(2, '0')}`
         ctx.lineWidth = 0.6
@@ -291,57 +239,68 @@ export default function SimpleGlobe({
       }
     }
 
-    const drawSatellitePoints = (baseColor: string, opacity: number = 1) => {
+    const drawSatellitePoints = (baseColor: string) => {
       for (const point of satellitePointsRef.current) {
         ctx.beginPath()
         ctx.arc(point.x, point.y, 1.0, 0, 2 * Math.PI)
         ctx.fillStyle = baseColor
-        ctx.globalAlpha = point.opacity * opacity
+        ctx.globalAlpha = point.opacity
         ctx.fill()
       }
       ctx.globalAlpha = 1
     }
 
-    const drawGlitchEffect = () => {
-      if (glitchIntensity === 0) return
+    // Глитч-эффект ТОЛЬКО для глобуса и спутника
+    const applyGlitchToGlobe = () => {
+      if (!glitchActive) return
       
-      const imageData = ctx.getImageData(0, 0, canvasWidth, canvasHeight)
+      // Вычисляем область вокруг глобуса и спутника
+      const maxRadius = Math.max(globeRadius, satelliteOrbitRadius + 40)
+      const globeBounds = {
+        x: centerX - maxRadius,
+        y: centerY - maxRadius,
+        w: maxRadius * 2,
+        h: maxRadius * 2
+      }
+      
+      // Ограничиваем область canvas
+      const startX = Math.max(0, Math.floor(globeBounds.x))
+      const startY = Math.max(0, Math.floor(globeBounds.y))
+      const endX = Math.min(canvasWidth, startX + globeBounds.w)
+      const endY = Math.min(canvasHeight, startY + globeBounds.h)
+      
+      if (endX <= startX || endY <= startY) return
+      
+      const imageData = ctx.getImageData(startX, startY, endX - startX, endY - startY)
       const data = imageData.data
       
-      const shift = Math.floor(glitchIntensity * 8)
-      
-      for (let y = 0; y < canvasHeight; y += 2) {
-        if (Math.random() > 0.5) {
-          for (let x = shift; x < canvasWidth; x++) {
-            const idx = (y * canvasWidth + x) * 4
-            const shiftIdx = (y * canvasWidth + (x - shift)) * 4
-            
+      // Смещение красного канала
+      for (let y = 0; y < imageData.height; y++) {
+        if (Math.random() > 0.6) {
+          const shift = Math.floor(Math.random() * 6) + 2
+          for (let x = shift; x < imageData.width; x++) {
+            const idx = (y * imageData.width + x) * 4
+            const shiftIdx = (y * imageData.width + (x - shift)) * 4
             if (shiftIdx >= 0 && shiftIdx < data.length) {
-              const r = data[shiftIdx]
-              const g = data[idx + 1]
-              const b = data[idx + 2]
-              
-              data[idx] = r
-              data[idx + 1] = g * (1 - glitchIntensity * 0.5)
-              data[idx + 2] = b * (1 - glitchIntensity * 0.3)
+              data[idx] = data[shiftIdx]
             }
           }
         }
       }
       
-      ctx.putImageData(imageData, 0, 0)
+      ctx.putImageData(imageData, startX, startY)
       
-      for (let i = 0; i < glitchIntensity * 15; i++) {
-        const y = Math.random() * canvasHeight
-        const height = Math.random() * 4 + 1
-        ctx.fillStyle = `rgba(255, 255, 255, ${Math.random() * 0.8})`
-        ctx.fillRect(0, y, canvasWidth, height)
+      // Белые полосы только в области глобуса
+      for (let i = 0; i < 5; i++) {
+        const y = startY + Math.random() * (endY - startY)
+        const height = Math.random() * 2 + 1
+        ctx.fillStyle = `rgba(255, 255, 255, ${Math.random() * 0.6})`
+        ctx.fillRect(startX, y, endX - startX, height)
       }
     }
 
     const draw = () => {
       ctx.clearRect(0, 0, canvasWidth, canvasHeight)
-      
       if (!isVisible) return
       
       const appearProgress = Math.min(1, (Date.now() - appearDelay) / 300)
@@ -359,37 +318,26 @@ export default function SimpleGlobe({
 
       const angle = satelliteRotationRef.current
       const z = Math.sin(angle)
-
       const scale = 1 + (-z) * 0.4
       const scaledRadius = satelliteBaseRadius * scale
-
       const satelliteX = centerX + Math.cos(angle) * satelliteOrbitRadius
       const satelliteY = centerY + Math.sin(angle) * satelliteOrbitRadius * 0.6
 
-      updateSatellitePoints(
-        satelliteX, 
-        satelliteY, 
-        scaledRadius, 
-        satelliteRotationRef.current * 2,
-        z
-      )
+      updateSatellitePoints(satelliteX, satelliteY, scaledRadius, satelliteRotationRef.current * 2, z)
 
       ctx.save()
-      ctx.translate(glitchOffset.x, glitchOffset.y)
       
-      drawGlobe(centerX, centerY, globeRadius, color, globeRotationRef.current, currentOpacity)
-
-      drawSatellite(
-        satelliteX, 
-        satelliteY, 
-        scaledRadius, 
-        satelliteColor, 
-        satelliteRotationRef.current * 2,
-        z,
-        currentOpacity
-      )
-      drawSatellitePoints(satelliteColor, currentOpacity)
+      // Рисуем глобус и спутник
+      drawGlobe(centerX, centerY, globeRadius, color, globeRotationRef.current)
+      drawSatellite(satelliteX, satelliteY, scaledRadius, satelliteColor, satelliteRotationRef.current * 2, z)
+      drawSatellitePoints(satelliteColor)
       
+      // Применяем глитч ТОЛЬКО к глобусу и спутнику
+      applyGlitchToGlobe()
+      
+      ctx.restore()
+      
+      // Свечение
       const avgOpacity = satellitePointsRef.current.reduce((sum, p) => sum + p.opacity, 0) / 
                          satellitePointsRef.current.length
       const glowIntensity = avgOpacity * (0.5 + (z + 1) * 0.25) * currentOpacity
@@ -399,19 +347,11 @@ export default function SimpleGlobe({
         ctx.fillStyle = `${satelliteColor}${Math.floor(20 * glowIntensity).toString(16).padStart(2, '0')}`
         ctx.fill()
       }
-      
-      ctx.restore()
-      
-      drawGlitchEffect()
     }
 
     const animate = () => {
-      if (autoRotate) {
-        globeRotationRef.current = (globeRotationRef.current + globeSpeed) % 360
-      }
-      if (satellite) {
-        satelliteRotationRef.current = (satelliteRotationRef.current + satelliteSpeed * 0.02) % (Math.PI * 2)
-      }
+      if (autoRotate) globeRotationRef.current = (globeRotationRef.current + globeSpeed) % 360
+      if (satellite) satelliteRotationRef.current = (satelliteRotationRef.current + satelliteSpeed * 0.02) % (Math.PI * 2)
       draw()
       animationRef.current = requestAnimationFrame(animate)
     }
@@ -419,11 +359,9 @@ export default function SimpleGlobe({
     animate()
 
     return () => {
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current)
-      }
+      if (animationRef.current) cancelAnimationFrame(animationRef.current)
     }
-  }, [width, height, color, satelliteColor, autoRotate, globeSpeed, satellite, satelliteSpeed, isVisible, glitchIntensity, glitchOffset, appearDelay])
+  }, [width, height, color, satelliteColor, autoRotate, globeSpeed, satellite, satelliteSpeed, isVisible, glitchActive, appearDelay])
 
   return (
     <canvas
