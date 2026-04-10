@@ -4,8 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import Script from 'next/script'
 import { useRouter } from 'next/navigation'
 import { LoadingScreen } from '@/components/LoadingScreen'
-import { GyroToggle } from '@/components/GyroToggle'
-import SimpleGlobe from "@/components/ui/SimpleGlobe"
+
 declare global {
   interface Window {
     enterLocation: (targetLocId: string, locationName: string) => void
@@ -23,276 +22,57 @@ export default function PanoramaPage() {
   const isLoaded = useRef(false)
   const router = useRouter()
   const panoramaInitialized = useRef(false)
-  const resourcesLoaded = useRef(false)
-
   const [loadingProgress, setLoadingProgress] = useState(0)
   const [showLoading, setShowLoading] = useState(true)
-  const [gyroActive, setGyroActive] = useState(false)
-  const [allResourcesReady, setAllResourcesReady] = useState(false)
 
   let ringAnimationFrame: number | null = null
-  let viewLoopId: number | null = null
-  let currentTargetView = 0
-  let mobileObserver: IntersectionObserver | null = null
 
+  // Вспомогательная функция для ожидания двух кадров рендера
   const afterLayout = (cb: () => void) => {
-    requestAnimationFrame(() => requestAnimationFrame(cb))
-  }
-
-  // ====================== UPDATE PANORAMA ======================
-  const updatePanoramaView = () => {
-    const activeLoc = document.querySelector('.location.active') as HTMLElement | null
-    if (!activeLoc) return
-
-    const wrapper = activeLoc.querySelector('.panorama-wrapper') as HTMLElement | null
-    if (!wrapper) return
-
-    const vw = window.innerWidth
-    const img = activeLoc.querySelector('.panorama-img') as HTMLImageElement | null
-    const imgWidth = img ? (img.clientWidth || img.naturalWidth || vw * 2) : vw * 2
-
-    if (imgWidth <= vw + 40) {
-      wrapper.style.transform = 'translate3d(0px, 0px, 0px)'
-      return
-    }
-
-    const maxShift = imgWidth - vw
-    const normalized = (currentTargetView + 75) / 150
-    const translateX = Math.round(-normalized * maxShift)
-
-    wrapper.style.transform = `translate3d(${translateX}px, 0px, 0px)`
-  }
-
-  const startViewLoop = () => {
-    const loop = () => {
-      const cv = window.currentView || 0
-      if (Math.abs(cv - currentTargetView) > 0.5) {
-        currentTargetView = cv
-        updatePanoramaView()
-      }
-      viewLoopId = requestAnimationFrame(loop)
-    }
-    viewLoopId = requestAnimationFrame(loop)
-  }
-
-  const handleGyroChange = (gamma: number) => {
-    if (!gyroActive) return
-    
-    const maxView = 75
-    const minView = -75
-    let newView = gamma * -2.5
-    
-    newView = Math.max(minView, Math.min(maxView, newView))
-    
-    window.currentView = newView
-  }
-
-  const setupMobileLabels = () => {
-    if (mobileObserver) {
-      mobileObserver.disconnect()
-      mobileObserver = null
-    }
-
-    const activeLoc = document.querySelector('.location.active')
-    if (!activeLoc) return
-
-    const hotspots = activeLoc.querySelectorAll('.hotspot') as NodeListOf<HTMLElement>
-
-    hotspots.forEach((hotspot) => {
-      let labelEl = hotspot.querySelector('.hotspot-label') as HTMLElement | null
-
-      if (!labelEl) {
-        const labelText = hotspot.dataset.label || ''
-        if (!labelText) return
-
-        labelEl = document.createElement('div')
-        labelEl.className = 'hotspot-label'
-        labelEl.textContent = labelText
-        hotspot.appendChild(labelEl)
-      }
+    requestAnimationFrame(() => {
+      requestAnimationFrame(cb)
     })
-
-    mobileObserver = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          const hotspot = entry.target as HTMLElement
-          const label = hotspot.querySelector('.hotspot-label') as HTMLElement | null
-          if (!label) return
-
-          if (entry.isIntersecting && entry.intersectionRatio >= 0.25) {
-            label.classList.add('show')
-          } else {
-            label.classList.remove('show')
-          }
-        })
-      },
-      {
-        threshold: [0, 0.25, 0.5],
-        rootMargin: '-40px 0px -100px 0px'
-      }
-    )
-
-    hotspots.forEach((hotspot) => mobileObserver!.observe(hotspot))
   }
 
-// ====================== ФУНКЦИЯ ЗАГРУЗКИ ВСЕХ РЕСУРСОВ ======================
-const loadAllResources = async (onProgress: (progress: number) => void) => {
-  const resourcesToLoad: Promise<unknown>[] = []
-  
-  // Список всех изображений панорам
-  const panoramaImages = [
-    '/images/panorama-bridge.jpg',
-    '/images/panorama-bridge.jpg',
-  ]
-  
-  // Список видео
-  const videos = [
-    '/videos/intro-fly.mp4',
-    '/videos/intro-enter.mp4',
-  ]
-  
-  // Список аудио
-  const audios = [
-    '/sounds/intro-fly-audio.mp3',
-    '/sounds/intro-enter-audio.mp3',
-  ]
-  
-  let loadedCount = 0
-  const totalCount = panoramaImages.length + videos.length + audios.length
-  
-  const updateProgress = () => {
-    loadedCount++
-    onProgress(Math.floor((loadedCount / totalCount) * 100))
-  }
-  
-  // Загрузка изображений
-  panoramaImages.forEach((src) => {
-    const img = new Image()
-    img.src = src
-    const promise = new Promise((resolve) => {
-      if (img.complete) {
-        updateProgress()
-        resolve(true)
-      } else {
-        img.onload = () => {
-          updateProgress()
-          resolve(true)
-        }
-        img.onerror = () => {
-          updateProgress()
-          resolve(false)
-        }
-      }
-    })
-    resourcesToLoad.push(promise)
-  })
-  
-  // Загрузка видео
-  videos.forEach((src) => {
-    const promise = new Promise((resolve) => {
-      const video = document.createElement('video')
-      video.preload = 'auto'
-      video.src = src
-      video.addEventListener('canplaythrough', () => {
-        updateProgress()
-        resolve(true)
-      }, { once: true })
-      video.addEventListener('error', () => {
-        updateProgress()
-        resolve(false)
-      }, { once: true })
-      setTimeout(() => {
-        updateProgress()
-        resolve(false)
-      }, 5000)
-    })
-    resourcesToLoad.push(promise)
-  })
-  
-  // Загрузка аудио
-  audios.forEach((src) => {
-    const promise = new Promise((resolve) => {
-      const audio = new Audio()
-      audio.preload = 'auto'
-      audio.src = src
-      audio.addEventListener('canplaythrough', () => {
-        updateProgress()
-        resolve(true)
-      }, { once: true })
-      audio.addEventListener('error', () => {
-        updateProgress()
-        resolve(false)
-      }, { once: true })
-      setTimeout(() => {
-        updateProgress()
-        resolve(false)
-      }, 5000)
-    })
-    resourcesToLoad.push(promise)
-  })
-  
-  await Promise.all(resourcesToLoad)
-  return true
-}
-
-// ====================== LOADING ======================
-useEffect(() => {
-  const startLoading = async () => {
-    await loadAllResources((progress) => {
-      setLoadingProgress(progress)
-    })
-    
-    setAllResourcesReady(true)
-    
-    setTimeout(() => {
-      setShowLoading(false)
-    }, 300)
-  }
-  
-  startLoading()
-}, [])
-
-  // Запуск видео и инициализация только после полной загрузки
+  // Короткий лоадер — всего на 0.5 секунды
   useEffect(() => {
-    if (!allResourcesReady) return
-    
-    // Показываем main-content
-    const mainContent = document.getElementById('main-content')
-    if (mainContent) mainContent.style.display = 'block'
-    
-    // Запускаем первое видео
-    const player1 = document.getElementById('intro-video-player-1') as HTMLVideoElement
-    const audio1 = document.getElementById('audio-intro-1') as HTMLAudioElement
-    
-    if (player1) {
-      player1.play().catch(e => console.log('Video 1 autoplay failed:', e))
-    }
-    if (audio1) {
-      audio1.volume = 0.5
-      audio1.play().catch(e => console.log('Audio 1 autoplay failed:', e))
-    }
-    
-  }, [allResourcesReady])
+    let startTime = Date.now();
+    let animationId: number;
 
-  // ====================== MAIN INIT ======================
+    const updateProgress = () => {
+      const elapsed = Date.now() - startTime;
+      let newProgress = Math.min(100, (elapsed / 500) * 100);
+      setLoadingProgress(Math.floor(newProgress));
+
+      if (newProgress >= 100) {
+        setLoadingProgress(100);
+        setTimeout(() => {
+          setShowLoading(false);
+        }, 100);
+      } else {
+        animationId = requestAnimationFrame(updateProgress);
+      }
+    };
+
+    animationId = requestAnimationFrame(updateProgress);
+    return () => cancelAnimationFrame(animationId);
+  }, []);
+
   useEffect(() => {
     if (isLoaded.current) return
     isLoaded.current = true
 
+    // ========== СТИЛИ ==========
     const style = document.createElement('style')
     style.textContent = `
       .panorama-wrapper { 
-        position: absolute;
+        position: absolute; 
         top: 0; 
         left: 0; 
         height: 100vh; 
         will-change: transform; 
-        overflow: visible;
       }
       .panorama-img { 
-        position: absolute;
-        top: 0;
-        left: 0;
         height: 100vh; 
         width: auto; 
         display: block; 
@@ -320,16 +100,7 @@ useEffect(() => {
         left: 0; 
         width: 100%; 
         height: 100%; 
-        pointer-events: none;
-      }
-
-      .layer-animated {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        pointer-events: none;
+        pointer-events: all; 
       }
 
       #viewport { 
@@ -351,9 +122,9 @@ useEffect(() => {
 
       .hotspot { 
         position: absolute; 
-        pointer-events: auto !important; 
-        width: 100px; 
-        height: 100px; 
+        pointer-events: all !important; 
+        width: 140px; 
+        height: 140px; 
         transform: translate(-50%, -50%); 
         z-index: 100; 
         cursor: pointer; 
@@ -480,52 +251,6 @@ useEffect(() => {
         box-shadow: 0 0 20px #0ff, 0 0 40px #0ff; 
         animation: dotPulse 2s infinite ease-in-out; 
       }
-
-      .hotspot-label {
-        position: absolute;
-        top: -68px;
-        left: 50%;
-        transform: translateX(-50%) translateY(30px);
-        background: rgba(0, 0, 0, 0.85);
-        color: #0ff;
-        padding: 6px 16px;
-        border-radius: 6px;
-        font-size: 15px;
-        font-weight: 700;
-        letter-spacing: 2px;
-        text-transform: uppercase;
-        white-space: nowrap;
-        font-family: 'CCUltimatum', monospace;
-        pointer-events: none;
-        opacity: 0;
-        visibility: hidden;
-        box-shadow: 0 0 20px #0ff, 0 0 40px rgba(0, 255, 255, 0.4);
-        transition: opacity 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.1),
-                    transform 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.1);
-        z-index: 110;
-        text-align: center;
-        line-height: 1.2;
-      }
-
-      .hotspot-label.show {
-        opacity: 1;
-        visibility: visible;
-        transform: translateX(-50%) translateY(0);
-      }
-
-      @media (min-width: 769px) {
-        .hotspot-label {
-          display: none !important;
-        }
-      }
-
-      @media (max-width: 768px) {
-        .hotspot-label {
-          top: -78px;
-          font-size: 16px;
-          padding: 8px 18px;
-        }
-      }
     `
     document.head.appendChild(style)
 
@@ -538,12 +263,14 @@ useEffect(() => {
     document.body.style.margin = '0'
     document.body.style.padding = '0'
 
+    // ========== ПЕРЕМЕННЫЕ ==========
     let ringVisible = false
     let ringTargetX = 0
     let ringTargetY = 0
     let ringCurrentX = 0
     let ringCurrentY = 0
 
+    // ========== ФУНКЦИИ ПАНОРАМЫ ==========
     const fixPanoramaScale = () => {
       const activeLoc = document.querySelector('.location.active')
       if (!activeLoc) return
@@ -553,30 +280,53 @@ useEffect(() => {
       if (!wrapper || !img) return
 
       const vh = window.innerHeight
-      const vw = window.innerWidth
-      
       img.style.height = `${vh}px`
       img.style.width = 'auto'
 
       if (img.complete && img.naturalWidth) {
         const ratio = img.naturalWidth / img.naturalHeight
-        let scaledWidth = ratio * vh
-        
-        const minWidth = vw * 1.3
-        if (scaledWidth < minWidth) {
-          scaledWidth = minWidth
-        }
-        
+        const scaledWidth = ratio * vh
         img.style.width = `${scaledWidth}px`
         wrapper.style.width = `${scaledWidth}px`
         wrapper.style.height = `${vh}px`
       } else {
         img.addEventListener('load', () => {
-          fixPanoramaScale()
+          const ratio = img.naturalWidth / img.naturalHeight
+          const scaledWidth = ratio * vh
+          img.style.width = `${scaledWidth}px`
+          wrapper.style.width = `${scaledWidth}px`
+          wrapper.style.height = `${vh}px`
+          updatePanoramaView()
         })
       }
     }
 
+    const updatePanoramaView = () => {
+      const activeLoc = document.querySelector('.location.active')
+      if (!activeLoc) return
+
+      const wrapper = activeLoc.querySelector('.panorama-wrapper') as HTMLElement
+      const img = activeLoc.querySelector('.panorama-img') as HTMLImageElement
+      if (!wrapper || !img) return
+
+      const vw = window.innerWidth
+      const imgWidth = img.clientWidth
+
+      if (imgWidth > vw) {
+        const maxShift = imgWidth - vw
+        const currentView = window.currentView || 0
+        const normalized = (currentView + 75) / 150
+        const translateX = -normalized * maxShift
+        wrapper.style.transform = `translateX(${translateX}px)`
+      } else {
+        wrapper.style.transform = `translateX(0px)`
+      }
+      
+      // Принудительный reflow
+      wrapper.getBoundingClientRect()
+    }
+
+    // ========== ФУНКЦИИ ХОТСПОТОВ И КОЛЬЦА ==========
     const showRing = (x: number, y: number) => {
       const ring = document.querySelector('.cursor-follow-ring') as HTMLElement
       if (!ring) return
@@ -650,12 +400,13 @@ useEffect(() => {
 
       hotspots.forEach((hotspot) => {
         const el = hotspot as HTMLElement
-        const percentX = el.dataset.percentX || '0'
-        const percentY = el.dataset.percentY || '0'
+        const percentX = parseFloat(el.dataset.percentX || '0')
+        const percentY = parseFloat(el.dataset.percentY || '0')
 
         el.style.left = `${percentX}%`
         el.style.top = `${percentY}%`
 
+        // Удаляем старые обработчики и добавляем новые
         el.removeEventListener('mouseenter', handleHotspotMouseEnter)
         el.removeEventListener('mouseleave', handleHotspotMouseLeave)
         el.removeEventListener('mousemove', handleHotspotMouseMove)
@@ -665,6 +416,7 @@ useEffect(() => {
         el.addEventListener('mousemove', handleHotspotMouseMove)
       })
 
+      // Создаём кольцо, если его ещё нет
       if (!document.querySelector('.cursor-follow-ring')) {
         const followRing = document.createElement('div')
         followRing.className = 'cursor-follow-ring'
@@ -673,11 +425,8 @@ useEffect(() => {
       }
     }
 
+    // ========== ГЛОБАЛЬНЫЕ ФУНКЦИИ ==========
     window.enterLocation = (targetLocId: string, locationName: string) => {
-      document.querySelectorAll('.hotspot-label.show').forEach((label) => {
-        (label as HTMLElement).classList.remove('show')
-      })
-
       const currentActive = document.querySelector('.location.active')
       if (currentActive) currentActive.classList.remove('active')
 
@@ -690,11 +439,11 @@ useEffect(() => {
 
       const run = () => {
         fixPanoramaScale()
+        
         afterLayout(() => {
           updatePanoramaView()
           afterLayout(() => {
             initHotspots()
-            setupMobileLabels()
           })
         })
       }
@@ -739,6 +488,7 @@ useEffect(() => {
     window.currentView = 0
     window.panoramaReady = false
 
+    // ========== ИНИЦИАЛИЗАЦИЯ ПОСЛЕ ВИДЕО ==========
     const setupPanorama = () => {
       fixPanoramaScale()
       
@@ -746,10 +496,8 @@ useEffect(() => {
         updatePanoramaView()
         afterLayout(() => {
           initHotspots()
-          setupMobileLabels()
           window.panoramaReady = true
           console.log('Panorama ready, hotspots positioned')
-          startViewLoop()
         })
       })
     }
@@ -801,11 +549,28 @@ useEffect(() => {
 
     waitForVideo()
 
+    // ========== ПРОВЕРКА ХОТСПОТА ДВЕРИ ==========
+    const checkDoorHotspot = () => {
+        const doorHotspot = document.querySelector('.hotspot-door');
+        if (!doorHotspot) {
+            console.log('Door hotspot missing, checking again...');
+            setTimeout(checkDoorHotspot, 100);
+        } else {
+            console.log('Door hotspot present in DOM');
+        }
+    };
+
+    setTimeout(checkDoorHotspot, 500);
+
+    // ========== ОБРАБОТЧИКИ РЕСАЙЗА ==========
     const handleResize = () => {
       if (window.panoramaReady) {
         fixPanoramaScale()
         afterLayout(() => {
           updatePanoramaView()
+          afterLayout(() => {
+            initHotspots()
+          })
         })
       }
     }
@@ -813,6 +578,7 @@ useEffect(() => {
     window.addEventListener('resize', handleResize)
     window.addEventListener('orientationchange', handleResize)
 
+    // ========== ДВИЖЕНИЕ МЫШИ ДЛЯ КОЛЬЦА ==========
     const handleMouseMove = (e: MouseEvent) => {
       if (ringVisible) {
         updateRingPosition(e.clientX, e.clientY)
@@ -820,6 +586,7 @@ useEffect(() => {
     }
     window.addEventListener('mousemove', handleMouseMove)
 
+    // ========== ОЧИСТКА ==========
     return () => {
       const oldLink = document.querySelector('link[href="/css/style.css"]')
       if (oldLink) oldLink.remove()
@@ -834,17 +601,62 @@ useEffect(() => {
       window.removeEventListener('mousemove', handleMouseMove)
 
       if (ringAnimationFrame) cancelAnimationFrame(ringAnimationFrame)
-      if (viewLoopId) cancelAnimationFrame(viewLoopId)
-      if (mobileObserver) mobileObserver.disconnect()
     }
   }, [router])
 
   return (
     <>
+      {/* Загрузочный экран - показывается только 0.5 секунды */}
       <LoadingScreen progress={loadingProgress} isVisible={showLoading} />
       
       <Script src="/js/main.js" strategy="afterInteractive" />
 
+      {/* Первое видео - autoPlay включён */}
+      <div id="intro-video-1" className="intro-video">
+        <img id="static-bg-1" src="/images/space-bg.jpg" alt="Static door scene" className="static-bg" />
+        <video autoPlay muted playsInline id="intro-video-player-1">
+          <source src="/videos/intro-fly.mp4" type="video/mp4" />
+        </video>
+        <audio id="audio-intro-1" preload="auto">
+          <source src="/sounds/intro-fly-audio.mp3" type="audio/mpeg" />
+        </audio>
+      </div>
+
+      {/* Второе видео */}
+      <div id="intro-video-2" className="intro-video" style={{ opacity: 0, pointerEvents: 'none' }}>
+        <img id="static-bg-2" src="/images/panorama-1-center.jpg" alt="Static bridge scene" className="static-bg" />
+        <video muted playsInline id="intro-video-player-2">
+          <source src="/videos/intro-enter.mp4" type="video/mp4" />
+        </video>
+        <audio id="audio-intro-2" preload="auto">
+          <source src="/sounds/intro-enter-audio.mp3" type="audio/mpeg" />
+        </audio>
+      </div>
+
+      {/* Экран с дверью */}
+      <div id="intro-screen" className="intro-screen" style={{ opacity: 0, pointerEvents: 'none' }}>
+        <div className="scene-background"></div>
+        <div className="door-container">
+          <div className="door door-left"></div>
+          <div className="door door-right"></div>
+          <div
+            className="hotspot-door"
+            style={{
+              left: '75.28%',
+              top: '65.39%',
+              width: '140px',
+              height: '140px',
+              cursor: 'pointer',
+              zIndex: 100,
+            }}
+            onClick={() => window.openDoorWithVideo?.()}
+          >
+            <div className="hotspot-dot"></div>
+          </div>
+        </div>
+      </div>
+
+      {/* Основная сцена */}
       <div id="main-content" style={{ display: 'none' }}>
         <div id="hud">
           <div className="scanline"></div>
@@ -872,46 +684,26 @@ useEffect(() => {
             <div className="location active" id="loc-1">
               <div className="panorama-wrapper">
                 <img src="/images/panorama-bridge.jpg" className="panorama-img" alt="Bridge" />
-                <div className="layer-interactive">
-                  <div className="hotspot" data-percent-x="10.77" data-percent-y="51.80" data-label="COMMUNITY" onClick={() => window.enterLocation?.('loc-2', 'COMMUNITY')}>
-                    <div className="hotspot-dot"></div>
-                  </div>
-                  <div className="hotspot" data-percent-x="50.09" data-percent-y="43.09" data-label="ABOUT" onClick={() => router.push('/about')}>
-                    <div className="hotspot-dot"></div>{/* Глобус за хотспотом */}
-<div className="absolute pointer-events-none" style={{
-  left: '50%',
-  top: '50%',
-  transform: 'translate(-50%, -50%)',
-  marginLeft: '-5px',
-  width: '180px',
-  height: '180px',
-  zIndex: -1,
-  opacity: 0.7,
-}}>
-  <SimpleGlobe 
-    width={180} 
-    height={180} 
-    color="#00d4ff"
-    autoRotate={true}
-    globeSpeed={0.1}
-    satellite={true}
-    satelliteColor="#ff6b35"
-    satelliteSpeed={0.05}
-    appearDelay={12000} // Глобус появится через 2 секунды с глитч эффектом
-  />
-</div>
-</div>
-                  <div className="hotspot" data-percent-x="26.34" data-percent-y="58.00" data-label="LIFT" onClick={() => console.log('LIFT')}>
-                    <div className="hotspot-dot"></div>
-                  </div>
-                  <div className="hotspot" data-percent-x="77.58" data-percent-y="58.43" data-label="CARGO BAY" onClick={() => window.openSection?.('cargo')}>
-                    <div className="hotspot-dot"></div>
-                  </div>
-                  <div className="hotspot" data-percent-x="91.79" data-percent-y="54.95" data-label="JOIN THE CLUB" onClick={() => console.log('JOIN THE CLUB')}>
-                    <div className="hotspot-dot"></div>
-                  </div>
+              </div>
+
+              <div className="layer-interactive">
+                <div className="hotspot" data-percent-x="10.77" data-percent-y="51.80" data-label="COMMUNITY" onClick={() => window.enterLocation?.('loc-2', 'COMMUNITY')}>
+                  <div className="hotspot-dot"></div>
+                </div>
+                <div className="hotspot" data-percent-x="50.09" data-percent-y="43.09" data-label="ABOUT" onClick={() => router.push('/')}>
+                  <div className="hotspot-dot"></div>
+                </div>
+                <div className="hotspot" data-percent-x="26.34" data-percent-y="58.00" data-label="LIFT" onClick={() => console.log('LIFT')}>
+                  <div className="hotspot-dot"></div>
+                </div>
+                <div className="hotspot" data-percent-x="77.58" data-percent-y="58.43" data-label="CARGO BAY" onClick={() => window.openSection?.('cargo')}>
+                  <div className="hotspot-dot"></div>
+                </div>
+                <div className="hotspot" data-percent-x="91.79" data-percent-y="54.95" data-label="JOIN THE CLUB" onClick={() => console.log('JOIN THE CLUB')}>
+                  <div className="hotspot-dot"></div>
                 </div>
               </div>
+
               <div className="layer-animated">
                 <div className="animated-object robot" style={{ left: '20%', top: '55%' }} id="robot-1"></div>
                 <div className="animated-object person" style={{ left: '50%', top: '52%' }} id="person-1"></div>
@@ -923,21 +715,23 @@ useEffect(() => {
             <div className="location" id="loc-2">
               <div className="panorama-wrapper">
                 <img src="/images/panorama-bridge.jpg" className="panorama-img" alt="Community" />
-                <div className="layer-interactive">
-                  <div className="hotspot" data-percent-x="10" data-percent-y="55" data-label="BRIDGE" onClick={() => window.enterLocation?.('loc-1', 'BRIDGE')}>
-                    <div className="hotspot-dot"></div>
-                  </div>
-                  <div className="hotspot" data-percent-x="90" data-percent-y="55" data-label="QUARTERS" onClick={() => window.enterLocation?.('loc-3', 'QUARTERS')}>
-                    <div className="hotspot-dot"></div>
-                  </div>
-                  <div className="hotspot" data-percent-x="35" data-percent-y="50" data-label="BAR" onClick={() => window.openSection?.('bar')}>
-                    <div className="hotspot-dot"></div>
-                  </div>
-                  <div className="hotspot" data-percent-x="65" data-percent-y="60" data-label="LOUNGE" onClick={() => window.openSection?.('lounge')}>
-                    <div className="hotspot-dot"></div>
-                  </div>
+              </div>
+
+              <div className="layer-interactive">
+                <div className="hotspot" data-percent-x="10" data-percent-y="55" data-label="BRIDGE" onClick={() => window.enterLocation?.('loc-1', 'BRIDGE')}>
+                  <div className="hotspot-dot"></div>
+                </div>
+                <div className="hotspot" data-percent-x="90" data-percent-y="55" data-label="QUARTERS" onClick={() => window.enterLocation?.('loc-3', 'QUARTERS')}>
+                  <div className="hotspot-dot"></div>
+                </div>
+                <div className="hotspot" data-percent-x="35" data-percent-y="50" data-label="BAR" onClick={() => window.openSection?.('bar')}>
+                  <div className="hotspot-dot"></div>
+                </div>
+                <div className="hotspot" data-percent-x="65" data-percent-y="60" data-label="LOUNGE" onClick={() => window.openSection?.('lounge')}>
+                  <div className="hotspot-dot"></div>
                 </div>
               </div>
+
               <div className="layer-animated">
                 <div className="animated-object person" style={{ left: '15%', top: '55%' }} id="person-2"></div>
                 <div className="animated-object person" style={{ left: '45%', top: '53%' }} id="person-3"></div>
@@ -949,18 +743,20 @@ useEffect(() => {
             <div className="location" id="loc-3">
               <div className="panorama-wrapper">
                 <img src="/images/panorama-bridge.jpg" className="panorama-img" alt="Quarters" />
-                <div className="layer-interactive">
-                  <div className="hotspot" data-percent-x="10" data-percent-y="55" data-label="COMMUNITY" onClick={() => window.enterLocation?.('loc-2', 'COMMUNITY')}>
-                    <div className="hotspot-dot"></div>
-                  </div>
-                  <div className="hotspot" data-percent-x="40" data-percent-y="50" data-label="QUARTERS 1" onClick={() => window.openSection?.('quarters1')}>
-                    <div className="hotspot-dot"></div>
-                  </div>
-                  <div className="hotspot" data-percent-x="70" data-percent-y="60" data-label="STORAGE" onClick={() => window.openSection?.('storage')}>
-                    <div className="hotspot-dot"></div>
-                  </div>
+              </div>
+
+              <div className="layer-interactive">
+                <div className="hotspot" data-percent-x="10" data-percent-y="55" data-label="COMMUNITY" onClick={() => window.enterLocation?.('loc-2', 'COMMUNITY')}>
+                  <div className="hotspot-dot"></div>
+                </div>
+                <div className="hotspot" data-percent-x="40" data-percent-y="50" data-label="QUARTERS 1" onClick={() => window.openSection?.('quarters1')}>
+                  <div className="hotspot-dot"></div>
+                </div>
+                <div className="hotspot" data-percent-x="70" data-percent-y="60" data-label="STORAGE" onClick={() => window.openSection?.('storage')}>
+                  <div className="hotspot-dot"></div>
                 </div>
               </div>
+
               <div className="layer-animated">
                 <div className="animated-object person" style={{ left: '30%', top: '60%' }} id="person-5"></div>
                 <div className="animated-object person" style={{ left: '70%', top: '55%' }} id="person-6"></div>
@@ -969,7 +765,7 @@ useEffect(() => {
           </div>
         </div>
 
-        {/* ==================== MODALS ==================== */}
+        {/* Модальные окна */}
         <div className="section-modal" id="modal-cargo">
           <div className="section-content">
             <div className="close-btn" onClick={() => window.closeSection?.('cargo')}>×</div>
@@ -1013,60 +809,6 @@ useEffect(() => {
           </div>
         </div>
       </div>
-
-      <div id="intro-video-1" className="intro-video">
-        <img id="static-bg-1" src="/images/space-bg.jpg" alt="Static door scene" className="static-bg" />
-        <video muted playsInline id="intro-video-player-1">
-          <source src="/videos/intro-fly.mp4" type="video/mp4" />
-        </video>
-        <audio id="audio-intro-1" preload="auto">
-          <source src="/sounds/intro-fly-audio.mp3" type="audio/mpeg" />
-        </audio>
-      </div>
-
-      <div id="intro-video-2" className="intro-video" style={{ opacity: 0, pointerEvents: 'none' }}>
-        <img id="static-bg-2" src="/images/panorama-1-center.jpg" alt="Static bridge scene" className="static-bg" />
-        <video muted playsInline id="intro-video-player-2">
-          <source src="/videos/intro-enter.mp4" type="video/mp4" />
-        </video>
-        <audio id="audio-intro-2" preload="auto">
-          <source src="/sounds/intro-enter-audio.mp3" type="audio/mpeg" />
-        </audio>
-      </div>
-
-      <div id="intro-screen" className="intro-screen" style={{ opacity: 0, pointerEvents: 'none' }}>
-        <div className="scene-background"></div>
-        <div className="door-container">
-          <div className="door door-left"></div>
-          <div className="door door-right"></div>
-          <div
-            className="hotspot-door"
-            style={{
-              left: '75.28%',
-              top: '65.39%',
-              width: '140px',
-              height: '140px',
-              cursor: 'pointer',
-              zIndex: 100,
-            }}
-            onClick={() => window.openDoorWithVideo?.()}
-          >
-            <div className="hotspot-dot"></div>
-          </div>
-        </div>
-      </div>
-
-      <GyroToggle 
-        onOrientationChange={handleGyroChange}
-        isActive={gyroActive}
-        onToggle={() => setGyroActive(!gyroActive)}
-      />
-
-      {gyroActive && (
-        <div className="fixed bottom-40 left-6 z-50 bg-black/80 text-[#00d4ff] text-xs px-2 py-1 rounded font-mono">
-          GYRO: {(window.currentView || 0).toFixed(0)}
-        </div>
-      )}
     </>
   )
 }

@@ -22,9 +22,7 @@ let ringTargetX = 0, ringTargetY = 0;
 let ringCurrentX = 0, ringCurrentY = 0;
 let ringVisible = false;
 const RING_SMOOTHING = 0.08;
-let finalViewOffset = 0;        // ← новое
-// Например: -12 = сдвиг влево, +12 = сдвиг вправо
-// Хранилище позиций хотспотов
+let finalViewOffset = 0;
 let hotspotPositions = {};
 let isHotspotsPositioned = false;
 
@@ -32,9 +30,22 @@ let isHotspotsPositioned = false;
 let doorTitleElement = null;
 let doorHotspotActive = false;
 
-window.addEventListener('load', () => {
-    const introVideo1 = document.getElementById('intro-video-1');
+// Функция инициализации всего (заменяет window.addEventListener('load', ...))
+function initMain() {
+    console.log("initMain called, checking elements...");
+    
     const player1 = document.getElementById('intro-video-player-1');
+    
+    // Если элементы ещё не созданы - ждём
+    if (!player1) {
+        console.log("Elements not ready, retrying in 100ms...");
+        setTimeout(initMain, 100);
+        return;
+    }
+    
+    console.log("Main.js initialized, elements ready");
+    
+    const introVideo1 = document.getElementById('intro-video-1');
     const audio1 = document.getElementById('audio-intro-1');
     const staticBg1 = document.getElementById('static-bg-1');
 
@@ -70,61 +81,77 @@ window.addEventListener('load', () => {
 
     // ========== ПЕРВОЕ ВИДЕО (пролет) ==========
     player1.addEventListener('play', () => {
-        audio1.currentTime = player1.currentTime;
-        audio1.play().catch(e => console.log("Audio blocked:", e));
+        if (audio1) {
+            audio1.currentTime = player1.currentTime;
+            audio1.play().catch(e => console.log("Audio blocked:", e));
+        }
     });
 
     player1.addEventListener('timeupdate', () => {
         if (player1.currentTime >= player1.duration - 0.15 && !player1.dataset.preEnded) {
             player1.dataset.preEnded = 'true';
-            staticBg1.style.opacity = '1';
+            if (staticBg1) staticBg1.style.opacity = '1';
         }
     });
 
-player1.addEventListener('ended', () => {
-    audio1.pause();
-    audio1.currentTime = 0;
-    introVideo1.style.display = 'none';
-    introScreen.style.opacity = '1';
-    introScreen.style.pointerEvents = 'all';
-    
-    // Небольшая задержка перед инициализацией хотспота
-    setTimeout(() => {
-        initDoorHotspot();
-    }, 50);
-});
-
-    setTimeout(() => {
-        if (introVideo1.style.display !== 'none') {
+    player1.addEventListener('ended', () => {
+        console.log("Video 1 ended - showing door");
+        if (audio1) {
             audio1.pause();
-            introVideo1.style.display = 'none';
+            audio1.currentTime = 0;
+        }
+        if (introVideo1) introVideo1.style.display = 'none';
+        if (introScreen) {
             introScreen.style.opacity = '1';
             introScreen.style.pointerEvents = 'all';
+        }
+        
+        setTimeout(() => {
+            initDoorHotspot();
+        }, 50);
+    });
+
+    setTimeout(() => {
+        if (introVideo1 && introVideo1.style.display !== 'none') {
+            console.log("Fallback: forcing door to show");
+            if (audio1) audio1.pause();
+            if (introVideo1) introVideo1.style.display = 'none';
+            if (introScreen) {
+                introScreen.style.opacity = '1';
+                introScreen.style.pointerEvents = 'all';
+            }
             initDoorHotspot();
         }
     }, 7000);
 
     // ========== ВТОРОЕ ВИДЕО (вход) ==========
-    player2.addEventListener('play', () => {
-        audio2.currentTime = player2.currentTime;
-        audio2.play().catch(e => console.log("Audio blocked:", e));
-        preparePanoramaDuringVideo();
-    });
+    if (player2) {
+        player2.addEventListener('play', () => {
+            if (audio2) {
+                audio2.currentTime = player2.currentTime;
+                audio2.play().catch(e => console.log("Audio blocked:", e));
+            }
+            preparePanoramaDuringVideo();
+        });
 
-    player2.addEventListener('timeupdate', () => {
-        if (player2.currentTime >= player2.duration - 0.15 && !player2.dataset.preEnded) {
-            player2.dataset.preEnded = 'true';
-            staticBg2.style.opacity = '1';
-        }
-    });
+        player2.addEventListener('timeupdate', () => {
+            if (player2.currentTime >= player2.duration - 0.15 && !player2.dataset.preEnded) {
+                player2.dataset.preEnded = 'true';
+                if (staticBg2) staticBg2.style.opacity = '1';
+            }
+        });
 
-    player2.addEventListener('ended', () => {
-        audio2.pause();
-        audio2.currentTime = 0;
-        introVideo2.style.display = 'none';
-        finalizePanorama();
-    });
-});
+        player2.addEventListener('ended', () => {
+            console.log("Video 2 ended - finalizing panorama");
+            if (audio2) {
+                audio2.pause();
+                audio2.currentTime = 0;
+            }
+            if (introVideo2) introVideo2.style.display = 'none';
+            finalizePanorama();
+        });
+    }
+}
 
 function initDoorHotspot() {
     console.log("initDoorHotspot called");
@@ -146,7 +173,10 @@ function initDoorHotspot() {
         return;
     }
     
-    if (doorTitleElement) doorTitleElement.style.display = 'block';
+    if (doorTitleElement) {
+        doorTitleElement.style.display = 'block';
+        doorTitleElement.style.opacity = '0.9';
+    }
     createFollowRing();
     
     // Очищаем старые обработчики
@@ -230,12 +260,15 @@ function handleDoorMouseMove(e) {
 }
 
 function preparePanoramaDuringVideo() {
+    console.log("preparePanoramaDuringVideo called");
     // Отключаем хотспот двери, чтобы он не мешал
     disableDoorHotspot();
     
     const mainContent = document.getElementById('main-content');
-    mainContent.style.display = 'block';
-    mainContent.style.opacity = '0';
+    if (mainContent) {
+        mainContent.style.display = 'block';
+        mainContent.style.opacity = '0';
+    }
     
     // Скрываем надпись двери
     if (doorTitleElement) {
@@ -260,6 +293,7 @@ function preparePanoramaDuringVideo() {
 }
 
 function setupPanorama() {
+    console.log("setupPanorama called");
     updateView();
     storeHotspotPositions();
     initAnimations();
@@ -267,23 +301,28 @@ function setupPanorama() {
 }
 
 function finalizePanorama() {
+    console.log("finalizePanorama called - zoom out animation");
     const mainContent = document.getElementById('main-content');
-    mainContent.style.display = 'block';
-    mainContent.style.opacity = '1';
+    if (mainContent) {
+        mainContent.style.display = 'block';
+        mainContent.style.opacity = '1';
+    }
 
     const img = document.querySelector('.location.active .panorama-img');
     if (!img) return;
 
     // Плавный zoom-out
     img.style.transition = 'transform 2.2s cubic-bezier(0.23, 1, 0.32, 1)';
+    img.style.transform = 'scale(1.15)';
 
-    img.style.transform = 'scale(1)';
+    setTimeout(() => {
+        img.style.transform = 'scale(1)';
+    }, 50);
 
     setTimeout(() => {
         isInitialZoom = false;
         
-        // ← Вот здесь задаём желаемое смещение после зумаута
-        currentView = finalViewOffset+0.2;     // например -15 или -8
+        currentView = finalViewOffset + 0.2;
 
         updateView();
         checkHotspots();
@@ -293,7 +332,7 @@ function finalizePanorama() {
             if (img) img.style.transition = '';
             positionHotspotsOnce();
         }, 2300);
-    }, 50);
+    }, 100);
 }
 
 function positionHotspotsOnce() {
@@ -342,6 +381,7 @@ function positionHotspotsOnce() {
     });
     
     isHotspotsPositioned = true;
+    console.log("Hotspots positioned");
 }
 
 function updateAllHotspotsPosition() {
@@ -388,23 +428,43 @@ function updateAllHotspotsPosition() {
     });
 }
 
-function openDoorWithVideo() {
-    document.getElementById('intro-screen').style.opacity = '0';
-    document.getElementById('intro-screen').style.pointerEvents = 'none';
-    document.getElementById('intro-video-2').style.opacity = '1';
-    document.getElementById('intro-video-2').style.pointerEvents = 'all';
-    document.getElementById('intro-video-player-2').play();
-}
+window.openDoorWithVideo = function() {
+    console.log("openDoorWithVideo called");
+    const introScreen = document.getElementById('intro-screen');
+    const introVideo2 = document.getElementById('intro-video-2');
+    const player2 = document.getElementById('intro-video-player-2');
+    const audio2 = document.getElementById('audio-intro-2');
+
+    if (introScreen) {
+        introScreen.style.opacity = '0';
+        introScreen.style.pointerEvents = 'none';
+    }
+    if (introVideo2) {
+        introVideo2.style.opacity = '1';
+        introVideo2.style.pointerEvents = 'all';
+    }
+    if (player2) {
+        player2.currentTime = 0;
+        player2.play().catch(e => console.log("Video 2 play error:", e));
+    }
+    if (audio2) {
+        audio2.currentTime = 0;
+        audio2.volume = 0.5;
+        audio2.play().catch(e => console.log("Audio 2 play error:", e));
+    }
+};
 
 function initAnimations() {
-    gsap.to('#robot-1', { left: '25%', duration: 4, repeat: -1, yoyo: true, ease: 'sine.inOut' });
-    gsap.to('#person-1', { left: '55%', duration: 6, repeat: -1, yoyo: true, ease: 'sine.inOut' });
-    gsap.to('#person-2', { left: '20%', duration: 5, repeat: -1, yoyo: true, ease: 'sine.inOut' });
-    gsap.to('#person-3', { left: '45%', duration: 7, repeat: -1, yoyo: true, ease: 'sine.inOut' });
-    gsap.to('#person-4', { left: '75%', duration: 5, repeat: -1, yoyo: true, ease: 'sine.inOut' });
-    gsap.to('#person-5', { left: '35%', duration: 6, repeat: -1, yoyo: true, ease: 'sine.inOut' });
-    gsap.to('#person-6', { left: '70%', duration: 5, repeat: -1, yoyo: true, ease: 'sine.inOut' });
-    gsap.to('.person', { scaleY: 1.02, duration: 2, repeat: -1, yoyo: true, ease: 'sine.inOut', transformOrigin: 'center bottom' });
+    if (typeof gsap !== 'undefined') {
+        gsap.to('#robot-1', { left: '25%', duration: 4, repeat: -1, yoyo: true, ease: 'sine.inOut' });
+        gsap.to('#person-1', { left: '55%', duration: 6, repeat: -1, yoyo: true, ease: 'sine.inOut' });
+        gsap.to('#person-2', { left: '20%', duration: 5, repeat: -1, yoyo: true, ease: 'sine.inOut' });
+        gsap.to('#person-3', { left: '45%', duration: 7, repeat: -1, yoyo: true, ease: 'sine.inOut' });
+        gsap.to('#person-4', { left: '75%', duration: 5, repeat: -1, yoyo: true, ease: 'sine.inOut' });
+        gsap.to('#person-5', { left: '35%', duration: 6, repeat: -1, yoyo: true, ease: 'sine.inOut' });
+        gsap.to('#person-6', { left: '70%', duration: 5, repeat: -1, yoyo: true, ease: 'sine.inOut' });
+        gsap.to('.person', { scaleY: 1.02, duration: 2, repeat: -1, yoyo: true, ease: 'sine.inOut', transformOrigin: 'center bottom' });
+    }
 }
 
 function storeHotspotPositions() {
@@ -451,7 +511,7 @@ function showRing(x, y) {
     ringCurrentX = x;
     ringCurrentY = y;
     ringVisible = true;
-    followRing.classList.add('visible');
+    if (followRing) followRing.classList.add('visible');
 }
 
 function hideRing() {
@@ -673,9 +733,9 @@ function updateView() {
         ratio = img.naturalWidth / img.naturalHeight;
     }
 
-    const baseWidth = ratio * vh;                    // ширина при scale=1
+    const baseWidth = ratio * vh;
     const currentScale = isInitialZoom ? initialScale : 1.0;
-    const displayedWidth = baseWidth * currentScale; // важный момент
+    const displayedWidth = baseWidth * currentScale;
 
     const halfRange = (displayedWidth - vw) / 2;
     const centerOffset = (vw - displayedWidth) / 2;
@@ -686,7 +746,6 @@ function updateView() {
     let translateX = centerOffset + shift;
     translateX = Math.max(vw - displayedWidth, Math.min(0, translateX));
 
-    // Применяем трансформации
     img.style.transformOrigin = 'center center';
     img.style.transform = `scale(${currentScale})`;
 
@@ -708,7 +767,7 @@ function checkHotspots() {
     if (indicator) indicator.classList.toggle('active', hasActiveHotspot);
 }
 
-function enterLocation(targetLocId, locationName) {
+window.enterLocation = function(targetLocId, locationName) {
     if (isTransitioning) return;
     isTransitioning = true;
     autoScrollActive = false;
@@ -740,7 +799,7 @@ function enterLocation(targetLocId, locationName) {
     
     showLocationName(locationName);
     isTransitioning = false;
-}
+};
 
 function showLocationName(name) {
     const el = document.getElementById('location-name');
@@ -751,26 +810,26 @@ function showLocationName(name) {
     }
 }
 
-function openSection(name) {
+window.openSection = function(name) {
     const modal = document.getElementById('modal-' + name);
     if (modal) modal.style.display = 'flex';
-}
+};
 
-function closeSection(name) {
+window.closeSection = function(name) {
     const modal = document.getElementById('modal-' + name);
     if (modal) modal.style.display = 'none';
-}
+};
 
 document.querySelectorAll('.section-modal').forEach(modal => {
     modal.addEventListener('click', e => {
-        if (e.target === modal) closeSection(modal.id.replace('modal-', ''));
+        if (e.target === modal) window.closeSection(modal.id.replace('modal-', ''));
     });
 });
 
 document.addEventListener('keydown', e => {
     if (e.key === 'Escape') {
         document.querySelectorAll('.section-modal[style*="flex"]').forEach(m => {
-            closeSection(m.id.replace('modal-', ''));
+            window.closeSection(m.id.replace('modal-', ''));
         });
     }
     if (e.key === 'ArrowLeft') {
@@ -792,7 +851,7 @@ function hideHint() {
     if (!hasInteracted) {
         hasInteracted = true;
         const hint = document.getElementById('look-hint');
-        if (hint) gsap.to(hint, { opacity: 0, duration: 0.5, delay: 2 });
+        if (hint && typeof gsap !== 'undefined') gsap.to(hint, { opacity: 0, duration: 0.5, delay: 2 });
     }
 }
 
@@ -820,3 +879,32 @@ document.addEventListener('DOMContentLoaded', () => {
         if (mobileHint) mobileHint.style.display = 'none';
     }
 });
+
+// ЗАПУСКАЕМ ИНИЦИАЛИЗАЦИЮ
+initMain();
+
+// Экспортируем функции в window для доступа из React
+window.initDoorHotspot = initDoorHotspot;
+window.finalizePanorama = finalizePanorama;
+window.setupPanorama = setupPanorama;
+window.updateView = updateView;
+window.fixPanoramaScale = function() {
+    const activeLoc = document.querySelector('.location.active');
+    if (!activeLoc) return;
+    const wrapper = activeLoc.querySelector('.panorama-wrapper');
+    const img = activeLoc.querySelector('.panorama-img');
+    if (!wrapper || !img) return;
+    const vh = window.innerHeight;
+    const vw = window.innerWidth;
+    img.style.height = `${vh}px`;
+    img.style.width = 'auto';
+    if (img.complete && img.naturalWidth) {
+        const ratio = img.naturalWidth / img.naturalHeight;
+        let scaledWidth = ratio * vh;
+        const minWidth = vw * 1.3;
+        if (scaledWidth < minWidth) scaledWidth = minWidth;
+        img.style.width = `${scaledWidth}px`;
+        wrapper.style.width = `${scaledWidth}px`;
+        wrapper.style.height = `${vh}px`;
+    }
+};
