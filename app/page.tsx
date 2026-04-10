@@ -879,10 +879,16 @@ const handleNavigate = (sectionId: string) => {
           <div className="look-text">DRAG or MOVE TO EDGE</div>
           <div className="look-subtext">Explore the spaceship</div>
         </div>
-        <div className="mobile-hint">
-          <div className="mobile-hint-icon">👆</div>
-          <div>SLIDE TO EXPLORE</div>
-        </div>
+<div className="mobile-hint">
+  <div className="mobile-hint-icon">
+    <img 
+      src="/image/hand.webp" 
+      alt="hand icon" 
+      style={{ width: '120px', height: '80px', display: 'block' }}
+    />
+  </div>
+  <div>SLIDE TO EXPLORE</div>
+</div>
 
         <div id="viewport">
           <div id="panorama">
