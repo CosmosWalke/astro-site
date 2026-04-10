@@ -119,21 +119,45 @@ export function MobileMenu({ sections, onNavigate }: MobileMenuProps) {
   return (
     <>
       {/* Кнопка меню */}
-      <button
-        onClick={() => setIsMenuOpen(!isMenuOpen)}
-        className={`fixed top-6 right-4 md:right-8 z-50 w-12 h-12 flex items-center justify-center border border-[#2a2a38] hover:border-[#00d4ff] transition-colors duration-300 group bg-[#050508]/80 backdrop-blur-sm ${
-          isScrolled ? 'bg-[#050508]/90' : ''
-        }`}
-        aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
-      >
-        {isMenuOpen ? (
-          <X className="w-5 h-5 text-[#e8e8ec]" />
-        ) : (
-          <Menu className="w-5 h-5 text-[#e8e8ec]" />
-        )}
-        <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-[#00d4ff] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-        <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-[#00d4ff] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-      </button>
+{/* Кнопка меню */}
+<button
+  onClick={() => setIsMenuOpen(!isMenuOpen)}
+  className="fixed z-50 transition-transform duration-300 hover:scale-105 active:scale-95"
+  aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
+  style={
+    isMenuOpen
+      ? {
+          // Стили для кнопки ЗАКРЫТИЯ (крестик)
+          top: isMobile ? '90px' : '24px',
+          right: isMobile ? '60px' : '25px',
+          width: isMobile ? '60px' : '80px',
+          height: isMobile ? '60px' : '80px',
+          padding: isMobile ? '8px' : '10px',
+          backgroundImage: `url('/image/menuxbutton.webp')`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+          backgroundColor: 'transparent',
+          border: 'none',
+          cursor: 'pointer',
+        }
+      : {
+          // Стили для кнопки ОТКРЫТИЯ (бургер)
+          top: isMobile ? '16px' : '24px',
+          right: isMobile ? '16px' : '25px',
+          width: isMobile ? '60px' : '80px',
+          height: isMobile ? '60px' : '80px',
+          padding: isMobile ? '8px' : '10px',
+          backgroundImage: `url('/image/menubutton.webp')`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+          backgroundColor: 'transparent',
+          border: 'none',
+          cursor: 'pointer',
+        }
+  }
+/>
 
       {/* Full Screen Menu */}
       {isMenuOpen && (
