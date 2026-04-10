@@ -1,5 +1,5 @@
 'use client'
-
+import { MobileMenu } from "@/components/ui/mobile-menu"
 import { useEffect, useRef, useState } from 'react'
 import Script from 'next/script'
 import { useRouter } from 'next/navigation'
@@ -18,7 +18,12 @@ declare global {
     panoramaReady: boolean
   }
 }
-
+const sections = [
+  { label: 'ABOUT', href: '/about', id: 'about', isPage: true },
+  { label: 'COMMUNITY', href: '#community', id: 'community', isPage: false },
+  { label: 'ASTRO CLUB', href: '#astro-club', id: 'astro-club', isPage: false },
+  { label: 'CARGO BAY', href: '#cargo-bay', id: 'cargo-bay', isPage: false },
+]
 export default function PanoramaPage() {
   const isLoaded = useRef(false)
   const router = useRouter()
@@ -838,9 +843,22 @@ useEffect(() => {
       if (mobileObserver) mobileObserver.disconnect()
     }
   }, [router])
-
+const handleNavigate = (sectionId: string) => {
+  const section = sections.find(s => s.id === sectionId)
+  
+  if (section?.isPage && section.href) {
+    window.location.href = section.href
+  } else {
+    const element = document.getElementById(sectionId)
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' })
+    }
+  }
+}
   return (
-    <>
+    <>    <MobileMenu sections={sections} onNavigate={handleNavigate} />
+    
+    <LoadingScreen progress={loadingProgress} isVisible={showLoading} />
       <LoadingScreen progress={loadingProgress} isVisible={showLoading} />
       
       <Script src="/js/main.js" strategy="afterInteractive" />
