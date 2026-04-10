@@ -139,7 +139,7 @@ export function MobileMenu({ sections, onNavigate }: MobileMenuProps) {
           backgroundRepeat: 'no-repeat',
           backgroundColor: 'transparent',
           border: 'none',
-          cursor: 'pointer',
+          cursor: `url('/images/handarrow.webp') 0 0, pointer`,  
         }
       : {
           // Стили для кнопки ОТКРЫТИЯ (бургер)
@@ -193,6 +193,7 @@ export function MobileMenu({ sections, onNavigate }: MobileMenuProps) {
           onNavigate(section.id)
         }}
         className={`menu-item group relative py-4 px-8 cursor-pointer ${isScrolling ? 'pointer-events-none opacity-50' : ''}`}
+       style={{ cursor: `url('/images/handarrow.webp') 0 0, pointer` }}
       >
         <TextScramble 
           text={section.label.toUpperCase()} 

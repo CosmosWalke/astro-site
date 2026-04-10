@@ -889,3 +889,17 @@ html {
     height: 500px; /* Фиксированная высота для всех карточек */
   }
 }
+/* Меню навигация */
+nav a,
+.menu-item,
+.group.relative.py-4.px-8,
+.flex.flex-col.items-start.gap-2 a,
+[class*="menu-item"] {
+    cursor: url('/images/handarrow.webp') 0 0, pointer !important;
+}
+
+/* Текст внутри меню */
+.menu-item span,
+.menu-item div {
+    cursor: url('/images/handarrow.webp') 0 0, pointer !important;
+}

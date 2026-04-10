@@ -47,13 +47,13 @@ body {
 .hotspot-door, 
 .door-container,
 .door {
-    cursor: url('/images/A.png') 0 0, pointer;
+    cursor: url('/images/handarrow.webp') 0 0, pointer !important;
 }
 
 /* Для круга-курсора */
 .cursor-follow-ring,
 .cursor-follow-ring .click-text {
-    cursor: url('/images/A.png') 0 0, auto;
+    cursor: url('/images/handarrow.webp') 0 0, auto !important;
 }
 
 /* Видео + статичный фон */
@@ -630,4 +630,46 @@ html.lenis {
 
 .lenis.lenis-smooth iframe {
   pointer-events: none;
+}
+/* Курсор при наведении на хотспоты */
+.hotspot, 
+.hotspot-door, 
+.door-container,
+.door {
+    cursor: url('/images/handarrow.png') 0 0, pointer !important;
+}
+
+/* Для круга-курсора при наведении на хотспоты */
+.cursor-follow-ring,
+.cursor-follow-ring .click-text {
+    cursor: url('/images/handarrow.png') 0 0, auto !important;
+}
+/* Кнопка меню (бургер и крестик) */
+button.fixed.z-50,
+button[aria-label="Open menu"],
+button[aria-label="Close menu"],
+.fixed.top-6.right-4 {
+    cursor: url('/images/handarrow.png') 0 0, pointer !important;
+}
+
+/* Для всех кнопок в хедере */
+header button,
+.menu-button,
+button.relative.w-12.h-12 {
+    cursor: url('/images/handarrow.png') 0 0, pointer !important;
+}
+/* Для пунктов меню */
+.menu-item,
+.menu-item a,
+nav a,
+.flex.flex-col.items-start.gap-2 a {
+    cursor: url('/images/handarrow.png') 0 0, pointer !important;
+}
+/* Для всех span внутри TextScramble */
+.text-5xl,
+.text-5xl span,
+[class*="text-5xl"],
+span.text-white,
+span.group-hover\:text-\[\#00d4ff\] {
+    cursor: url('/images/handarrow.png') 0 0, pointer !important;
 }
