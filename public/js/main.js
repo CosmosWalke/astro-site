@@ -528,8 +528,12 @@ function updateRingPosition(x, y) {
 
 function hideAllHotspots() {
     document.querySelectorAll('.location.active .hotspot').forEach(h => {
-        h.style.opacity = '0';
-        h.style.pointerEvents = 'none';
+        // Проверяем, что это не контейнер с глобусом
+        const isGlobeContainer = h.querySelector('.simple-globe-container, canvas');
+        if (!isGlobeContainer) {
+            h.style.opacity = '0';
+            h.style.pointerEvents = 'none';
+        }
     });
 }
 

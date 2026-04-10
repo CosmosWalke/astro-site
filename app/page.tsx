@@ -878,29 +878,35 @@ useEffect(() => {
                   </div>
                   <div className="hotspot" data-percent-x="50.09" data-percent-y="43.09" data-label="ABOUT" onClick={() => router.push('/about')}>
                     <div className="hotspot-dot"></div>{/* Глобус за хотспотом */}
-<div className="absolute pointer-events-none" style={{
-  left: '50%',
-  top: '50%',
-  transform: 'translate(-50%, -50%)',
-  marginLeft: '-5px',
-  width: '180px',
-  height: '180px',
-  zIndex: -1,
-  opacity: 0.7,
-}}>
-  <SimpleGlobe 
-    width={180} 
-    height={180} 
-    color="#00d4ff"
-    autoRotate={true}
-    globeSpeed={0.1}
-    satellite={true}
-    satelliteColor="#ff6b35"
-    satelliteSpeed={0.05}
-    appearDelay={12000} // Глобус появится через 2 секунды с глитч эффектом
-  />
+<div className="hotspot" data-percent-x="50.09" data-percent-y="43.09" data-label="ABOUT" onClick={() => router.push('/about')}>
+  <div className="hotspot-dot"></div>
+  <div className="globe-protected" style={{
+    position: 'absolute',
+    left: '50%',
+    top: '50%',
+    transform: 'translate(-50%, -50%)',
+    marginLeft: '-5px',
+    width: '180px',
+    height: '180px',
+    zIndex: -1,
+    opacity: 0.7,
+    pointerEvents: 'none',
+  }}>
+<SimpleGlobe 
+  width={180} 
+  height={180} 
+  color="#00d4ff"
+  autoRotate={true}
+  globeSpeed={0.1}
+  satellite={true}
+  satelliteColor="#ff6b35"
+  satelliteSpeed={0.05}
+  glitchInterval={22000}  // Глитч каждые 7 секунд
+/>
 </div>
 </div>
+</div>
+
                   <div className="hotspot" data-percent-x="26.34" data-percent-y="58.00" data-label="LIFT" onClick={() => console.log('LIFT')}>
                     <div className="hotspot-dot"></div>
                   </div>
