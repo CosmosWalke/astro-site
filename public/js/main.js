@@ -302,6 +302,17 @@ function setupPanorama() {
 
 function finalizePanorama() {
     console.log("finalizePanorama called - zoom out animation");
+        // ====== ОТКЛЮЧАЕМ ХОТСПОТ ДВЕРИ ======
+            // Удаляем хотспот двери из DOM
+const doorHotspot = document.querySelector('.hotspot-door');
+if (doorHotspot) {
+    doorHotspot.style.pointerEvents = 'none';
+    doorHotspot.style.opacity = '0';
+    doorHotspot.style.display = 'none';
+}
+    disableDoorHotspot();
+    // ====================================
+    
     const mainContent = document.getElementById('main-content');
     if (mainContent) {
         mainContent.style.display = 'block';

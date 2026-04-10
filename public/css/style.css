@@ -673,3 +673,15 @@ span.text-white,
 span.group-hover\:text-\[\#00d4ff\] {
     cursor: url('/images/handarrow.png') 0 0, pointer !important;
 }
+/* Принудительно для всех span внутри меню */
+.flex.flex-col.items-start.gap-2 span,
+.menu-item span,
+nav span {
+    cursor: url('/images/handarrow.webp') 0 0, pointer !important;
+}
+/* Скрываем и отключаем хотспот двери после перехода */
+.panorama-active .hotspot-door {
+    display: none !important;
+    pointer-events: none !important;
+    opacity: 0 !important;
+}
