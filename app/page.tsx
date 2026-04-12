@@ -936,9 +936,13 @@ const handleNavigate = (sectionId: string) => {
       <div className="hotspot" data-percent-x="77.58" data-percent-y="58.43" data-label="CARGO BAY" onClick={() => window.openSection?.('cargo')}>
         <div className="hotspot-dot"></div>
       </div>
-      <div className="hotspot" data-percent-x="91.79" data-percent-y="54.95" data-label="JOIN THE CLUB" onClick={() => console.log('JOIN THE CLUB')}>
-        <div className="hotspot-dot"></div>
-      </div>
+<div className="hotspot" data-percent-x="91.79" data-percent-y="54.95" data-label="JOIN THE CLUB" onClick={() => console.log('JOIN THE CLUB')}>
+  <div className="hotspot-dot"></div>
+<div className="hotspot-label" style={{ textAlign: 'center' }}>
+  <div style={{ lineHeight: '1' }}>JOIN</div>
+  <div style={{ lineHeight: '1' }}>THE CLUB</div>
+</div>
+</div>
     </div>
   </div>
   <div className="layer-animated">

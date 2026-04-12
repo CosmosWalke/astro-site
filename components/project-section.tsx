@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { gsap } from 'gsap'
+import Link from 'next/link' // Добавьте импорт Link
 
 const projectData = [
   {
@@ -9,21 +10,24 @@ const projectData = [
     title: 'VAPE',
     description: 'Our dual-tank inhale-activated system features a digital screen on the front panel to allow the customers to have a more simplified and smooth experience. It will display our brand logo, provide what strain your are hitting and puff count. Simply inhale to activate and press button to alternate between flavors, its that simple.',
     image: '/image/vape.webp',
-    stats: { FLAVORS: '20', uptime: '99.97%', keepers: '28' }
+    stats: { FLAVORS: '20', uptime: '99.97%', keepers: '28' },
+    slug: '/vape' // Добавьте slug для каждого продукта
   },
   {
     id: '002',
     title: 'FLOWERS',
     description: 'NEW ASTRO FUEL. EVERY UNIVERSAL RATION PACK IS EQUIPPED WITH A DARK MATTER QUAD INFUSED PREROLL',
     image: '/image/flowers.webp',
-    stats: { FLAVORS: '8', capacity: '50K', defense: 'MAX' }
+    stats: { FLAVORS: '8', capacity: '50K', defense: 'MAX' },
+    slug: '/flowers' // Добавьте, если есть страница
   },
   {
     id: '003',
     title: 'PREROLLS',
     description: 'Diverse groups united under the Protocol. Each faction brings unique skills and perspectives to the collective mission of survival.',
     image: '/image/prerolls.webp',
-    stats: { factions: '7', members: '12.5K', alliance: 'ACTIVE' }
+    stats: { factions: '7', members: '12.5K', alliance: 'ACTIVE' },
+    slug: '/prerolls' // Добавьте, если есть страница
   }
 ]
 
@@ -200,15 +204,28 @@ export function ProjectSection() {
                   ))}
                 </div>
 
-                {/* Кнопка Explore More */}
-                <button className="group relative inline-flex items-center gap-2 sm:gap-3 px-4 sm:px-5 md:px-6 py-2 sm:py-2.5 md:py-3 bg-transparent border border-[#2a2a38] hover:border-[#00d4ff] transition-colors duration-300">
-                  <span className="text-xs sm:text-sm font-medium text-[#e8e8ec]">Explore More</span>
-                  <svg className="w-3 h-3 sm:w-4 sm:h-4 text-[#00d4ff] group-hover:translate-x-1 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                  </svg>
-                  <div className="absolute top-0 left-0 w-1.5 h-1.5 sm:w-2 sm:h-2 border-t border-l border-[#00d4ff] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  <div className="absolute bottom-0 right-0 w-1.5 h-1.5 sm:w-2 sm:h-2 border-b border-r border-[#00d4ff] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                </button>
+                {/* Кнопка Explore More - обернутая в Link для VAPE */}
+                {project.title === 'VAPE' ? (
+                  <Link href={project.slug}>
+                    <button className="group relative inline-flex items-center gap-2 sm:gap-3 px-4 sm:px-5 md:px-6 py-2 sm:py-2.5 md:py-3 bg-transparent border border-[#2a2a38] hover:border-[#00d4ff] transition-colors duration-300">
+                      <span className="text-xs sm:text-sm font-medium text-[#e8e8ec]">Explore More</span>
+                      <svg className="w-3 h-3 sm:w-4 sm:h-4 text-[#00d4ff] group-hover:translate-x-1 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                      </svg>
+                      <div className="absolute top-0 left-0 w-1.5 h-1.5 sm:w-2 sm:h-2 border-t border-l border-[#00d4ff] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                      <div className="absolute bottom-0 right-0 w-1.5 h-1.5 sm:w-2 sm:h-2 border-b border-r border-[#00d4ff] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    </button>
+                  </Link>
+                ) : (
+                  <button className="group relative inline-flex items-center gap-2 sm:gap-3 px-4 sm:px-5 md:px-6 py-2 sm:py-2.5 md:py-3 bg-transparent border border-[#2a2a38] hover:border-[#00d4ff] transition-colors duration-300">
+                    <span className="text-xs sm:text-sm font-medium text-[#e8e8ec]">Explore More</span>
+                    <svg className="w-3 h-3 sm:w-4 sm:h-4 text-[#00d4ff] group-hover:translate-x-1 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                    </svg>
+                    <div className="absolute top-0 left-0 w-1.5 h-1.5 sm:w-2 sm:h-2 border-t border-l border-[#00d4ff] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    <div className="absolute bottom-0 right-0 w-1.5 h-1.5 sm:w-2 sm:h-2 border-b border-r border-[#00d4ff] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  </button>
+                )}
               </div>
             </div>
           ))}

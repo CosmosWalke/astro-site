@@ -474,6 +474,7 @@ body {
     transition: opacity 0.4s ease;
     font-family: 'CCUltimatum', 'Courier New', monospace;
     font-weight: 700;
+    line-height: 1;  /* ← ДОБАВЬ ЭТУ СТРОКУ */
 }
 
 .center-title.active {
@@ -589,8 +590,13 @@ body {
   background: none;              /* убрали фон */
   border: none;                  /* убрали рамки */
   box-shadow: none;
+  
 }
-
+.hotspot[data-label="JOIN THE CLUB"] .hotspot-label {
+    white-space: normal;
+    line-height: 1.7;
+    text-align: center;
+}
 .hotspot-label.show {
   opacity: 0.95;
   visibility: visible;
