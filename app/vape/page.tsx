@@ -48,7 +48,7 @@ const flavors: VapeFlavor[] = [
     name: 'PEACH',
     bgImage: '/vapes/peach/bg.webp',
     bgImageMobile: '/vapes/peach/bgmobile.png',
-    vapeImage: '/vapes/peach/vape.png',
+    vapeImage: '/vapes/peach/vape.webp',
     preroll: {
       src: '/vapes/peach/preroll.webp',
       sizeMobile: 250,
@@ -89,7 +89,7 @@ const flavors: VapeFlavor[] = [
     name: 'GREEN APPLE',
     bgImage: '/vapes/green-apple/bg.webp',
     bgImageMobile: '/vapes/green-apple/bgmobile.png',
-    vapeImage: '/vapes/green-apple/vape.png',
+    vapeImage: '/vapes/green-apple/vape.webp',
     preroll: {
       src: '/vapes/green-apple/preroll.webp',
       sizeMobile: 250,
@@ -130,7 +130,7 @@ const flavors: VapeFlavor[] = [
     name: 'PASSION FRUIT',
     bgImage: '/vapes/passion-fruit/bg.webp',
     bgImageMobile: '/vapes/passion-fruit/bgmobile.png',
-    vapeImage: '/vapes/passion-fruit/vape.png',
+    vapeImage: '/vapes/passion-fruit/vape.webp',
     preroll: {
       src: '/vapes/passion-fruit/preroll.webp',
       sizeMobile: 250,
@@ -171,7 +171,7 @@ const flavors: VapeFlavor[] = [
     name: 'DRAGON FRUIT',
     bgImage: '/vapes/dragon-fruit/bg.webp',
     bgImageMobile: '/vapes/dragon-fruit/bgmobile.png',
-    vapeImage: '/vapes/dragon-fruit/vape.png',
+    vapeImage: '/vapes/dragon-fruit/vape.webp',
     preroll: {
       src: '/vapes/dragon-fruit/preroll.webp',
       sizeMobile: 250,
@@ -212,7 +212,7 @@ const flavors: VapeFlavor[] = [
     name: 'STRAWBERRY',
     bgImage: '/vapes/strawberry/bg.webp',
     bgImageMobile: '/vapes/strawberry/bgmobile.png',
-    vapeImage: '/vapes/strawberry/vape.png',
+    vapeImage: '/vapes/strawberry/vape.webp',
     preroll: {
       src: '/vapes/strawberry/preroll.webp',
       sizeMobile: 250,
