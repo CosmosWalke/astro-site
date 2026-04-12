@@ -16,11 +16,29 @@ interface Fruit {
   rotate?: number;
 }
 
+interface ExtraElement {
+  src: string;
+  sizeMobile: number;
+  sizeDesktop: number;
+  leftMobile: string;
+  leftDesktop: string;
+  topMobile: string;
+  topDesktop: string;
+  rotate?: number;
+  yOffset?: number;
+  rotateAmount?: number;
+  duration?: number;
+  zIndex?: number;
+}
+
 interface VapeFlavor {
   id: string;
   name: string;
-  bgColor: string;
+  bgImage: string;
+  bgImageMobile: string;
   vapeImage: string;
+  preroll: ExtraElement;
+  tube: ExtraElement;
   fruits: Fruit[];
 }
 
@@ -28,8 +46,37 @@ const flavors: VapeFlavor[] = [
   {
     id: 'peach',
     name: 'PEACH',
-    bgColor: 'from-orange-400 via-amber-500 to-red-500',
+    bgImage: '/vapes/peach/bg.webp',
+    bgImageMobile: '/vapes/peach/bgmobile.png',
     vapeImage: '/vapes/peach/vape.png',
+    preroll: {
+      src: '/vapes/peach/preroll.webp',
+      sizeMobile: 250,
+      sizeDesktop: 320,
+      leftMobile: '25%',
+      leftDesktop: '40%',
+      topMobile: '65%',
+      topDesktop: '65%',
+      rotate: -30,
+      yOffset: -15,
+      rotateAmount: -10,
+      duration: 6,
+      zIndex: 30,
+    },
+    tube: {
+      src: '/vapes/peach/tube.webp',
+      sizeMobile: 300,
+      sizeDesktop: 500,
+      leftMobile: '78%',
+      leftDesktop: '65%',
+      topMobile: '35%',
+      topDesktop: '50%',
+      rotate: 8,
+      yOffset: -18,
+      rotateAmount: 6,
+      duration: 6.5,
+      zIndex: 10,
+    },
     fruits: [
       { src: '/vapes/peach/fruit1.png', size: 140, left: '10%', top: '18%', delay: 0 },
       { src: '/vapes/peach/fruit2.png', size: 95, left: '78%', top: '25%', delay: 1.2 },
@@ -40,8 +87,37 @@ const flavors: VapeFlavor[] = [
   {
     id: 'green-apple',
     name: 'GREEN APPLE',
-    bgColor: 'from-emerald-400 via-green-500 to-lime-600',
+    bgImage: '/vapes/green-apple/bg.webp',
+    bgImageMobile: '/vapes/green-apple/bgmobile.png',
     vapeImage: '/vapes/green-apple/vape.png',
+    preroll: {
+      src: '/vapes/green-apple/preroll.webp',
+      sizeMobile: 250,
+      sizeDesktop: 320,
+      leftMobile: '25%',
+      leftDesktop: '40%',
+      topMobile: '65%',
+      topDesktop: '65%',
+      rotate: -30,
+      yOffset: -15,
+      rotateAmount: -10,
+      duration: 6,
+      zIndex: 30,
+    },
+    tube: {
+      src: '/vapes/green-apple/tube.webp',
+      sizeMobile: 300,
+      sizeDesktop: 500,
+      leftMobile: '78%',
+      leftDesktop: '65%',
+      topMobile: '35%',
+      topDesktop: '50%',
+      rotate: 8,
+      yOffset: -18,
+      rotateAmount: 6,
+      duration: 6.5,
+      zIndex: 10,
+    },
     fruits: [
       { src: '/vapes/green-apple/fruit1.png', size: 135, left: '15%', top: '20%', delay: 0 },
       { src: '/vapes/green-apple/fruit2.png', size: 100, left: '77%', top: '28%', delay: 1.3 },
@@ -52,8 +128,37 @@ const flavors: VapeFlavor[] = [
   {
     id: 'passion-fruit',
     name: 'PASSION FRUIT',
-    bgColor: 'from-purple-500 via-violet-600 to-fuchsia-500',
+    bgImage: '/vapes/passion-fruit/bg.webp',
+    bgImageMobile: '/vapes/passion-fruit/bgmobile.png',
     vapeImage: '/vapes/passion-fruit/vape.png',
+    preroll: {
+      src: '/vapes/passion-fruit/preroll.webp',
+      sizeMobile: 250,
+      sizeDesktop: 320,
+      leftMobile: '25%',
+      leftDesktop: '40%',
+      topMobile: '65%',
+      topDesktop: '65%',
+      rotate: -30,
+      yOffset: -15,
+      rotateAmount: -10,
+      duration: 6,
+      zIndex: 30,
+    },
+    tube: {
+      src: '/vapes/passion-fruit/tube.webp',
+      sizeMobile: 300,
+      sizeDesktop: 500,
+      leftMobile: '78%',
+      leftDesktop: '65%',
+      topMobile: '35%',
+      topDesktop: '50%',
+      rotate: 8,
+      yOffset: -18,
+      rotateAmount: 6,
+      duration: 6.5,
+      zIndex: 10,
+    },
     fruits: [
       { src: '/vapes/passion-fruit/fruit1.png', size: 130, left: '12%', top: '18%', delay: 0 },
       { src: '/vapes/passion-fruit/fruit2.png', size: 105, left: '80%', top: '30%', delay: 1.1 },
@@ -64,8 +169,37 @@ const flavors: VapeFlavor[] = [
   {
     id: 'dragon-fruit',
     name: 'DRAGON FRUIT',
-    bgColor: 'from-rose-500 via-pink-600 to-red-500',
+    bgImage: '/vapes/dragon-fruit/bg.webp',
+    bgImageMobile: '/vapes/dragon-fruit/bgmobile.png',
     vapeImage: '/vapes/dragon-fruit/vape.png',
+    preroll: {
+      src: '/vapes/dragon-fruit/preroll.webp',
+      sizeMobile: 250,
+      sizeDesktop: 320,
+      leftMobile: '25%',
+      leftDesktop: '40%',
+      topMobile: '65%',
+      topDesktop: '65%',
+      rotate: -30,
+      yOffset: -15,
+      rotateAmount: -10,
+      duration: 6,
+      zIndex: 30,
+    },
+    tube: {
+      src: '/vapes/dragon-fruit/tube.webp',
+      sizeMobile: 300,
+      sizeDesktop: 500,
+      leftMobile: '78%',
+      leftDesktop: '65%',
+      topMobile: '35%',
+      topDesktop: '50%',
+      rotate: 8,
+      yOffset: -18,
+      rotateAmount: 6,
+      duration: 6.5,
+      zIndex: 10,
+    },
     fruits: [
       { src: '/vapes/dragon-fruit/fruit1.png', size: 135, left: '18%', top: '22%', delay: 0 },
       { src: '/vapes/dragon-fruit/fruit2.png', size: 95, left: '75%', top: '25%', delay: 1.4 },
@@ -76,8 +210,37 @@ const flavors: VapeFlavor[] = [
   {
     id: 'strawberry',
     name: 'STRAWBERRY',
-    bgColor: 'from-red-500 via-rose-600 to-pink-500',
+    bgImage: '/vapes/strawberry/bg.webp',
+    bgImageMobile: '/vapes/strawberry/bgmobile.png',
     vapeImage: '/vapes/strawberry/vape.png',
+    preroll: {
+      src: '/vapes/strawberry/preroll.webp',
+      sizeMobile: 250,
+      sizeDesktop: 320,
+      leftMobile: '25%',
+      leftDesktop: '40%',
+      topMobile: '65%',
+      topDesktop: '65%',
+      rotate: -30,
+      yOffset: -15,
+      rotateAmount: -10,
+      duration: 6,
+      zIndex: 30,
+    },
+    tube: {
+      src: '/vapes/strawberry/tube.webp',
+      sizeMobile: 300,
+      sizeDesktop: 500,
+      leftMobile: '78%',
+      leftDesktop: '65%',
+      topMobile: '35%',
+      topDesktop: '50%',
+      rotate: 8,
+      yOffset: -18,
+      rotateAmount: 6,
+      duration: 6.5,
+      zIndex: 10,
+    },
     fruits: [
       { src: '/vapes/strawberry/fruit1.png', size: 130, left: '13%', top: '19%', delay: 0 },
       { src: '/vapes/strawberry/fruit2.png', size: 98, left: '77%', top: '27%', delay: 1.2 },
@@ -91,6 +254,7 @@ export default function VapePage() {
   const router = useRouter();
   const [activeIndex, setActiveIndex] = useState(0);
   const [prevIndex, setPrevIndex] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
   const activeFlavor = flavors[activeIndex];
   const prevFlavor = flavors[prevIndex];
 
@@ -98,9 +262,35 @@ export default function VapePage() {
     setPrevIndex(activeIndex);
   }, [activeIndex]);
 
+  // Определяем мобильное устройство
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // Получаем текущие размеры и позиции для элемента
+  const getElementStyles = (element: ExtraElement) => {
+    const size = isMobile ? element.sizeMobile : element.sizeDesktop;
+    const left = isMobile ? element.leftMobile : element.leftDesktop;
+    const top = isMobile ? element.topMobile : element.topDesktop;
+    
+    return {
+      size,
+      left,
+      top,
+      marginLeft: -size / 2,
+      marginTop: -size / 2,
+    };
+  };
+
   return (
     <main className="bg-zinc-950 text-white min-h-screen overflow-hidden">
-      {/* Полноэкранная сцена */}
       <div className="relative h-screen w-full flex items-center justify-center">
         <AnimatePresence mode="wait">
           <motion.div
@@ -111,8 +301,66 @@ export default function VapePage() {
             transition={{ duration: 0.5, ease: "easeInOut" }}
             className="absolute inset-0"
           >
-            {/* Фон с градиентом */}
-            <div className={`absolute inset-0 bg-gradient-to-br ${activeFlavor.bgColor}`} />
+            {/* Фон */}
+            <div className="absolute inset-0">
+              <picture>
+                <source srcSet={activeFlavor.bgImageMobile} media="(max-width: 768px)" />
+                <img src={activeFlavor.bgImage} alt="" className="w-full h-full object-cover" />
+              </picture>
+              <div className="absolute inset-0 bg-black/30" />
+            </div>
+
+            {/* TUBE - за вейпом */}
+            <motion.div
+              key={`tube-${activeFlavor.id}`}
+              className="absolute pointer-events-none"
+              style={{
+                left: getElementStyles(activeFlavor.tube).left,
+                top: getElementStyles(activeFlavor.tube).top,
+                width: getElementStyles(activeFlavor.tube).size,
+                height: getElementStyles(activeFlavor.tube).size,
+                marginLeft: getElementStyles(activeFlavor.tube).marginLeft,
+                marginTop: getElementStyles(activeFlavor.tube).marginTop,
+                zIndex: activeFlavor.tube.zIndex || 10,
+              }}
+              animate={{
+                y: [0, activeFlavor.tube.yOffset || -15, 0],
+                rotate: [activeFlavor.tube.rotate || 0, (activeFlavor.tube.rotate || 0) + (activeFlavor.tube.rotateAmount || 5), activeFlavor.tube.rotate || 0],
+              }}
+              transition={{
+                duration: activeFlavor.tube.duration || 6,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+            >
+              <img src={activeFlavor.tube.src} alt="" className="w-full h-full object-contain drop-shadow-xl" />
+            </motion.div>
+
+            {/* PREROLL - перед вейпом (теперь внутри того же motion.div что и фон) */}
+            <motion.div
+              key={`preroll-${activeFlavor.id}`}
+              className="absolute pointer-events-none"
+              style={{
+                left: getElementStyles(activeFlavor.preroll).left,
+                top: getElementStyles(activeFlavor.preroll).top,
+                width: getElementStyles(activeFlavor.preroll).size,
+                height: getElementStyles(activeFlavor.preroll).size,
+                marginLeft: getElementStyles(activeFlavor.preroll).marginLeft,
+                marginTop: getElementStyles(activeFlavor.preroll).marginTop,
+                zIndex: activeFlavor.preroll.zIndex || 30,
+              }}
+              animate={{
+                y: [0, activeFlavor.preroll.yOffset || -15, 0],
+                rotate: [activeFlavor.preroll.rotate || 0, (activeFlavor.preroll.rotate || 0) + (activeFlavor.preroll.rotateAmount || -10), activeFlavor.preroll.rotate || 0],
+              }}
+              transition={{
+                duration: activeFlavor.preroll.duration || 6,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+            >
+              <img src={activeFlavor.preroll.src} alt="" className="w-full h-full object-contain drop-shadow-2xl" />
+            </motion.div>
 
             {/* Плавающие фрукты */}
             {activeFlavor.fruits.map((fruit, i) => (
@@ -148,9 +396,7 @@ export default function VapePage() {
           whileTap={{ scale: 0.95 }}
         >
           <ArrowLeft className="w-4 h-4 md:w-5 md:h-5 text-white group-hover:-translate-x-1 transition-transform duration-300" />
-          <span className="text-sm md:text-base font-medium text-white/90 group-hover:text-white transition-colors duration-300">
-            Back
-          </span>
+          <span className="text-sm md:text-base font-medium text-white/90 group-hover:text-white transition-colors duration-300">Back</span>
         </motion.button>
 
         {/* Текст сверху */}
@@ -164,24 +410,21 @@ export default function VapePage() {
             transition={{ duration: 0.4 }}
           >
             <div className="uppercase tracking-[5px] text-sm mb-4 opacity-80">NEW FLAVOUR</div>
-            <h2 className="text-6xl md:text-8xl font-black tracking-tighter">
+            <h2 className="text-6xl md:text-8xl font-black tracking-tighter drop-shadow-lg">
               {activeFlavor.name}
             </h2>
           </motion.div>
         </AnimatePresence>
 
-        {/* Центральное изображение вейпа с плавным перетеканием */}
+        {/* Центральное изображение вейпа */}
         <div className="relative z-20 flex items-center justify-center">
           <div className="relative w-[300px] h-[300px] md:w-[430px] md:h-[430px]">
-            {/* Предыдущее изображение (исчезает) */}
             <img
               src={prevFlavor.vapeImage}
               alt=""
               className="absolute inset-0 w-full h-full object-contain drop-shadow-2xl transition-opacity duration-500 ease-in-out"
               style={{ opacity: 0 }}
             />
-            
-            {/* Текущее изображение (появляется) */}
             <img
               src={activeFlavor.vapeImage}
               alt={activeFlavor.name}
@@ -192,9 +435,9 @@ export default function VapePage() {
         </div>
       </div>
 
-      {/* Кнопки-миниатюры внизу - полноценные PNG вейпов */}
+      {/* Кнопки-миниатюры */}
       <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50">
-        <div className="flex gap-3 md:gap-4 bg-black/20 backdrop-blur-md px-4 py-3 md:px-6 md:py-4 rounded-full">
+        <div className="flex gap-3 md:gap-4 bg-black/30 backdrop-blur-md px-4 py-3 md:px-6 md:py-4 rounded-full">
           {flavors.map((flavor, index) => (
             <motion.button
               key={flavor.id}
@@ -208,14 +451,8 @@ export default function VapePage() {
                 transition-all duration-300
                 ${activeIndex === index ? 'scale-110 drop-shadow-xl' : 'opacity-60 hover:opacity-100'}
               `}>
-                <img
-                  src={flavor.vapeImage}
-                  alt={flavor.name}
-                  className="w-full h-full object-contain"
-                />
+                <img src={flavor.vapeImage} alt={flavor.name} className="w-full h-full object-contain" />
               </div>
-              
-              {/* Активный индикатор - маленькая точка под активной миниатюрой */}
               {activeIndex === index && (
                 <motion.div
                   layoutId="activeDot"
