@@ -674,7 +674,7 @@ export default function VapePage() {
               </div>
             )}
 
-            {/* Flavors для десктопа (справа) - выровнен по верхнему краю с Description */}
+            {/* Flavors для десктопа (справа) */}
             {!isMobile && (
               <div className="absolute right-8 top-1/2 -translate-y-1/2 z-[15] max-w-[400px] w-[360px] bg-black/60 backdrop-blur-md rounded-2xl p-6 border border-white/20 pointer-events-auto max-h-[85vh] overflow-y-auto custom-scrollbar">
                 <FlavorsListContent />
@@ -863,26 +863,31 @@ export default function VapePage() {
           )}
         </AnimatePresence>
 
-        {/* Текст сверху */}
+        {/* Текст сверху - для мобильных по центру, для ПК - в правом верхнем углу */}
         <AnimatePresence mode="wait">
           <motion.div
             key={`text-${activeFlavor.id}`}
-            className="absolute top-24 left-1/2 -translate-x-1/2 text-center z-30"
+            className={`z-30 ${
+              isMobile 
+                ? 'absolute top-24 left-1/2 -translate-x-1/2 text-center' 
+                : 'absolute top-12 right-12 text-right'
+            }`}
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 20 }}
             transition={{ duration: 0.4 }}
           >
-            <div className="uppercase tracking-[5px] text-sm mb-4 opacity-80">ASTRO KIT</div>
-            <h2 className="text-6xl md:text-8xl font-black tracking-tighter drop-shadow-lg">
+            <div className={`uppercase tracking-[5px] text-sm mb-4 opacity-80 ${!isMobile && 'text-right'}`}>ASTRO KIT</div>
+            <h2 className={`text-6xl md:text-8xl font-black tracking-tighter drop-shadow-lg ${!isMobile && 'text-right'}`}>
               {activeFlavor.name}
             </h2>
           </motion.div>
         </AnimatePresence>
 
         {/* Центральное изображение вейпа */}
+        {/* Центральное изображение вейпа - увеличено на 50% для ПК */}
         <div className="relative z-20 flex items-center justify-center">
-          <div className="relative w-[300px] h-[300px] md:w-[430px] md:h-[430px]">
+          <div className="relative w-[300px] h-[300px] md:w-[500px] md:h-[500px]">
             <img
               src={prevFlavor.vapeImage}
               alt=""

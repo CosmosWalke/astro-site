@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { gsap } from 'gsap'
-import Link from 'next/link' // Добавьте импорт Link
+import Link from 'next/link'
 
 const projectData = [
   {
@@ -11,7 +11,7 @@ const projectData = [
     description: 'Our dual-tank inhale-activated system features a digital screen on the front panel to allow the customers to have a more simplified and smooth experience. It will display our brand logo, provide what strain your are hitting and puff count. Simply inhale to activate and press button to alternate between flavors, its that simple.',
     image: '/image/vape.webp',
     stats: { FLAVORS: '20', uptime: '99.97%', keepers: '28' },
-    slug: '/vape' // Добавьте slug для каждого продукта
+    slug: '/vape'
   },
   {
     id: '002',
@@ -19,7 +19,7 @@ const projectData = [
     description: 'NEW ASTRO FUEL. EVERY UNIVERSAL RATION PACK IS EQUIPPED WITH A DARK MATTER QUAD INFUSED PREROLL',
     image: '/image/flowers.webp',
     stats: { FLAVORS: '8', capacity: '50K', defense: 'MAX' },
-    slug: '/flowers' // Добавьте, если есть страница
+    slug: '/flowers'
   },
   {
     id: '003',
@@ -27,7 +27,7 @@ const projectData = [
     description: 'Diverse groups united under the Protocol. Each faction brings unique skills and perspectives to the collective mission of survival.',
     image: '/image/prerolls.webp',
     stats: { factions: '7', members: '12.5K', alliance: 'ACTIVE' },
-    slug: '/prerolls' // Добавьте, если есть страница
+    slug: '/prerolls'
   }
 ]
 
@@ -81,6 +81,33 @@ export function ProjectSection() {
     preloadImages()
   }, [])
 
+  // Функция для проверки, нужно ли оборачивать кнопку в Link
+  const hasValidSlug = (slug: string) => {
+    return slug && slug !== '/prerolls' ? true : false
+  }
+
+  // Компонент кнопки с оберткой Link для всех продуктов
+  const ExploreMoreButton = ({ project }: { project: typeof projectData[0] }) => {
+    const buttonContent = (
+      <button className="group relative inline-flex items-center gap-2 sm:gap-3 px-4 sm:px-5 md:px-6 py-2 sm:py-2.5 md:py-3 bg-transparent border border-[#2a2a38] hover:border-[#00d4ff] transition-colors duration-300">
+        <span className="text-xs sm:text-sm font-medium text-[#e8e8ec]">Explore More</span>
+        <svg className="w-3 h-3 sm:w-4 sm:h-4 text-[#00d4ff] group-hover:translate-x-1 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+        </svg>
+        <div className="absolute top-0 left-0 w-1.5 h-1.5 sm:w-2 sm:h-2 border-t border-l border-[#00d4ff] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        <div className="absolute bottom-0 right-0 w-1.5 h-1.5 sm:w-2 sm:h-2 border-b border-r border-[#00d4ff] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+      </button>
+    )
+
+    // Если есть slug и он не пустой, оборачиваем в Link
+    if (project.slug) {
+      return <Link href={project.slug}>{buttonContent}</Link>
+    }
+    
+    // Если slug нет, возвращаем просто кнопку
+    return buttonContent
+  }
+
   return (
     <section 
       ref={sectionRef}
@@ -132,12 +159,9 @@ export function ProjectSection() {
                 transition: 'opacity 0.6s cubic-bezier(0.2, 0.9, 0.4, 1.1), transform 0.6s cubic-bezier(0.2, 0.9, 0.4, 1.1)'
               }}
             >
-              {/* Изображение продукта - рамка по размеру изображения */}
+              {/* Изображение продукта */}
               <div className="relative w-full lg:w-1/2 overflow-hidden group">
-                {/* Контейнер, который подстраивается под размер изображения */}
                 <div className="relative inline-block w-full">
-                  
-                  {/* Само изображение - оригинальный размер */}
                   <img 
                     src={project.image}
                     alt={project.title}
@@ -152,7 +176,7 @@ export function ProjectSection() {
                     }}
                   />
 
-                  {/* Рамка с углами - поверх изображения */}
+                  {/* Рамка с углами */}
                   <div className="absolute inset-0 border border-[#1a1a24] z-10 pointer-events-none">
                     <div className="absolute top-0 left-0 w-4 h-4 sm:w-6 md:w-8 border-t-2 border-l-2 border-[#00d4ff]" />
                     <div className="absolute top-0 right-0 w-4 h-4 sm:w-6 md:w-8 border-t-2 border-r-2 border-[#00d4ff]" />
@@ -204,28 +228,8 @@ export function ProjectSection() {
                   ))}
                 </div>
 
-                {/* Кнопка Explore More - обернутая в Link для VAPE */}
-                {project.title === 'VAPE' ? (
-                  <Link href={project.slug}>
-                    <button className="group relative inline-flex items-center gap-2 sm:gap-3 px-4 sm:px-5 md:px-6 py-2 sm:py-2.5 md:py-3 bg-transparent border border-[#2a2a38] hover:border-[#00d4ff] transition-colors duration-300">
-                      <span className="text-xs sm:text-sm font-medium text-[#e8e8ec]">Explore More</span>
-                      <svg className="w-3 h-3 sm:w-4 sm:h-4 text-[#00d4ff] group-hover:translate-x-1 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                      </svg>
-                      <div className="absolute top-0 left-0 w-1.5 h-1.5 sm:w-2 sm:h-2 border-t border-l border-[#00d4ff] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                      <div className="absolute bottom-0 right-0 w-1.5 h-1.5 sm:w-2 sm:h-2 border-b border-r border-[#00d4ff] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                    </button>
-                  </Link>
-                ) : (
-                  <button className="group relative inline-flex items-center gap-2 sm:gap-3 px-4 sm:px-5 md:px-6 py-2 sm:py-2.5 md:py-3 bg-transparent border border-[#2a2a38] hover:border-[#00d4ff] transition-colors duration-300">
-                    <span className="text-xs sm:text-sm font-medium text-[#e8e8ec]">Explore More</span>
-                    <svg className="w-3 h-3 sm:w-4 sm:h-4 text-[#00d4ff] group-hover:translate-x-1 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                    </svg>
-                    <div className="absolute top-0 left-0 w-1.5 h-1.5 sm:w-2 sm:h-2 border-t border-l border-[#00d4ff] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                    <div className="absolute bottom-0 right-0 w-1.5 h-1.5 sm:w-2 sm:h-2 border-b border-r border-[#00d4ff] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  </button>
-                )}
+                {/* Кнопка Explore More - обернутая в Link для всех продуктов */}
+                <ExploreMoreButton project={project} />
               </div>
             </div>
           ))}
