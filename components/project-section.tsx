@@ -10,7 +10,7 @@ const projectData = [
     title: 'VAPE',
     description: 'Our dual-tank inhale-activated system features a digital screen on the front panel to allow the customers to have a more simplified and smooth experience. It will display our brand logo, provide what strain your are hitting and puff count. Simply inhale to activate and press button to alternate between flavors, its that simple.',
     image: '/image/vape.webp',
-    stats: { FLAVORS: '20', uptime: '99.97%', keepers: '28' },
+    stats: { FLAVORS: '20', MASTERBOX: '50 PCS', QUALITY: 'BEST' },
     slug: '/vape'
   },
   {
@@ -18,7 +18,7 @@ const projectData = [
     title: 'FLOWERS',
     description: 'NEW ASTRO FUEL. EVERY UNIVERSAL RATION PACK IS EQUIPPED WITH A DARK MATTER QUAD INFUSED PREROLL',
     image: '/image/flowers.webp',
-    stats: { FLAVORS: '8', capacity: '50K', defense: 'MAX' },
+    stats: { FLAVORS: '20', MASTERBOX: '64 PCS', defense: 'MAX' },
     slug: '/flowers'
   },
   {
@@ -26,7 +26,7 @@ const projectData = [
     title: 'PREROLLS',
     description: 'Quad Infuse Dark Matter Preroll Experience a supernova of flavor and potency, featuring a perfect fusion of premium flower strains.Features:6x0.75g (4.5g total)Ice Water Bubble HashLive Resin infusedNatural Terpenes.reat Taste, Extra Strength',
     image: '/image/prerolls.webp',
-    stats: { factions: '7', members: '12.5K', alliance: 'ACTIVE' },
+    stats: { FLAVORS: '10', MASTERBOX: '50 PCS', QUALITY: 'BEST' },
     slug: '/prerolls'
   }
 ]

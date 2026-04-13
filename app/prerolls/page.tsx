@@ -100,7 +100,7 @@ const featuresData: Record<string, FeatureInfo> = {
 const flavors: PrerollFlavor[] = [
   {
     id: 'cosmic-selection',
-    name: 'COSMIC SELECTION',
+    name: 'ASTRO SPARK',
     bgImage: '/prerolls/solar-flare/bg.webp',
     bgImageMobile: '/prerolls/solar-flare/bgmobile.webp',
     prerollMainImage: '/prerolls/solar-flare/prerollmain.webp',

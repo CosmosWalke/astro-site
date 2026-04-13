@@ -5,7 +5,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, X } from 'lucide-react';
+import { ArrowLeft, X, ChevronDown } from 'lucide-react';
 
 interface Fruit {
   src: string;
@@ -785,6 +785,76 @@ const flavors: FlowerFlavor[] = [
   },
 ];
 
+// Компонент выпадающего списка для выбора продукта (выпадает вверх)
+const ProductSelector = ({ 
+  activeIndex, 
+  onSelect 
+}: { 
+  activeIndex: number; 
+  onSelect: (index: number) => void;
+}) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const products = flavors.map((flavor, index) => ({
+    id: flavor.id,
+    name: flavor.name,
+    index
+  }));
+
+  const selectedProduct = products[activeIndex];
+
+  return (
+    <div className="relative w-full max-w-md mx-auto">
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full flex items-center justify-between px-6 py-4 bg-black/60 backdrop-blur-md border-2 border-[#00d4ff]/50 rounded-xl hover:border-[#00d4ff] transition-all duration-300 group"
+      >
+        <div className="flex items-center gap-3">
+          <span className="text-xs font-mono text-[#00d4ff] uppercase tracking-wider">SELECT PRODUCT:</span>
+          <span className="text-base md:text-lg font-bold text-white">{selectedProduct?.name}</span>
+        </div>
+        <motion.div
+          animate={{ rotate: isOpen ? 180 : 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          <ChevronDown className="w-5 h-5 text-[#00d4ff]" />
+        </motion.div>
+      </button>
+
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 10 }}
+            transition={{ duration: 0.2 }}
+            className="absolute bottom-full left-0 right-0 mb-2 bg-black/90 backdrop-blur-md border border-[#00d4ff]/30 rounded-xl overflow-hidden z-50 max-h-80 overflow-y-auto custom-scrollbar"
+          >
+            {products.map((product) => (
+              <button
+                key={product.id}
+                onClick={() => {
+                  onSelect(product.index);
+                  setIsOpen(false);
+                }}
+                className={`w-full px-6 py-4 text-left transition-all duration-300 hover:bg-[#00d4ff]/10 ${
+                  activeIndex === product.index ? 'bg-[#00d4ff]/20 text-[#00d4ff]' : 'text-white/80'
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <span className="text-base font-medium">{product.name}</span>
+                  {activeIndex === product.index && (
+                    <div className="w-2 h-2 rounded-full bg-[#00d4ff]" />
+                  )}
+                </div>
+              </button>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
+
 export default function FlowersPage() {
   const router = useRouter();
   const [activeIndex, setActiveIndex] = useState(0);
@@ -1004,14 +1074,14 @@ export default function FlowersPage() {
               <div className="absolute inset-0 bg-black/30" />
             </div>
 
-            {/* Description for desktop (left) - no animation, stays as is */}
+            {/* Description for desktop (left) */}
             {!isMobile && (
               <div className="absolute left-8 top-1/2 -translate-y-1/2 z-[15] max-w-[600px] w-[560px] bg-black/60 backdrop-blur-md rounded-2xl p-8 border border-white/20 pointer-events-auto">
                 <DescriptionContent />
               </div>
             )}
 
-            {/* Strain Info for desktop (right) - no animation, stays as is */}
+            {/* Strain Info for desktop (right) */}
             {!isMobile && (
               <div className="absolute right-8 top-1/2 -translate-y-1/2 z-[15] max-w-[400px] w-[360px] bg-black/60 backdrop-blur-md rounded-2xl p-6 border border-white/20 pointer-events-auto max-h-[85vh] overflow-y-auto custom-scrollbar">
                 <StrainInfoContent />
@@ -1258,7 +1328,7 @@ export default function FlowersPage() {
           )}
         </AnimatePresence>
 
-        {/* Title text - different for mobile and desktop - no animation on appearance, just fade */}
+        {/* Title text - different for mobile and desktop */}
         <AnimatePresence mode="wait">
           <motion.div
             key={`text-${activeFlavor.id}`}
@@ -1287,7 +1357,7 @@ export default function FlowersPage() {
           </motion.div>
         </AnimatePresence>
 
-        {/* Central flower image - no animation, just fade */}
+        {/* Central flower image */}
         <div className="relative z-20 flex items-center justify-center">
           <div className="relative w-[600px] h-[600px] md:w-[860px] md:h-[860px]">
             <img
@@ -1306,34 +1376,9 @@ export default function FlowersPage() {
         </div>
       </div>
 
-      {/* Thumbnail buttons - 8 products */}
-      <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50">
-        <div className="flex gap-3 md:gap-4 bg-black/30 backdrop-blur-md px-4 py-3 md:px-6 md:py-4 rounded-full overflow-x-auto max-w-[95vw]">
-          {flavors.map((flavor, index) => (
-            <motion.button
-              key={flavor.id}
-              onClick={() => setActiveIndex(index)}
-              whileHover={{ scale: 1.15, y: -4 }}
-              whileTap={{ scale: 0.95 }}
-              className="relative flex-shrink-0"
-            >
-              <div className={`
-                w-14 h-14 md:w-20 md:h-20
-                transition-all duration-300
-                ${activeIndex === index ? 'scale-110 drop-shadow-xl' : 'opacity-60 hover:opacity-100'}
-              `}>
-                <img src={flavor.flowerImage} alt={flavor.name} className="w-full h-full object-contain" />
-              </div>
-              {activeIndex === index && (
-                <motion.div
-                  layoutId="activeDot"
-                  className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-white"
-                  transition={{ duration: 0.3 }}
-                />
-              )}
-            </motion.button>
-          ))}
-        </div>
+      {/* Product Selector - по центру, на месте бывших миниатюр */}
+      <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 w-full max-w-md px-4">
+        <ProductSelector activeIndex={activeIndex} onSelect={setActiveIndex} />
       </div>
 
       {/* Scrollbar styles */}
