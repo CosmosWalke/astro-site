@@ -143,16 +143,11 @@ export function CardsSection() {
         <div className="text-center mb-12">
           <div className="flex items-center gap-4 mb-6 justify-center">
             <div className="h-px w-16 bg-gradient-to-r from-transparent to-[#00d4ff]/50" />
-            <span className="font-mono text-xs text-[#00d4ff] tracking-[0.3em]">SECTION 004</span>
+            <span className="font-mono text-xs text-[#00d4ff] tracking-[1.8em]">CARDS</span>
             <div className="h-px w-16 bg-gradient-to-l from-transparent to-[#00d4ff]/50" />
           </div>
-          <h2 className="text-4xl md:text-6xl font-bold">
-            <span className="text-[#e8e8ec]">ASTRO </span>
-            <span className="text-[#00d4ff] text-glow-cyan">CHARACTERS</span>
-          </h2>
-          <p className="text-center text-[#6b6b7b] text-sm mt-4 max-w-md mx-auto">
-            Choose your path in the ASTROUNIVERSE
-          </p>
+
+      
         </div>
         
         {isMobile ? (
