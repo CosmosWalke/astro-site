@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger)
@@ -70,8 +70,7 @@ const cardColors: CardColor[] = [
 ]
 
 export function CardsSection() {
-  const router = useRouter()
-  const [isMobile, setIsMobile] = useState<boolean | null>(null) // ← ИЗМЕНЕНО: null вместо false
+  const [isMobile, setIsMobile] = useState<boolean | null>(null)
   const [hoveredCard, setHoveredCard] = useState<number | null>(null)
   const [activeCardIndex, setActiveCardIndex] = useState<number>(0)
   const [mobileCardIndex, setMobileCardIndex] = useState<number>(0)
@@ -81,17 +80,7 @@ export function CardsSection() {
   const cardsSectionRef = useRef<HTMLDivElement>(null)
   const splitCardsRef = useRef<(HTMLDivElement | null)[]>([])
 
-  const handleExploreClick = (category: string) => {
-    console.log('Navigating to cards with category:', category)
-    try {
-      router.push(`/cards?category=${encodeURIComponent(category)}`)
-    } catch (error) {
-      console.error('Navigation error:', error)
-      window.location.href = `/cards?category=${encodeURIComponent(category)}`
-    }
-  }
-
-  // Определяем устройство ТОЛЬКО на клиенте
+  // Определяем устройство
   useEffect(() => {
     const checkDevice = () => {
       setIsMobile(window.innerWidth < 768)
@@ -101,30 +90,10 @@ export function CardsSection() {
     return () => window.removeEventListener('resize', checkDevice)
   }, [])
 
-  // Не рендерим ничего, пока не определили устройство (избегаем гидратации)
-  if (isMobile === null) {
-    return (
-      <div className="relative min-h-screen bg-[#050508] overflow-hidden py-32 flex items-center justify-center">
-        <div className="w-12 h-12 border-2 border-[#00d4ff] border-t-transparent rounded-full animate-spin" />
-      </div>
-    )
-  }
-
-  const cardWidth = isMobile ? 260 : 280
-  const cardHeight = isMobile ? 480 : 520
-
-  const nextMobileCard = () => {
-    setMobileCardIndex((prev) => (prev + 1) % cardColors.length)
-    setActiveCardIndex(mobileCardIndex + 1)
-  }
-
-  const prevMobileCard = () => {
-    setMobileCardIndex((prev) => (prev - 1 + cardColors.length) % cardColors.length)
-    setActiveCardIndex(mobileCardIndex - 1)
-  }
-
+  // Автопрокрутка карусели (только для мобильных)
   useEffect(() => {
-    if (!isMobile) return;
+    if (isMobile === null) return
+    if (!isMobile) return
     
     if (autoPlayIntervalRef.current) {
       clearInterval(autoPlayIntervalRef.current);
@@ -141,11 +110,13 @@ export function CardsSection() {
         clearInterval(autoPlayIntervalRef.current);
       }
     };
-  }, [isMobile, isAutoPlaying]);
+  }, [isMobile, isAutoPlaying, cardColors.length]);
 
   // GSAP анимация для десктопа
   useEffect(() => {
-    if (isMobile || !cardsSectionRef.current) return
+    if (isMobile === null) return
+    if (isMobile) return
+    if (!cardsSectionRef.current) return
 
     const ctx = gsap.context(() => {
       gsap.fromTo(cardsSectionRef.current,
@@ -188,6 +159,29 @@ export function CardsSection() {
 
     return () => ctx.revert()
   }, [isMobile])
+
+  // Функции навигации
+  const nextMobileCard = () => {
+    setMobileCardIndex((prev) => (prev + 1) % cardColors.length)
+    setActiveCardIndex(mobileCardIndex + 1)
+  }
+
+  const prevMobileCard = () => {
+    setMobileCardIndex((prev) => (prev - 1 + cardColors.length) % cardColors.length)
+    setActiveCardIndex(mobileCardIndex - 1)
+  }
+
+  // Показываем спиннер загрузки
+  if (isMobile === null) {
+    return (
+      <div className="relative min-h-screen bg-[#050508] overflow-hidden py-32 flex items-center justify-center">
+        <div className="w-12 h-12 border-2 border-[#00d4ff] border-t-transparent rounded-full animate-spin" />
+      </div>
+    )
+  }
+
+  const cardWidth = isMobile ? 260 : 280
+  const cardHeight = isMobile ? 480 : 520
 
   return (
     <div 
@@ -260,22 +254,14 @@ export function CardsSection() {
               )}
               
               <button
-                onClick={() => {
-                  prevMobileCard();
-                  setIsAutoPlaying(false);
-                  setTimeout(() => setIsAutoPlaying(true), 10000);
-                }}
+                onClick={prevMobileCard}
                 className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-10 w-8 h-8 bg-[#0a0a0f] border border-[#1a1a24] rounded-full flex items-center justify-center"
               >
                 <ChevronLeft className="w-4 h-4 text-[#00d4ff]" />
               </button>
               
               <button
-                onClick={() => {
-                  nextMobileCard();
-                  setIsAutoPlaying(false);
-                  setTimeout(() => setIsAutoPlaying(true), 10000);
-                }}
+                onClick={nextMobileCard}
                 className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-10 w-8 h-8 bg-[#0a0a0f] border border-[#1a1a24] rounded-full flex items-center justify-center"
               >
                 <ChevronRight className="w-4 h-4 text-[#00d4ff]" />
@@ -298,9 +284,9 @@ export function CardsSection() {
               </div>
             </div>
             
-            <button
-              onClick={() => handleExploreClick(cardColors[mobileCardIndex].category)}
-              className="mt-12 relative px-6 py-2 rounded-full text-xs font-bold tracking-wider uppercase transition-all duration-300 hover:scale-105"
+            <Link
+              href="/cards"
+              className="mt-12 relative px-6 py-2 rounded-full text-xs font-bold tracking-wider uppercase transition-all duration-300 hover:scale-105 inline-block"
               style={{
                 background: `linear-gradient(135deg, ${cardColors[mobileCardIndex].glow}20, ${cardColors[mobileCardIndex].glow}05)`,
                 border: `1px solid ${cardColors[mobileCardIndex].glow}`,
@@ -309,7 +295,7 @@ export function CardsSection() {
               }}
             >
               Explore
-            </button>
+            </Link>
           </>
         ) : (
           // Десктоп версия - 4 карты
@@ -394,13 +380,9 @@ export function CardsSection() {
                       transitionDelay: isActive ? '0.2s' : '0s'
                     }}
                   >
-                    <button
-                      onClick={(e) => {
-                        e.preventDefault()
-                        e.stopPropagation()
-                        handleExploreClick(cardColor.category)
-                      }}
-                      className="group relative px-6 py-2 rounded-full text-xs font-bold tracking-wider uppercase transition-all duration-300 hover:scale-105 overflow-hidden"
+                    <Link
+                      href="/cards"
+                      className="group relative px-6 py-2 rounded-full text-xs font-bold tracking-wider uppercase transition-all duration-300 hover:scale-105 overflow-hidden inline-block"
                       style={{
                         background: `linear-gradient(135deg, ${cardColor.glow}20, ${cardColor.glow}05)`,
                         border: `1px solid ${cardColor.glow}`,
@@ -411,7 +393,7 @@ export function CardsSection() {
                       }}
                     >
                       <span className="relative z-10">Explore</span>
-                    </button>
+                    </Link>
                   </div>
                 </div>
               )
