@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger)
@@ -18,6 +19,7 @@ interface CardColor {
   id: string
   video: string
   image: string
+  category: string  // Добавляем категорию для фильтрации
 }
 
 const cardColors: CardColor[] = [
@@ -29,7 +31,8 @@ const cardColors: CardColor[] = [
     subtitle: 'ASTRONAUTS',
     id: 'NW-001', 
     video: '/video/cards/1.webm',
-    image: '/image/cards/Astranauts.webp'
+    image: '/image/cards/Astranauts.webp',
+    category: 'ASTRONAUTS'  // Категория для фильтра
   },
   { 
     glow: '#9945ff', 
@@ -39,7 +42,8 @@ const cardColors: CardColor[] = [
     subtitle: 'ALIENS',
     id: 'CG-002', 
     video: '/video/cards/2.webm',
-    image: '/image/cards/aliens.webp'
+    image: '/image/cards/aliens.webp',
+    category: 'ALIENS'  // Категория для фильтра
   },
   { 
     glow: '#14f195', 
@@ -49,7 +53,8 @@ const cardColors: CardColor[] = [
     subtitle: 'SHIPS',
     id: 'FK-003', 
     video: '/video/cards/3.webm',
-    image: '/image/cards/ship.webp'
+    image: '/image/cards/ship.webp',
+    category: 'SHIPS'  // Категория для фильтра
   },
   { 
     glow: '#ff6b35', 
@@ -59,11 +64,13 @@ const cardColors: CardColor[] = [
     subtitle: 'PLANETS',
     id: 'SW-004', 
     video: '/video/cards/4.webm',
-    image: '/image/cards/planet.webp'
+    image: '/image/cards/planet.webp',
+    category: 'PLANETS'  // Категория для фильтра
   }
 ]
 
 export function CardsSection() {
+  const router = useRouter()
   const [isMobile, setIsMobile] = useState(false)
   const [hoveredCard, setHoveredCard] = useState<number | null>(null)
   const [activeCardIndex, setActiveCardIndex] = useState<number>(0)
@@ -73,6 +80,12 @@ export function CardsSection() {
   
   const cardsSectionRef = useRef<HTMLDivElement>(null)
   const splitCardsRef = useRef<(HTMLDivElement | null)[]>([])
+
+  // Функция для перехода на страницу карт с нужной категорией
+  const handleExploreClick = (category: string) => {
+    // Передаем категорию через query параметр
+    router.push(`/cards?category=${category}`)
+  }
 
   useEffect(() => {
     const checkDevice = () => {
@@ -281,8 +294,10 @@ export function CardsSection() {
               </div>
             </div>
             
+            {/* Мобильная кнопка Explore */}
             <button
-              className="mt-12 relative px-6 py-2 rounded-full text-xs font-bold tracking-wider uppercase transition-all duration-300"
+              onClick={() => handleExploreClick(adaptiveCardColors[mobileCardIndex].category)}
+              className="mt-12 relative px-6 py-2 rounded-full text-xs font-bold tracking-wider uppercase transition-all duration-300 hover:scale-105"
               style={{
                 background: `linear-gradient(135deg, ${adaptiveCardColors[mobileCardIndex].glow}20, ${adaptiveCardColors[mobileCardIndex].glow}05)`,
                 border: `1px solid ${adaptiveCardColors[mobileCardIndex].glow}`,
@@ -353,7 +368,7 @@ export function CardsSection() {
                       />
                     )}
                     
-                    {/* Угловые элементы - без изменений */}
+                    {/* Угловые элементы */}
                     <div className="absolute top-3 left-3 w-5 h-5 border-t-2 border-l-2 transition-all duration-300" style={{ borderColor: isActive ? cardColor.glow : `rgba(${cardColor.glowRgb}, 0.5)` }} />
                     <div className="absolute top-3 right-3 w-5 h-5 border-t-2 border-r-2 transition-all duration-300" style={{ borderColor: isActive ? cardColor.glow : `rgba(${cardColor.glowRgb}, 0.5)` }} />
                     <div className="absolute bottom-3 left-3 w-5 h-5 border-b-2 border-l-2 transition-all duration-300" style={{ borderColor: isActive ? cardColor.glow : `rgba(${cardColor.glowRgb}, 0.5)` }} />
@@ -370,6 +385,7 @@ export function CardsSection() {
                     </div>
                   </div>
                   
+                  {/* Десктопная кнопка Explore */}
                   <div 
                     className="absolute -bottom-12 left-1/2 transition-all duration-500"
                     style={{
@@ -379,6 +395,7 @@ export function CardsSection() {
                     }}
                   >
                     <button
+                      onClick={() => handleExploreClick(cardColor.category)}
                       className="group relative px-6 py-2 rounded-full text-xs font-bold tracking-wider uppercase transition-all duration-300 hover:scale-105 overflow-hidden"
                       style={{
                         background: `linear-gradient(135deg, ${cardColor.glow}20, ${cardColor.glow}05)`,
