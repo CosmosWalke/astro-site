@@ -9,9 +9,12 @@ import { ArrowLeft, X } from 'lucide-react';
 
 interface Fruit {
   src: string;
-  size: number;
-  left: string;
-  top: string;
+  sizeMobile: number;
+  sizeDesktop: number;
+  leftMobile: string;
+  leftDesktop: string;
+  topMobile: string;
+  topDesktop: string;
   delay: number;
   rotate?: number;
 }
@@ -100,7 +103,7 @@ const flavors: VapeFlavor[] = [
     id: 'peach',
     name: 'SOLAR FLARE',
     bgImage: '/vapes/peach/bg.webp',
-    bgImageMobile: '/vapes/peach/bgmobile.png',
+    bgImageMobile: '/vapes/peach/bgmobile.webp',
     vapeImage: '/vapes/peach/vape.webp',
     preroll: {
       src: '/vapes/peach/preroll.webp',
@@ -131,10 +134,47 @@ const flavors: VapeFlavor[] = [
       zIndex: 10,
     },
     fruits: [
-      { src: '/vapes/peach/fruit1.png', size: 140, left: '10%', top: '18%', delay: 0 },
-      { src: '/vapes/peach/fruit2.png', size: 95, left: '78%', top: '25%', delay: 1.2 },
-      { src: '/vapes/peach/fruit3.png', size: 125, left: '25%', top: '65%', delay: 0.6, rotate: -18 },
-      { src: '/vapes/peach/fruit4.png', size: 85, left: '72%', top: '70%', delay: 2.1 },
+      { 
+        src: '/vapes/peach/fruit1.webp', 
+        sizeMobile: 140, 
+        sizeDesktop: 180,
+        leftMobile: '10%', 
+        leftDesktop: '10%',
+        topMobile: '18%', 
+        topDesktop: '18%',
+        delay: 0 
+      },
+      { 
+        src: '/vapes/peach/fruit2.webp', 
+        sizeMobile: 95, 
+        sizeDesktop: 130,
+        leftMobile: '78%', 
+        leftDesktop: '78%',
+        topMobile: '25%', 
+        topDesktop: '25%',
+        delay: 1.2 
+      },
+      { 
+        src: '/vapes/peach/fruit3.webp', 
+        sizeMobile: 125, 
+        sizeDesktop: 160,
+        leftMobile: '25%', 
+        leftDesktop: '25%',
+        topMobile: '65%', 
+        topDesktop: '65%',
+        delay: 0.6, 
+        rotate: -18 
+      },
+      { 
+        src: '/vapes/peach/fruit4.webp', 
+        sizeMobile: 85, 
+        sizeDesktop: 110,
+        leftMobile: '72%', 
+        leftDesktop: '72%',
+        topMobile: '70%', 
+        topDesktop: '70%',
+        delay: 2.1 
+      },
     ],
     flavorsList: [
       {
@@ -167,7 +207,7 @@ const flavors: VapeFlavor[] = [
     id: 'green-apple',
     name: 'NEBULA GREEN',
     bgImage: '/vapes/green-apple/bg.webp',
-    bgImageMobile: '/vapes/green-apple/bgmobile.png',
+    bgImageMobile: '/vapes/green-apple/bgmobile.webp',
     vapeImage: '/vapes/green-apple/vape.webp',
     preroll: {
       src: '/vapes/green-apple/preroll.webp',
@@ -198,10 +238,46 @@ const flavors: VapeFlavor[] = [
       zIndex: 10,
     },
     fruits: [
-      { src: '/vapes/green-apple/fruit1.png', size: 135, left: '15%', top: '20%', delay: 0 },
-      { src: '/vapes/green-apple/fruit2.png', size: 100, left: '77%', top: '28%', delay: 1.3 },
-      { src: '/vapes/green-apple/fruit3.png', size: 115, left: '28%', top: '67%', delay: 0.8 },
-      { src: '/vapes/green-apple/fruit4.png', size: 90, left: '70%', top: '72%', delay: 2 },
+      { 
+        src: '/vapes/green-apple/fruit1.webp', 
+        sizeMobile: 135, 
+        sizeDesktop: 175,
+        leftMobile: '15%', 
+        leftDesktop: '15%',
+        topMobile: '20%', 
+        topDesktop: '20%',
+        delay: 0 
+      },
+      { 
+        src: '/vapes/green-apple/fruit2.webp', 
+        sizeMobile: 100, 
+        sizeDesktop: 130,
+        leftMobile: '77%', 
+        leftDesktop: '77%',
+        topMobile: '28%', 
+        topDesktop: '28%',
+        delay: 1.3 
+      },
+      { 
+        src: '/vapes/green-apple/fruit3.webp', 
+        sizeMobile: 115, 
+        sizeDesktop: 150,
+        leftMobile: '28%', 
+        leftDesktop: '28%',
+        topMobile: '67%', 
+        topDesktop: '67%',
+        delay: 0.8 
+      },
+      { 
+        src: '/vapes/green-apple/fruit4.webp', 
+        sizeMobile: 90, 
+        sizeDesktop: 120,
+        leftMobile: '70%', 
+        leftDesktop: '70%',
+        topMobile: '72%', 
+        topDesktop: '72%',
+        delay: 2 
+      },
     ],
     flavorsList: [
       {
@@ -234,7 +310,7 @@ const flavors: VapeFlavor[] = [
     id: 'passion-fruit',
     name: 'GALAXY PURPLE',
     bgImage: '/vapes/passion-fruit/bg.webp',
-    bgImageMobile: '/vapes/passion-fruit/bgmobile.png',
+    bgImageMobile: '/vapes/passion-fruit/bgmobile.webp',
     vapeImage: '/vapes/passion-fruit/vape.webp',
     preroll: {
       src: '/vapes/passion-fruit/preroll.webp',
@@ -265,10 +341,46 @@ const flavors: VapeFlavor[] = [
       zIndex: 10,
     },
     fruits: [
-      { src: '/vapes/passion-fruit/fruit1.png', size: 130, left: '12%', top: '18%', delay: 0 },
-      { src: '/vapes/passion-fruit/fruit2.png', size: 105, left: '80%', top: '30%', delay: 1.1 },
-      { src: '/vapes/passion-fruit/fruit3.png', size: 110, left: '25%', top: '67%', delay: 0.7 },
-      { src: '/vapes/passion-fruit/fruit4.png', size: 88, left: '70%', top: '73%', delay: 2.2 },
+      { 
+        src: '/vapes/passion-fruit/fruit1.webp', 
+        sizeMobile: 130, 
+        sizeDesktop: 170,
+        leftMobile: '12%', 
+        leftDesktop: '12%',
+        topMobile: '18%', 
+        topDesktop: '18%',
+        delay: 0 
+      },
+      { 
+        src: '/vapes/passion-fruit/fruit2.webp', 
+        sizeMobile: 105, 
+        sizeDesktop: 135,
+        leftMobile: '80%', 
+        leftDesktop: '80%',
+        topMobile: '30%', 
+        topDesktop: '30%',
+        delay: 1.1 
+      },
+      { 
+        src: '/vapes/passion-fruit/fruit3.webp', 
+        sizeMobile: 110, 
+        sizeDesktop: 145,
+        leftMobile: '25%', 
+        leftDesktop: '25%',
+        topMobile: '67%', 
+        topDesktop: '67%',
+        delay: 0.7 
+      },
+      { 
+        src: '/vapes/passion-fruit/fruit4.webp', 
+        sizeMobile: 88, 
+        sizeDesktop: 115,
+        leftMobile: '70%', 
+        leftDesktop: '70%',
+        topMobile: '73%', 
+        topDesktop: '73%',
+        delay: 2.2 
+      },
     ],
     flavorsList: [
       {
@@ -301,7 +413,7 @@ const flavors: VapeFlavor[] = [
     id: 'dragon-fruit',
     name: 'NEPTUNE PULSE',
     bgImage: '/vapes/dragon-fruit/bg.webp',
-    bgImageMobile: '/vapes/dragon-fruit/bgmobile.png',
+    bgImageMobile: '/vapes/dragon-fruit/bgmobile.webp',
     vapeImage: '/vapes/dragon-fruit/vape.webp',
     preroll: {
       src: '/vapes/dragon-fruit/preroll.webp',
@@ -332,10 +444,46 @@ const flavors: VapeFlavor[] = [
       zIndex: 10,
     },
     fruits: [
-      { src: '/vapes/dragon-fruit/fruit1.png', size: 135, left: '18%', top: '22%', delay: 0 },
-      { src: '/vapes/dragon-fruit/fruit2.png', size: 95, left: '75%', top: '25%', delay: 1.4 },
-      { src: '/vapes/dragon-fruit/fruit3.png', size: 120, left: '27%', top: '70%', delay: 0.9 },
-      { src: '/vapes/dragon-fruit/fruit4.png', size: 85, left: '72%', top: '68%', delay: 2 },
+      { 
+        src: '/vapes/dragon-fruit/fruit1.webp', 
+        sizeMobile: 135, 
+        sizeDesktop: 175,
+        leftMobile: '18%', 
+        leftDesktop: '18%',
+        topMobile: '22%', 
+        topDesktop: '22%',
+        delay: 0 
+      },
+      { 
+        src: '/vapes/dragon-fruit/fruit2.webp', 
+        sizeMobile: 95, 
+        sizeDesktop: 125,
+        leftMobile: '75%', 
+        leftDesktop: '75%',
+        topMobile: '25%', 
+        topDesktop: '25%',
+        delay: 1.4 
+      },
+      { 
+        src: '/vapes/dragon-fruit/fruit3.webp', 
+        sizeMobile: 120, 
+        sizeDesktop: 155,
+        leftMobile: '27%', 
+        leftDesktop: '27%',
+        topMobile: '70%', 
+        topDesktop: '70%',
+        delay: 0.9 
+      },
+      { 
+        src: '/vapes/dragon-fruit/fruit4.webp', 
+        sizeMobile: 85, 
+        sizeDesktop: 110,
+        leftMobile: '72%', 
+        leftDesktop: '72%',
+        topMobile: '68%', 
+        topDesktop: '68%',
+        delay: 2 
+      },
     ],
     flavorsList: [
       {
@@ -368,7 +516,7 @@ const flavors: VapeFlavor[] = [
     id: 'strawberry',
     name: 'NEBULA CRIMSON',
     bgImage: '/vapes/strawberry/bg.webp',
-    bgImageMobile: '/vapes/strawberry/bgmobile.png',
+    bgImageMobile: '/vapes/strawberry/bgmobile.webp',
     vapeImage: '/vapes/strawberry/vape.webp',
     preroll: {
       src: '/vapes/strawberry/preroll.webp',
@@ -399,10 +547,46 @@ const flavors: VapeFlavor[] = [
       zIndex: 10,
     },
     fruits: [
-      { src: '/vapes/strawberry/fruit1.png', size: 130, left: '13%', top: '19%', delay: 0 },
-      { src: '/vapes/strawberry/fruit2.png', size: 98, left: '77%', top: '27%', delay: 1.2 },
-      { src: '/vapes/strawberry/fruit3.png', size: 118, left: '26%', top: '66%', delay: 0.6 },
-      { src: '/vapes/strawberry/fruit4.png', size: 82, left: '71%', top: '73%', delay: 2.3 },
+      { 
+        src: '/vapes/strawberry/fruit1.webp', 
+        sizeMobile: 130, 
+        sizeDesktop: 170,
+        leftMobile: '13%', 
+        leftDesktop: '13%',
+        topMobile: '19%', 
+        topDesktop: '19%',
+        delay: 0 
+      },
+      { 
+        src: '/vapes/strawberry/fruit2.webp', 
+        sizeMobile: 98, 
+        sizeDesktop: 130,
+        leftMobile: '77%', 
+        leftDesktop: '77%',
+        topMobile: '27%', 
+        topDesktop: '27%',
+        delay: 1.2 
+      },
+      { 
+        src: '/vapes/strawberry/fruit3.webp', 
+        sizeMobile: 118, 
+        sizeDesktop: 150,
+        leftMobile: '26%', 
+        leftDesktop: '26%',
+        topMobile: '66%', 
+        topDesktop: '66%',
+        delay: 0.6 
+      },
+      { 
+        src: '/vapes/strawberry/fruit4.webp', 
+        sizeMobile: 82, 
+        sizeDesktop: 110,
+        leftMobile: '71%', 
+        leftDesktop: '71%',
+        topMobile: '73%', 
+        topDesktop: '73%',
+        delay: 2.3 
+      },
     ],
     flavorsList: [
       {
@@ -461,7 +645,7 @@ export default function VapePage() {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // Получаем текущие размеры и позиции для элемента
+  // Получаем текущие размеры и позиции для элемента (preroll, tube)
   const getElementStyles = (element: ExtraElement) => {
     const size = isMobile ? element.sizeMobile : element.sizeDesktop;
     const left = isMobile ? element.leftMobile : element.leftDesktop;
@@ -473,6 +657,19 @@ export default function VapePage() {
       top,
       marginLeft: -size / 2,
       marginTop: -size / 2,
+    };
+  };
+
+  // Получаем текущие размеры и позиции для фруктов
+  const getFruitStyles = (fruit: Fruit) => {
+    const size = isMobile ? fruit.sizeMobile : fruit.sizeDesktop;
+    const left = isMobile ? fruit.leftMobile : fruit.leftDesktop;
+    const top = isMobile ? fruit.topMobile : fruit.topDesktop;
+    
+    return {
+      size,
+      left,
+      top,
     };
   };
 
@@ -733,16 +930,16 @@ export default function VapePage() {
               <img src={activeFlavor.preroll.src} alt="" className="w-full h-full object-contain drop-shadow-2xl" />
             </motion.div>
 
-            {/* Плавающие фрукты */}
+            {/* Плавающие фрукты - теперь с адаптивными размерами и позициями */}
             {activeFlavor.fruits.map((fruit, i) => (
               <motion.div
                 key={i}
                 className="absolute pointer-events-none"
                 style={{ 
-                  left: fruit.left, 
-                  top: fruit.top, 
-                  width: fruit.size, 
-                  height: fruit.size, 
+                  left: getFruitStyles(fruit).left, 
+                  top: getFruitStyles(fruit).top, 
+                  width: getFruitStyles(fruit).size, 
+                  height: getFruitStyles(fruit).size, 
                   zIndex: 100 
                 }}
                 animate={{
@@ -885,9 +1082,8 @@ export default function VapePage() {
         </AnimatePresence>
 
         {/* Центральное изображение вейпа */}
-        {/* Центральное изображение вейпа - увеличено на 50% для ПК */}
         <div className="relative z-20 flex items-center justify-center">
-          <div className="relative w-[300px] h-[300px] md:w-[500px] md:h-[500px]">
+          <div className="relative w-[300px] h-[300px] md:w-[645px] md:h-[645px]">
             <img
               src={prevFlavor.vapeImage}
               alt=""

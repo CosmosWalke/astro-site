@@ -9,11 +9,17 @@ import { ArrowLeft, X } from 'lucide-react';
 
 interface Fruit {
   src: string;
-  size: number;
-  left: string;
-  top: string;
+  sizeMobile: number;
+  sizeDesktop: number;
+  leftMobile: string;
+  leftDesktop: string;
+  topMobile: string;
+  topDesktop: string;
   delay: number;
   rotate?: number;
+  yOffset?: number;
+  rotateAmount?: number;
+  duration?: number;
 }
 
 interface ExtraElement {
@@ -108,10 +114,10 @@ const flavors: FlowerFlavor[] = [
       sizeMobile: 250,
       sizeDesktop: 320,
       leftMobile: '25%',
-      leftDesktop: '38%',
+      leftDesktop: '40%',
       topMobile: '65%',
       topDesktop: '65%',
-      rotate: -35,
+      rotate: -30,
       yOffset: -15,
       rotateAmount: -10,
       duration: 6,
@@ -132,10 +138,47 @@ const flavors: FlowerFlavor[] = [
       zIndex: 10,
     },
     fruits: [
-      { src: '/flowers/blue-zlurpee/fruit1.png', size: 140, left: '10%', top: '18%', delay: 0 },
-      { src: '/flowers/blue-zlurpee/fruit2.png', size: 95, left: '78%', top: '25%', delay: 1.2 },
-      { src: '/flowers/blue-zlurpee/fruit3.png', size: 125, left: '25%', top: '65%', delay: 0.6, rotate: -18 },
-      { src: '/flowers/blue-zlurpee/fruit4.png', size: 85, left: '72%', top: '70%', delay: 2.1 },
+      { 
+        src: '/flowers/blue-zlurpee/fruit1.webp', 
+        sizeMobile: 140, 
+        sizeDesktop: 180,
+        leftMobile: '10%', 
+        leftDesktop: '25%',
+        topMobile: '18%', 
+        topDesktop: '18%',
+        delay: 0 
+      },
+      { 
+        src: '/flowers/blue-zlurpee/fruit2.webp', 
+        sizeMobile: 95, 
+        sizeDesktop: 130,
+        leftMobile: '75%', 
+        leftDesktop: '73%',
+        topMobile: '25%', 
+        topDesktop: '25%',
+        delay: 1.2 
+      },
+      { 
+        src: '/flowers/blue-zlurpee/fruit3.webp', 
+        sizeMobile: 125, 
+        sizeDesktop: 160,
+        leftMobile: '25%', 
+        leftDesktop: '25%',
+        topMobile: '65%', 
+        topDesktop: '65%',
+        delay: 0.6, 
+        rotate: -18 
+      },
+      { 
+        src: '/flowers/blue-zlurpee/fruit4.webp', 
+        sizeMobile: 150, 
+        sizeDesktop: 210,
+        leftMobile: '60%', 
+        leftDesktop: '72%',
+        topMobile: '65%', 
+        topDesktop: '73%',
+        delay: 2.1 
+      },
     ],
     strainInfo: {
       name: 'Blue Zlurpee',
@@ -156,10 +199,10 @@ const flavors: FlowerFlavor[] = [
       sizeMobile: 250,
       sizeDesktop: 320,
       leftMobile: '25%',
-      leftDesktop: '38%',
+      leftDesktop: '40%',
       topMobile: '65%',
       topDesktop: '65%',
-      rotate: -35,
+      rotate: -30,
       yOffset: -15,
       rotateAmount: -10,
       duration: 6,
@@ -180,10 +223,46 @@ const flavors: FlowerFlavor[] = [
       zIndex: 10,
     },
     fruits: [
-      { src: '/flowers/frosted-mochi/fruit1.png', size: 130, left: '13%', top: '19%', delay: 0 },
-      { src: '/flowers/frosted-mochi/fruit2.png', size: 98, left: '77%', top: '27%', delay: 1.2 },
-      { src: '/flowers/frosted-mochi/fruit3.png', size: 118, left: '26%', top: '66%', delay: 0.6 },
-      { src: '/flowers/frosted-mochi/fruit4.png', size: 82, left: '71%', top: '73%', delay: 2.3 },
+      { 
+        src: '/flowers/frosted-mochi/fruit1.webp', 
+        sizeMobile: 130, 
+        sizeDesktop: 170,
+        leftMobile: '13%', 
+        leftDesktop: '25%',
+        topMobile: '19%', 
+        topDesktop: '19%',
+        delay: 0 
+      },
+      { 
+        src: '/flowers/frosted-mochi/fruit2.webp', 
+        sizeMobile: 98, 
+        sizeDesktop: 130,
+        leftMobile: '70%', 
+        leftDesktop: '71%',
+        topMobile: '30%', 
+        topDesktop: '27%',
+        delay: 1.2 
+      },
+      { 
+        src: '/flowers/frosted-mochi/fruit3.webp', 
+        sizeMobile: 118, 
+        sizeDesktop: 150,
+        leftMobile: '26%', 
+        leftDesktop: '26%',
+        topMobile: '66%', 
+        topDesktop: '66%',
+        delay: 0.6 
+      },
+      { 
+        src: '/flowers/frosted-mochi/fruit4.webp', 
+        sizeMobile: 150, 
+        sizeDesktop: 210,
+        leftMobile: '60%', 
+        leftDesktop: '71%',
+        topMobile: '63%', 
+        topDesktop: '73%',
+        delay: 2.3 
+      },
     ],
     strainInfo: {
       name: 'Frosted Mochi',
@@ -204,10 +283,10 @@ const flavors: FlowerFlavor[] = [
       sizeMobile: 250,
       sizeDesktop: 320,
       leftMobile: '25%',
-      leftDesktop: '38%',
+      leftDesktop: '40%',
       topMobile: '65%',
       topDesktop: '65%',
-      rotate: -35,
+      rotate: -30,
       yOffset: -15,
       rotateAmount: -10,
       duration: 6,
@@ -228,10 +307,46 @@ const flavors: FlowerFlavor[] = [
       zIndex: 10,
     },
     fruits: [
-      { src: '/flowers/cartier-cush/fruit1.png', size: 135, left: '15%', top: '20%', delay: 0 },
-      { src: '/flowers/cartier-cush/fruit2.png', size: 100, left: '77%', top: '28%', delay: 1.3 },
-      { src: '/flowers/cartier-cush/fruit3.png', size: 115, left: '28%', top: '67%', delay: 0.8 },
-      { src: '/flowers/cartier-cush/fruit4.png', size: 90, left: '70%', top: '72%', delay: 2 },
+      { 
+        src: '/flowers/cartier-cush/fruit1.webp', 
+        sizeMobile: 135, 
+        sizeDesktop: 175,
+        leftMobile: '15%', 
+        leftDesktop: '25%',
+        topMobile: '20%', 
+        topDesktop: '20%',
+        delay: 0 
+      },
+      { 
+        src: '/flowers/cartier-cush/fruit2.webp', 
+        sizeMobile: 100, 
+        sizeDesktop: 135,
+        leftMobile: '70%', 
+        leftDesktop: '72%',
+        topMobile: '28%', 
+        topDesktop: '28%',
+        delay: 1.3 
+      },
+      { 
+        src: '/flowers/cartier-cush/fruit3.webp', 
+        sizeMobile: 115, 
+        sizeDesktop: 150,
+        leftMobile: '28%', 
+        leftDesktop: '28%',
+        topMobile: '67%', 
+        topDesktop: '67%',
+        delay: 0.8 
+      },
+      { 
+        src: '/flowers/cartier-cush/fruit4.webp', 
+        sizeMobile: 160, 
+        sizeDesktop: 220,
+        leftMobile: '60%', 
+        leftDesktop: '70%',
+        topMobile: '62%', 
+        topDesktop: '72%',
+        delay: 2 
+      },
     ],
     strainInfo: {
       name: 'Cartier Cush',
@@ -252,10 +367,10 @@ const flavors: FlowerFlavor[] = [
       sizeMobile: 250,
       sizeDesktop: 320,
       leftMobile: '25%',
-      leftDesktop: '38%',
+      leftDesktop: '40%',
       topMobile: '65%',
       topDesktop: '65%',
-      rotate: -35,
+      rotate: -30,
       yOffset: -15,
       rotateAmount: -10,
       duration: 6,
@@ -276,10 +391,46 @@ const flavors: FlowerFlavor[] = [
       zIndex: 10,
     },
     fruits: [
-      { src: '/flowers/milkyway-runtz/fruit1.png', size: 135, left: '15%', top: '20%', delay: 0 },
-      { src: '/flowers/milkyway-runtz/fruit2.png', size: 100, left: '77%', top: '28%', delay: 1.3 },
-      { src: '/flowers/milkyway-runtz/fruit3.png', size: 115, left: '28%', top: '67%', delay: 0.8 },
-      { src: '/flowers/milkyway-runtz/fruit4.png', size: 90, left: '70%', top: '72%', delay: 2 },
+      { 
+        src: '/flowers/milkyway-runtz/fruit1.webp', 
+        sizeMobile: 135, 
+        sizeDesktop: 175,
+        leftMobile: '15%', 
+        leftDesktop: '25%',
+        topMobile: '20%', 
+        topDesktop: '20%',
+        delay: 0 
+      },
+      { 
+        src: '/flowers/milkyway-runtz/fruit2.webp', 
+        sizeMobile: 100, 
+        sizeDesktop: 135,
+        leftMobile: '70%', 
+        leftDesktop: '72%',
+        topMobile: '28%', 
+        topDesktop: '28%',
+        delay: 1.3 
+      },
+      { 
+        src: '/flowers/milkyway-runtz/fruit3.webp', 
+        sizeMobile: 115, 
+        sizeDesktop: 150,
+        leftMobile: '28%', 
+        leftDesktop: '28%',
+        topMobile: '67%', 
+        topDesktop: '67%',
+        delay: 0.8 
+      },
+      { 
+        src: '/flowers/milkyway-runtz/fruit4.webp', 
+        sizeMobile: 160, 
+        sizeDesktop: 220,
+        leftMobile: '60%', 
+        leftDesktop: '70%',
+        topMobile: '62%', 
+        topDesktop: '72%',
+        delay: 2 
+      },
     ],
     strainInfo: {
       name: 'MilkyWay Runtz',
@@ -300,10 +451,10 @@ const flavors: FlowerFlavor[] = [
       sizeMobile: 250,
       sizeDesktop: 320,
       leftMobile: '25%',
-      leftDesktop: '38%',
+      leftDesktop: '40%',
       topMobile: '65%',
       topDesktop: '65%',
-      rotate: -35,
+      rotate: -30,
       yOffset: -15,
       rotateAmount: -10,
       duration: 6,
@@ -324,10 +475,46 @@ const flavors: FlowerFlavor[] = [
       zIndex: 10,
     },
     fruits: [
-      { src: '/flowers/eternal-zlushy/fruit1.png', size: 135, left: '18%', top: '22%', delay: 0 },
-      { src: '/flowers/eternal-zlushy/fruit2.png', size: 95, left: '75%', top: '25%', delay: 1.4 },
-      { src: '/flowers/eternal-zlushy/fruit3.png', size: 120, left: '27%', top: '70%', delay: 0.9 },
-      { src: '/flowers/eternal-zlushy/fruit4.png', size: 85, left: '72%', top: '68%', delay: 2 },
+      { 
+        src: '/flowers/eternal-zlushy/fruit1.webp', 
+        sizeMobile: 135, 
+        sizeDesktop: 175,
+        leftMobile: '18%', 
+        leftDesktop: '24%',
+        topMobile: '22%', 
+        topDesktop: '22%',
+        delay: 0 
+      },
+      { 
+        src: '/flowers/eternal-zlushy/fruit2.webp', 
+        sizeMobile: 95, 
+        sizeDesktop: 125,
+        leftMobile: '70%', 
+        leftDesktop: '72%',
+        topMobile: '25%', 
+        topDesktop: '25%',
+        delay: 1.4 
+      },
+      { 
+        src: '/flowers/eternal-zlushy/fruit3.webp', 
+        sizeMobile: 120, 
+        sizeDesktop: 155,
+        leftMobile: '27%', 
+        leftDesktop: '27%',
+        topMobile: '70%', 
+        topDesktop: '70%',
+        delay: 0.9 
+      },
+      { 
+        src: '/flowers/eternal-zlushy/fruit4.webp', 
+        sizeMobile: 165, 
+        sizeDesktop: 215,
+        leftMobile: '62%', 
+        leftDesktop: '71%',
+        topMobile: '60%', 
+        topDesktop: '68%',
+        delay: 2 
+      },
     ],
     strainInfo: {
       name: 'Eternal Zlushy',
@@ -348,10 +535,10 @@ const flavors: FlowerFlavor[] = [
       sizeMobile: 250,
       sizeDesktop: 320,
       leftMobile: '25%',
-      leftDesktop: '38%',
+      leftDesktop: '40%',
       topMobile: '65%',
       topDesktop: '65%',
-      rotate: -35,
+      rotate: -30,
       yOffset: -15,
       rotateAmount: -10,
       duration: 6,
@@ -372,10 +559,46 @@ const flavors: FlowerFlavor[] = [
       zIndex: 10,
     },
     fruits: [
-      { src: '/flowers/astro-berry-gelato/fruit1.png', size: 130, left: '13%', top: '19%', delay: 0 },
-      { src: '/flowers/astro-berry-gelato/fruit2.png', size: 98, left: '77%', top: '27%', delay: 1.2 },
-      { src: '/flowers/astro-berry-gelato/fruit3.png', size: 118, left: '26%', top: '66%', delay: 0.6 },
-      { src: '/flowers/astro-berry-gelato/fruit4.png', size: 82, left: '71%', top: '73%', delay: 2.3 },
+      { 
+        src: '/flowers/astro-berry-gelato/fruit1.webp', 
+        sizeMobile: 130, 
+        sizeDesktop: 170,
+        leftMobile: '13%', 
+        leftDesktop: '23%',
+        topMobile: '19%', 
+        topDesktop: '19%',
+        delay: 0 
+      },
+      { 
+        src: '/flowers/astro-berry-gelato/fruit2.webp', 
+        sizeMobile: 98, 
+        sizeDesktop: 130,
+        leftMobile: '70%', 
+        leftDesktop: '73%',
+        topMobile: '27%', 
+        topDesktop: '27%',
+        delay: 1.2 
+      },
+      { 
+        src: '/flowers/astro-berry-gelato/fruit3.webp', 
+        sizeMobile: 118, 
+        sizeDesktop: 150,
+        leftMobile: '26%', 
+        leftDesktop: '26%',
+        topMobile: '66%', 
+        topDesktop: '66%',
+        delay: 0.6 
+      },
+      { 
+        src: '/flowers/astro-berry-gelato/fruit4.webp', 
+        sizeMobile: 162, 
+        sizeDesktop: 210,
+        leftMobile: '61%', 
+        leftDesktop: '71%',
+        topMobile: '63%', 
+        topDesktop: '73%',
+        delay: 2.3 
+      },
     ],
     strainInfo: {
       name: 'Astro Berry Gelato',
@@ -396,10 +619,10 @@ const flavors: FlowerFlavor[] = [
       sizeMobile: 250,
       sizeDesktop: 320,
       leftMobile: '25%',
-      leftDesktop: '38%',
+      leftDesktop: '40%',
       topMobile: '65%',
       topDesktop: '65%',
-      rotate: -35,
+      rotate: -30,
       yOffset: -15,
       rotateAmount: -10,
       duration: 6,
@@ -420,10 +643,47 @@ const flavors: FlowerFlavor[] = [
       zIndex: 10,
     },
     fruits: [
-      { src: '/flowers/higashi/fruit1.png', size: 140, left: '10%', top: '18%', delay: 0 },
-      { src: '/flowers/higashi/fruit2.png', size: 95, left: '78%', top: '25%', delay: 1.2 },
-      { src: '/flowers/higashi/fruit3.png', size: 125, left: '25%', top: '65%', delay: 0.6, rotate: -18 },
-      { src: '/flowers/higashi/fruit4.png', size: 85, left: '72%', top: '70%', delay: 2.1 },
+      { 
+        src: '/flowers/higashi/fruit1.webp', 
+        sizeMobile: 140, 
+        sizeDesktop: 180,
+        leftMobile: '10%', 
+        leftDesktop: '21%',
+        topMobile: '18%', 
+        topDesktop: '18%',
+        delay: 0 
+      },
+      { 
+        src: '/flowers/higashi/fruit2.webp', 
+        sizeMobile: 95, 
+        sizeDesktop: 125,
+        leftMobile: '70%', 
+        leftDesktop: '73%',
+        topMobile: '25%', 
+        topDesktop: '25%',
+        delay: 1.2 
+      },
+      { 
+        src: '/flowers/higashi/fruit3.webp', 
+        sizeMobile: 125, 
+        sizeDesktop: 160,
+        leftMobile: '25%', 
+        leftDesktop: '25%',
+        topMobile: '65%', 
+        topDesktop: '65%',
+        delay: 0.6, 
+        rotate: -18 
+      },
+      { 
+        src: '/flowers/higashi/fruit4.webp', 
+        sizeMobile: 165, 
+        sizeDesktop: 210,
+        leftMobile: '62%', 
+        leftDesktop: '72%',
+        topMobile: '60%', 
+        topDesktop: '70%',
+        delay: 2.1 
+      },
     ],
     strainInfo: {
       name: 'Higashi',
@@ -444,10 +704,10 @@ const flavors: FlowerFlavor[] = [
       sizeMobile: 250,
       sizeDesktop: 320,
       leftMobile: '25%',
-      leftDesktop: '38%',
+      leftDesktop: '40%',
       topMobile: '65%',
       topDesktop: '65%',
-      rotate: -35,
+      rotate: -30,
       yOffset: -15,
       rotateAmount: -10,
       duration: 6,
@@ -468,10 +728,46 @@ const flavors: FlowerFlavor[] = [
       zIndex: 10,
     },
     fruits: [
-      { src: '/flowers/cosmic-caviar/fruit1.png', size: 130, left: '12%', top: '18%', delay: 0 },
-      { src: '/flowers/cosmic-caviar/fruit2.png', size: 105, left: '80%', top: '30%', delay: 1.1 },
-      { src: '/flowers/cosmic-caviar/fruit3.png', size: 110, left: '25%', top: '67%', delay: 0.7 },
-      { src: '/flowers/cosmic-caviar/fruit4.png', size: 88, left: '70%', top: '73%', delay: 2.2 },
+      { 
+        src: '/flowers/cosmic-caviar/fruit1.webp', 
+        sizeMobile: 130, 
+        sizeDesktop: 170,
+        leftMobile: '12%', 
+        leftDesktop: '22%',
+        topMobile: '18%', 
+        topDesktop: '18%',
+        delay: 0 
+      },
+      { 
+        src: '/flowers/cosmic-caviar/fruit2.webp', 
+        sizeMobile: 105, 
+        sizeDesktop: 140,
+        leftMobile: '70%', 
+        leftDesktop: '70%',
+        topMobile: '30%', 
+        topDesktop: '30%',
+        delay: 1.1 
+      },
+      { 
+        src: '/flowers/cosmic-caviar/fruit3.webp', 
+        sizeMobile: 110, 
+        sizeDesktop: 145,
+        leftMobile: '25%', 
+        leftDesktop: '25%',
+        topMobile: '67%', 
+        topDesktop: '67%',
+        delay: 0.7 
+      },
+      { 
+        src: '/flowers/cosmic-caviar/fruit4.webp', 
+        sizeMobile: 168, 
+        sizeDesktop: 215,
+        leftMobile: '60%', 
+        leftDesktop: '70%',
+        topMobile: '63%', 
+        topDesktop: '73%',
+        delay: 2.2 
+      },
     ],
     strainInfo: {
       name: 'Cosmic Caviar',
@@ -510,7 +806,7 @@ export default function FlowersPage() {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // Get current sizes and positions for element
+  // Get current styles for element (preroll, tube)
   const getElementStyles = (element: ExtraElement) => {
     const size = isMobile ? element.sizeMobile : element.sizeDesktop;
     const left = isMobile ? element.leftMobile : element.leftDesktop;
@@ -522,6 +818,19 @@ export default function FlowersPage() {
       top,
       marginLeft: -size / 2,
       marginTop: -size / 2,
+    };
+  };
+
+  // Get current styles for fruit
+  const getFruitStyles = (fruit: Fruit) => {
+    const size = isMobile ? fruit.sizeMobile : fruit.sizeDesktop;
+    const left = isMobile ? fruit.leftMobile : fruit.leftDesktop;
+    const top = isMobile ? fruit.topMobile : fruit.topDesktop;
+    
+    return {
+      size,
+      left,
+      top,
     };
   };
 
@@ -575,7 +884,7 @@ export default function FlowersPage() {
   const DescriptionContent = () => (
     <div className="space-y-6 md:space-y-8">
       <div>
-        <h3 className="text-2xl md:text-4xl font-bold text-white mb-3 md:mb-4">Astro Kit contains</h3>
+        <h3 className="text-2xl md:text-4xl font-bold text-white mb-3 md:mb-4">ASTRO FUEL Kit contains</h3>
         <div className="space-y-4 md:space-y-6">
           <button
             onClick={() => setSelectedFeature('flower')}
@@ -627,7 +936,7 @@ export default function FlowersPage() {
     </div>
   );
 
-  // Strain info component - expanded description for each product (without duplicate name and terpenes)
+  // Strain info component - expanded description for each product
   const StrainInfoContent = () => {
     const strain = activeFlavor.strainInfo;
 
@@ -696,7 +1005,7 @@ export default function FlowersPage() {
               </div>
             )}
 
-            {/* Strain Info for desktop (right) - single expanded description */}
+            {/* Strain Info for desktop (right) */}
             {!isMobile && (
               <div className="absolute right-8 top-1/2 -translate-y-1/2 z-[15] max-w-[400px] w-[360px] bg-black/60 backdrop-blur-md rounded-2xl p-6 border border-white/20 pointer-events-auto max-h-[85vh] overflow-y-auto custom-scrollbar">
                 <StrainInfoContent />
@@ -755,16 +1064,16 @@ export default function FlowersPage() {
               <img src={activeFlavor.preroll.src} alt="" className="w-full h-full object-contain drop-shadow-2xl" />
             </motion.div>
 
-            {/* Floating fruits */}
+            {/* Floating fruits - now with responsive sizes and positions */}
             {activeFlavor.fruits.map((fruit, i) => (
               <motion.div
                 key={i}
                 className="absolute pointer-events-none"
                 style={{ 
-                  left: fruit.left, 
-                  top: fruit.top, 
-                  width: fruit.size, 
-                  height: fruit.size, 
+                  left: getFruitStyles(fruit).left, 
+                  top: getFruitStyles(fruit).top, 
+                  width: getFruitStyles(fruit).size, 
+                  height: getFruitStyles(fruit).size, 
                   zIndex: 100 
                 }}
                 animate={{
@@ -885,13 +1194,13 @@ export default function FlowersPage() {
           )}
         </AnimatePresence>
 
-        {/* Title text - centered on mobile, top-right on desktop */}
+        {/* Title text - different for mobile and desktop */}
         <AnimatePresence mode="wait">
           <motion.div
             key={`text-${activeFlavor.id}`}
             className={`z-30 ${
               isMobile 
-                ? 'absolute top-24 left-1/2 -translate-x-1/2 text-center' 
+                ? 'absolute top-20 left-1/2 -translate-x-1/2 text-center whitespace-nowrap' 
                 : 'absolute top-12 right-12 text-right'
             }`}
             initial={{ opacity: 0, y: -20 }}
@@ -899,8 +1208,17 @@ export default function FlowersPage() {
             exit={{ opacity: 0, y: 20 }}
             transition={{ duration: 0.4 }}
           >
-            <div className={`uppercase tracking-[5px] text-sm mb-4 opacity-80 ${!isMobile && 'text-right'}`}>ASTRO KIT</div>
-            <h2 className={`text-6xl md:text-8xl font-black tracking-tighter drop-shadow-lg ${!isMobile && 'text-right'}`}>
+            {/* Hide "ASTRO KIT" on mobile, only show product name */}
+            {!isMobile && (
+              <div className={`uppercase tracking-[5px] text-sm mb-4 opacity-80 ${!isMobile && 'text-right'}`}>
+                ASTRO KIT
+              </div>
+            )}
+            <h2 className={`font-black tracking-tighter drop-shadow-lg ${
+              isMobile 
+                ? 'text-5xl' 
+                : 'text-6xl md:text-8xl text-right'
+            }`}>
               {activeFlavor.name}
             </h2>
           </motion.div>
