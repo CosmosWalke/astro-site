@@ -111,12 +111,12 @@ const flavors: FlowerFlavor[] = [
     flowerImage: '/flowers/blue-zlurpee/flower.webp',
     preroll: {
       src: '/flowers/blue-zlurpee/preroll.webp',
-      sizeMobile: 250,
-      sizeDesktop: 320,
+      sizeMobile: 150,
+      sizeDesktop: 200,
       leftMobile: '25%',
       leftDesktop: '40%',
-      topMobile: '65%',
-      topDesktop: '65%',
+      topMobile: '55%',
+      topDesktop: '48%',
       rotate: -30,
       yOffset: -15,
       rotateAmount: -10,
@@ -125,12 +125,12 @@ const flavors: FlowerFlavor[] = [
     },
     tube: {
       src: '/flowers/blue-zlurpee/tube.webp',
-      sizeMobile: 300,
-      sizeDesktop: 500,
+      sizeMobile: 120,
+      sizeDesktop: 200,
       leftMobile: '78%',
       leftDesktop: '65%',
-      topMobile: '35%',
-      topDesktop: '50%',
+      topMobile: '17%',
+      topDesktop: '20%',
       rotate: 8,
       yOffset: -18,
       rotateAmount: 6,
@@ -160,10 +160,10 @@ const flavors: FlowerFlavor[] = [
       },
       { 
         src: '/flowers/blue-zlurpee/fruit3.webp', 
-        sizeMobile: 225, 
-        sizeDesktop: 260,
+        sizeMobile: 200, 
+        sizeDesktop: 220,
         leftMobile: '50%', 
-        leftDesktop: '20%',
+        leftDesktop: '22%',
         topMobile: '65%', 
         topDesktop: '65%',
         delay: 0.6, 
@@ -196,12 +196,12 @@ const flavors: FlowerFlavor[] = [
     flowerImage: '/flowers/frosted-mochi/flower.webp',
     preroll: {
       src: '/flowers/frosted-mochi/preroll.webp',
-      sizeMobile: 250,
-      sizeDesktop: 320,
+      sizeMobile: 150,
+      sizeDesktop: 200,
       leftMobile: '25%',
       leftDesktop: '40%',
-      topMobile: '65%',
-      topDesktop: '65%',
+      topMobile: '55%',
+      topDesktop: '48%',
       rotate: -30,
       yOffset: -15,
       rotateAmount: -10,
@@ -210,12 +210,12 @@ const flavors: FlowerFlavor[] = [
     },
     tube: {
       src: '/flowers/frosted-mochi/tube.webp',
-      sizeMobile: 300,
-      sizeDesktop: 500,
+      sizeMobile: 120,
+      sizeDesktop: 200,
       leftMobile: '78%',
       leftDesktop: '65%',
-      topMobile: '35%',
-      topDesktop: '50%',
+      topMobile: '17%',
+      topDesktop: '20%',
       rotate: 8,
       yOffset: -18,
       rotateAmount: 6,
@@ -245,10 +245,10 @@ const flavors: FlowerFlavor[] = [
       },
       { 
         src: '/flowers/frosted-mochi/fruit3.webp', 
-        sizeMobile: 225, 
-        sizeDesktop: 260,
+        sizeMobile: 200, 
+        sizeDesktop: 220,
         leftMobile: '50%', 
-        leftDesktop: '20%',
+        leftDesktop: '22%',
         topMobile: '65%', 
         topDesktop: '65%',
         delay: 0.6, 
@@ -281,12 +281,12 @@ const flavors: FlowerFlavor[] = [
     flowerImage: '/flowers/cartier-cush/flower.webp',
     preroll: {
       src: '/flowers/cartier-cush/preroll.webp',
-      sizeMobile: 250,
-      sizeDesktop: 320,
+      sizeMobile: 150,
+      sizeDesktop: 200,
       leftMobile: '25%',
       leftDesktop: '40%',
-      topMobile: '65%',
-      topDesktop: '65%',
+      topMobile: '55%',
+      topDesktop: '48%',
       rotate: -30,
       yOffset: -15,
       rotateAmount: -10,
@@ -295,12 +295,12 @@ const flavors: FlowerFlavor[] = [
     },
     tube: {
       src: '/flowers/cartier-cush/tube.webp',
-      sizeMobile: 300,
-      sizeDesktop: 500,
+       sizeMobile: 120,
+      sizeDesktop: 200,
       leftMobile: '78%',
       leftDesktop: '65%',
-      topMobile: '35%',
-      topDesktop: '50%',
+      topMobile: '17%',
+      topDesktop: '20%',
       rotate: 8,
       yOffset: -18,
       rotateAmount: 6,
@@ -330,10 +330,10 @@ const flavors: FlowerFlavor[] = [
       },
       { 
         src: '/flowers/cartier-cush/fruit3.webp', 
-        sizeMobile: 225, 
-        sizeDesktop: 260,
+        sizeMobile: 200, 
+        sizeDesktop: 220,
         leftMobile: '50%', 
-        leftDesktop: '20%',
+        leftDesktop: '22%',
         topMobile: '65%', 
         topDesktop: '65%',
         delay: 0.6, 
@@ -366,12 +366,12 @@ const flavors: FlowerFlavor[] = [
     flowerImage: '/flowers/milkyway-runtz/flower.webp',
     preroll: {
       src: '/flowers/milkyway-runtz/preroll.webp',
-      sizeMobile: 250,
-      sizeDesktop: 320,
+      sizeMobile: 150,
+      sizeDesktop: 200,
       leftMobile: '25%',
       leftDesktop: '40%',
-      topMobile: '65%',
-      topDesktop: '65%',
+      topMobile: '55%',
+      topDesktop: '48%',
       rotate: -30,
       yOffset: -15,
       rotateAmount: -10,
@@ -380,12 +380,12 @@ const flavors: FlowerFlavor[] = [
     },
     tube: {
       src: '/flowers/milkyway-runtz/tube.webp',
-      sizeMobile: 300,
-      sizeDesktop: 500,
+      sizeMobile: 120,
+      sizeDesktop: 200,
       leftMobile: '78%',
       leftDesktop: '65%',
-      topMobile: '35%',
-      topDesktop: '50%',
+      topMobile: '17%',
+      topDesktop: '20%',
       rotate: 8,
       yOffset: -18,
       rotateAmount: 6,
@@ -415,10 +415,10 @@ const flavors: FlowerFlavor[] = [
       },
       { 
         src: '/flowers/milkyway-runtz/fruit3.webp', 
-        sizeMobile: 225, 
-        sizeDesktop: 260,
+        sizeMobile: 200, 
+        sizeDesktop: 220,
         leftMobile: '50%', 
-        leftDesktop: '20%',
+        leftDesktop: '22%',
         topMobile: '65%', 
         topDesktop: '65%',
         delay: 0.8, 
@@ -451,12 +451,12 @@ const flavors: FlowerFlavor[] = [
     flowerImage: '/flowers/eternal-zlushy/flower.webp',
     preroll: {
       src: '/flowers/eternal-zlushy/preroll.webp',
-      sizeMobile: 250,
-      sizeDesktop: 320,
+      sizeMobile: 150,
+      sizeDesktop: 200,
       leftMobile: '25%',
       leftDesktop: '40%',
-      topMobile: '65%',
-      topDesktop: '65%',
+      topMobile: '55%',
+      topDesktop: '48%',
       rotate: -30,
       yOffset: -15,
       rotateAmount: -10,
@@ -465,12 +465,12 @@ const flavors: FlowerFlavor[] = [
     },
     tube: {
       src: '/flowers/eternal-zlushy/tube.webp',
-      sizeMobile: 300,
-      sizeDesktop: 500,
+      sizeMobile: 120,
+      sizeDesktop: 200,
       leftMobile: '78%',
       leftDesktop: '65%',
-      topMobile: '35%',
-      topDesktop: '50%',
+      topMobile: '17%',
+      topDesktop: '20%',
       rotate: 8,
       yOffset: -18,
       rotateAmount: 6,
@@ -500,10 +500,10 @@ const flavors: FlowerFlavor[] = [
       },
       { 
         src: '/flowers/eternal-zlushy/fruit3.webp', 
-        sizeMobile: 225, 
-        sizeDesktop: 260,
+        sizeMobile: 200, 
+        sizeDesktop: 220,
         leftMobile: '50%', 
-        leftDesktop: '20%',
+        leftDesktop: '22%',
         topMobile: '65%', 
         topDesktop: '65%',
         delay: 0.9, 
@@ -536,12 +536,12 @@ const flavors: FlowerFlavor[] = [
     flowerImage: '/flowers/astro-berry-gelato/flower.webp',
     preroll: {
       src: '/flowers/astro-berry-gelato/preroll.webp',
-      sizeMobile: 250,
-      sizeDesktop: 320,
+      sizeMobile: 150,
+      sizeDesktop: 200,
       leftMobile: '25%',
       leftDesktop: '40%',
-      topMobile: '65%',
-      topDesktop: '65%',
+      topMobile: '55%',
+      topDesktop: '48%',
       rotate: -30,
       yOffset: -15,
       rotateAmount: -10,
@@ -550,12 +550,12 @@ const flavors: FlowerFlavor[] = [
     },
     tube: {
       src: '/flowers/astro-berry-gelato/tube.webp',
-      sizeMobile: 300,
-      sizeDesktop: 500,
+      sizeMobile: 120,
+      sizeDesktop: 200,
       leftMobile: '78%',
       leftDesktop: '65%',
-      topMobile: '35%',
-      topDesktop: '50%',
+      topMobile: '17%',
+      topDesktop: '20%',
       rotate: 8,
       yOffset: -18,
       rotateAmount: 6,
@@ -585,10 +585,10 @@ const flavors: FlowerFlavor[] = [
       },
       { 
         src: '/flowers/astro-berry-gelato/fruit3.webp', 
-        sizeMobile: 225, 
-        sizeDesktop: 260,
+        sizeMobile: 200, 
+        sizeDesktop: 220,
         leftMobile: '50%', 
-        leftDesktop: '20%',
+        leftDesktop: '22%',
         topMobile: '65%', 
         topDesktop: '65%',
         delay: 0.6, 
@@ -621,12 +621,12 @@ const flavors: FlowerFlavor[] = [
     flowerImage: '/flowers/higashi/flower.webp',
     preroll: {
       src: '/flowers/higashi/preroll.webp',
-      sizeMobile: 250,
-      sizeDesktop: 320,
+        sizeMobile: 150,
+      sizeDesktop: 200,
       leftMobile: '25%',
       leftDesktop: '40%',
-      topMobile: '65%',
-      topDesktop: '65%',
+      topMobile: '55%',
+      topDesktop: '48%',
       rotate: -30,
       yOffset: -15,
       rotateAmount: -10,
@@ -635,12 +635,12 @@ const flavors: FlowerFlavor[] = [
     },
     tube: {
       src: '/flowers/higashi/tube.webp',
-      sizeMobile: 300,
-      sizeDesktop: 500,
+       sizeMobile: 120,
+      sizeDesktop: 200,
       leftMobile: '78%',
       leftDesktop: '65%',
-      topMobile: '35%',
-      topDesktop: '50%',
+      topMobile: '17%',
+      topDesktop: '20%',
       rotate: 8,
       yOffset: -18,
       rotateAmount: 6,
@@ -670,10 +670,10 @@ const flavors: FlowerFlavor[] = [
       },
       { 
         src: '/flowers/higashi/fruit3.webp', 
-        sizeMobile: 225, 
-        sizeDesktop: 260,
+        sizeMobile: 200, 
+        sizeDesktop: 220,
         leftMobile: '50%', 
-        leftDesktop: '20%',
+        leftDesktop: '22%',
         topMobile: '65%', 
         topDesktop: '65%',
         delay: 0.6, 
@@ -706,12 +706,12 @@ const flavors: FlowerFlavor[] = [
     flowerImage: '/flowers/cosmic-caviar/flower.webp',
     preroll: {
       src: '/flowers/cosmic-caviar/preroll.webp',
-      sizeMobile: 250,
-      sizeDesktop: 320,
+      sizeMobile: 150,
+      sizeDesktop: 200,
       leftMobile: '25%',
       leftDesktop: '40%',
-      topMobile: '65%',
-      topDesktop: '65%',
+      topMobile: '55%',
+      topDesktop: '48%',
       rotate: -30,
       yOffset: -15,
       rotateAmount: -10,
@@ -720,12 +720,12 @@ const flavors: FlowerFlavor[] = [
     },
     tube: {
       src: '/flowers/cosmic-caviar/tube.webp',
-      sizeMobile: 300,
-      sizeDesktop: 500,
+      sizeMobile: 120,
+      sizeDesktop: 200,
       leftMobile: '78%',
       leftDesktop: '65%',
-      topMobile: '35%',
-      topDesktop: '50%',
+      topMobile: '17%',
+      topDesktop: '20%',
       rotate: 8,
       yOffset: -18,
       rotateAmount: 6,
@@ -755,10 +755,10 @@ const flavors: FlowerFlavor[] = [
       },
       { 
         src: '/flowers/cosmic-caviar/fruit3.webp', 
-        sizeMobile: 225, 
-        sizeDesktop: 260,
+        sizeMobile: 200, 
+        sizeDesktop: 220,
         leftMobile: '50%', 
-        leftDesktop: '20%',
+        leftDesktop: '22%',
         topMobile: '65%', 
         topDesktop: '65%',
         delay: 0.7, 
@@ -1004,23 +1004,27 @@ export default function FlowersPage() {
               <div className="absolute inset-0 bg-black/30" />
             </div>
 
-            {/* Description for desktop (left) */}
+            {/* Description for desktop (left) - no animation, stays as is */}
             {!isMobile && (
               <div className="absolute left-8 top-1/2 -translate-y-1/2 z-[15] max-w-[600px] w-[560px] bg-black/60 backdrop-blur-md rounded-2xl p-8 border border-white/20 pointer-events-auto">
                 <DescriptionContent />
               </div>
             )}
 
-            {/* Strain Info for desktop (right) */}
+            {/* Strain Info for desktop (right) - no animation, stays as is */}
             {!isMobile && (
               <div className="absolute right-8 top-1/2 -translate-y-1/2 z-[15] max-w-[400px] w-[360px] bg-black/60 backdrop-blur-md rounded-2xl p-6 border border-white/20 pointer-events-auto max-h-[85vh] overflow-y-auto custom-scrollbar">
                 <StrainInfoContent />
               </div>
             )}
 
-            {/* TUBE - behind flower */}
+            {/* TUBE - behind flower - slides in from left */}
             <motion.div
               key={`tube-${activeFlavor.id}`}
+              initial={{ opacity: 0, x: -200, scale: 0.8 }}
+              animate={{ opacity: 1, x: 0, scale: 1 }}
+              exit={{ opacity: 0, x: 200, scale: 0.8 }}
+              transition={{ duration: 0.6, ease: "easeOut", delay: 0.1 }}
               className="absolute pointer-events-none"
               style={{
                 left: getElementStyles(activeFlavor.tube).left,
@@ -1031,23 +1035,30 @@ export default function FlowersPage() {
                 marginTop: getElementStyles(activeFlavor.tube).marginTop,
                 zIndex: activeFlavor.tube.zIndex || 10,
               }}
-              animate={{
-                y: [0, activeFlavor.tube.yOffset || -15, 0],
-                rotate: [activeFlavor.tube.rotate || 0, (activeFlavor.tube.rotate || 0) + (activeFlavor.tube.rotateAmount || 5), activeFlavor.tube.rotate || 0],
-              }}
-              transition={{
-                duration: activeFlavor.tube.duration || 6,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
             >
-              <img src={activeFlavor.tube.src} alt="" className="w-full h-full object-contain drop-shadow-xl" />
+              <motion.div
+                animate={{
+                  y: [0, activeFlavor.tube.yOffset || -15, 0],
+                  rotate: [activeFlavor.tube.rotate || 0, (activeFlavor.tube.rotate || 0) + (activeFlavor.tube.rotateAmount || 5), activeFlavor.tube.rotate || 0],
+                }}
+                transition={{
+                  duration: activeFlavor.tube.duration || 6,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+              >
+                <img src={activeFlavor.tube.src} alt="" className="w-full h-full object-contain drop-shadow-xl" />
+              </motion.div>
             </motion.div>
 
-            {/* FRUIT3 - ЗА flower (zIndex: 15, ниже чем у flower который z-20) */}
+            {/* FRUIT3 - ЗА flower - slides in from right */}
             {activeFlavor.fruits[2] && (
               <motion.div
                 key={`fruit3-${activeFlavor.id}`}
+                initial={{ opacity: 0, x: 200, scale: 0.8 }}
+                animate={{ opacity: 1, x: 0, scale: 1 }}
+                exit={{ opacity: 0, x: -200, scale: 0.8 }}
+                transition={{ duration: 0.6, ease: "easeOut", delay: 0.2 }}
                 className="absolute pointer-events-none"
                 style={{ 
                   left: getFruitStyles(activeFlavor.fruits[2]).left, 
@@ -1056,24 +1067,31 @@ export default function FlowersPage() {
                   height: getFruitStyles(activeFlavor.fruits[2]).size, 
                   zIndex: 21
                 }}
-                animate={{
-                  y: [0, -35, 0],
-                  rotate: [activeFlavor.fruits[2].rotate || 0, (activeFlavor.fruits[2].rotate || 0) + 20, activeFlavor.fruits[2].rotate || 0],
-                }}
-                transition={{
-                  duration: 7.5 + 2,
-                  repeat: Infinity,
-                  delay: activeFlavor.fruits[2].delay,
-                  ease: "easeInOut",
-                }}
               >
-                <img src={activeFlavor.fruits[2].src} alt="" className="w-full h-full object-contain drop-shadow-2xl" />
+                <motion.div
+                  animate={{
+                    y: [0, -35, 0],
+                    rotate: [activeFlavor.fruits[2].rotate || 0, (activeFlavor.fruits[2].rotate || 0) + 20, activeFlavor.fruits[2].rotate || 0],
+                  }}
+                  transition={{
+                    duration: 7.5 + 2,
+                    repeat: Infinity,
+                    delay: activeFlavor.fruits[2].delay,
+                    ease: "easeInOut",
+                  }}
+                >
+                  <img src={activeFlavor.fruits[2].src} alt="" className="w-full h-full object-contain drop-shadow-2xl" />
+                </motion.div>
               </motion.div>
             )}
 
-            {/* PREROLL - перед flower */}
+            {/* PREROLL - перед flower - slides in from top */}
             <motion.div
               key={`preroll-${activeFlavor.id}`}
+              initial={{ opacity: 0, y: -200, scale: 0.8 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 200, scale: 0.8 }}
+              transition={{ duration: 0.6, ease: "easeOut", delay: 0.15 }}
               className="absolute pointer-events-none"
               style={{
                 left: getElementStyles(activeFlavor.preroll).left,
@@ -1084,26 +1102,32 @@ export default function FlowersPage() {
                 marginTop: getElementStyles(activeFlavor.preroll).marginTop,
                 zIndex: activeFlavor.preroll.zIndex || 30,
               }}
-              animate={{
-                y: [0, activeFlavor.preroll.yOffset || -15, 0],
-                rotate: [activeFlavor.preroll.rotate || 0, (activeFlavor.preroll.rotate || 0) + (activeFlavor.preroll.rotateAmount || -10), activeFlavor.preroll.rotate || 0],
-              }}
-              transition={{
-                duration: activeFlavor.preroll.duration || 6,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
             >
-              <img src={activeFlavor.preroll.src} alt="" className="w-full h-full object-contain drop-shadow-2xl" />
+              <motion.div
+                animate={{
+                  y: [0, activeFlavor.preroll.yOffset || -15, 0],
+                  rotate: [activeFlavor.preroll.rotate || 0, (activeFlavor.preroll.rotate || 0) + (activeFlavor.preroll.rotateAmount || -10), activeFlavor.preroll.rotate || 0],
+                }}
+                transition={{
+                  duration: activeFlavor.preroll.duration || 6,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+              >
+                <img src={activeFlavor.preroll.src} alt="" className="w-full h-full object-contain drop-shadow-2xl" />
+              </motion.div>
             </motion.div>
 
-            {/* Остальные фрукты (fruit1, fruit2, fruit4) - ПЕРЕД flower (zIndex: 100) */}
+            {/* Остальные фрукты (fruit1, fruit2, fruit4) - ПЕРЕД flower - slides in from bottom */}
             {activeFlavor.fruits.map((fruit, i) => {
-              // Пропускаем fruit3 (индекс 2), так как он уже отрендерен выше
               if (i === 2) return null;
               return (
                 <motion.div
                   key={i}
+                  initial={{ opacity: 0, y: 200, scale: 0.8 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -200, scale: 0.8 }}
+                  transition={{ duration: 0.6, ease: "easeOut", delay: 0.25 + i * 0.05 }}
                   className="absolute pointer-events-none"
                   style={{ 
                     left: getFruitStyles(fruit).left, 
@@ -1112,18 +1136,21 @@ export default function FlowersPage() {
                     height: getFruitStyles(fruit).size, 
                     zIndex: 100
                   }}
-                  animate={{
-                    y: [0, -35, 0],
-                    rotate: [fruit.rotate || 0, (fruit.rotate || 0) + 20, fruit.rotate || 0],
-                  }}
-                  transition={{
-                    duration: 7.5 + i,
-                    repeat: Infinity,
-                    delay: fruit.delay,
-                    ease: "easeInOut",
-                  }}
                 >
-                  <img src={fruit.src} alt="" className="w-full h-full object-contain drop-shadow-2xl" />
+                  <motion.div
+                    animate={{
+                      y: [0, -35, 0],
+                      rotate: [fruit.rotate || 0, (fruit.rotate || 0) + 20, fruit.rotate || 0],
+                    }}
+                    transition={{
+                      duration: 7.5 + i,
+                      repeat: Infinity,
+                      delay: fruit.delay,
+                      ease: "easeInOut",
+                    }}
+                  >
+                    <img src={fruit.src} alt="" className="w-full h-full object-contain drop-shadow-2xl" />
+                  </motion.div>
                 </motion.div>
               );
             })}
@@ -1231,7 +1258,7 @@ export default function FlowersPage() {
           )}
         </AnimatePresence>
 
-        {/* Title text - different for mobile and desktop */}
+        {/* Title text - different for mobile and desktop - no animation on appearance, just fade */}
         <AnimatePresence mode="wait">
           <motion.div
             key={`text-${activeFlavor.id}`}
@@ -1240,12 +1267,11 @@ export default function FlowersPage() {
                 ? 'absolute top-20 left-1/2 -translate-x-1/2 text-center whitespace-nowrap' 
                 : 'absolute top-12 right-12 text-right'
             }`}
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
             transition={{ duration: 0.4 }}
           >
-            {/* Hide "ASTRO KIT" on mobile, only show product name */}
             {!isMobile && (
               <div className={`uppercase tracking-[5px] text-sm mb-4 opacity-80 ${!isMobile && 'text-right'}`}>
                 ASTRO FUEL KIT
@@ -1261,7 +1287,7 @@ export default function FlowersPage() {
           </motion.div>
         </AnimatePresence>
 
-        {/* Central flower image */}
+        {/* Central flower image - no animation, just fade */}
         <div className="relative z-20 flex items-center justify-center">
           <div className="relative w-[600px] h-[600px] md:w-[860px] md:h-[860px]">
             <img

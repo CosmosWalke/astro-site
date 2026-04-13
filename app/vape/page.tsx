@@ -107,12 +107,12 @@ const flavors: VapeFlavor[] = [
     vapeImage: '/vapes/peach/vape.webp',
     preroll: {
       src: '/vapes/peach/preroll.webp',
-      sizeMobile: 250,
-      sizeDesktop: 320,
+      sizeMobile: 130,
+      sizeDesktop: 180,
       leftMobile: '25%',
-      leftDesktop: '40%',
-      topMobile: '65%',
-      topDesktop: '65%',
+      leftDesktop: '37%',
+      topMobile: '58%',
+      topDesktop: '50%',
       rotate: -30,
       yOffset: -15,
       rotateAmount: -10,
@@ -121,12 +121,12 @@ const flavors: VapeFlavor[] = [
     },
     tube: {
       src: '/vapes/peach/tube.webp',
-      sizeMobile: 300,
-      sizeDesktop: 500,
-      leftMobile: '78%',
+      sizeMobile: 110,
+      sizeDesktop: 180,
+      leftMobile: '80%',
       leftDesktop: '65%',
-      topMobile: '35%',
-      topDesktop: '50%',
+      topMobile: '15%',
+      topDesktop: '20%',
       rotate: 8,
       yOffset: -18,
       rotateAmount: 6,
@@ -156,8 +156,8 @@ const flavors: VapeFlavor[] = [
       },
       { 
         src: '/vapes/peach/fruit3.webp', 
-        sizeMobile: 225, 
-        sizeDesktop: 260,
+        sizeMobile: 165, 
+        sizeDesktop: 200,
         leftMobile: '50%', 
         leftDesktop: '65%',
         topMobile: '65%', 
@@ -211,12 +211,12 @@ const flavors: VapeFlavor[] = [
     vapeImage: '/vapes/green-apple/vape.webp',
     preroll: {
       src: '/vapes/green-apple/preroll.webp',
-      sizeMobile: 250,
-      sizeDesktop: 320,
+      sizeMobile: 130,
+      sizeDesktop: 180,
       leftMobile: '25%',
-      leftDesktop: '40%',
-      topMobile: '65%',
-      topDesktop: '65%',
+      leftDesktop: '37%',
+      topMobile: '58%',
+      topDesktop: '50%',
       rotate: -30,
       yOffset: -15,
       rotateAmount: -10,
@@ -225,12 +225,12 @@ const flavors: VapeFlavor[] = [
     },
     tube: {
       src: '/vapes/green-apple/tube.webp',
-      sizeMobile: 300,
-      sizeDesktop: 500,
-      leftMobile: '78%',
+      sizeMobile: 110,
+      sizeDesktop: 180,
+      leftMobile: '80%',
       leftDesktop: '65%',
-      topMobile: '35%',
-      topDesktop: '50%',
+      topMobile: '15%',
+      topDesktop: '20%',
       rotate: 8,
       yOffset: -18,
       rotateAmount: 6,
@@ -260,8 +260,8 @@ const flavors: VapeFlavor[] = [
       },
       { 
         src: '/vapes/green-apple/fruit3.webp', 
-        sizeMobile: 225, 
-        sizeDesktop: 260,
+        sizeMobile: 165, 
+        sizeDesktop: 200,
         leftMobile: '50%', 
         leftDesktop: '65%',
         topMobile: '65%', 
@@ -315,12 +315,12 @@ const flavors: VapeFlavor[] = [
     vapeImage: '/vapes/passion-fruit/vape.webp',
     preroll: {
       src: '/vapes/passion-fruit/preroll.webp',
-      sizeMobile: 250,
-      sizeDesktop: 320,
+      sizeMobile: 130,
+      sizeDesktop: 180,
       leftMobile: '25%',
-      leftDesktop: '40%',
-      topMobile: '65%',
-      topDesktop: '65%',
+      leftDesktop: '37%',
+      topMobile: '58%',
+      topDesktop: '50%',
       rotate: -30,
       yOffset: -15,
       rotateAmount: -10,
@@ -329,12 +329,12 @@ const flavors: VapeFlavor[] = [
     },
     tube: {
       src: '/vapes/passion-fruit/tube.webp',
-      sizeMobile: 300,
-      sizeDesktop: 500,
-      leftMobile: '78%',
+       sizeMobile: 110,
+      sizeDesktop: 180,
+      leftMobile: '80%',
       leftDesktop: '65%',
-      topMobile: '35%',
-      topDesktop: '50%',
+      topMobile: '15%',
+      topDesktop: '20%',
       rotate: 8,
       yOffset: -18,
       rotateAmount: 6,
@@ -364,8 +364,8 @@ const flavors: VapeFlavor[] = [
       },
       { 
         src: '/vapes/passion-fruit/fruit3.webp', 
-        sizeMobile: 225, 
-        sizeDesktop: 260,
+        sizeMobile: 165, 
+        sizeDesktop: 200,
         leftMobile: '50%', 
         leftDesktop: '65%',
         topMobile: '65%', 
@@ -419,12 +419,12 @@ const flavors: VapeFlavor[] = [
     vapeImage: '/vapes/dragon-fruit/vape.webp',
     preroll: {
       src: '/vapes/dragon-fruit/preroll.webp',
-      sizeMobile: 250,
-      sizeDesktop: 320,
+      sizeMobile: 130,
+      sizeDesktop: 180,
       leftMobile: '25%',
-      leftDesktop: '40%',
-      topMobile: '65%',
-      topDesktop: '65%',
+      leftDesktop: '37%',
+      topMobile: '58%',
+      topDesktop: '50%',
       rotate: -30,
       yOffset: -15,
       rotateAmount: -10,
@@ -433,12 +433,12 @@ const flavors: VapeFlavor[] = [
     },
     tube: {
       src: '/vapes/dragon-fruit/tube.webp',
-      sizeMobile: 300,
-      sizeDesktop: 500,
-      leftMobile: '78%',
+      sizeMobile: 110,
+      sizeDesktop: 180,
+      leftMobile: '80%',
       leftDesktop: '65%',
-      topMobile: '35%',
-      topDesktop: '50%',
+      topMobile: '15%',
+      topDesktop: '20%',
       rotate: 8,
       yOffset: -18,
       rotateAmount: 6,
@@ -468,8 +468,8 @@ const flavors: VapeFlavor[] = [
       },
       { 
         src: '/vapes/dragon-fruit/fruit3.webp', 
-        sizeMobile: 225, 
-        sizeDesktop: 260,
+        sizeMobile: 165, 
+        sizeDesktop: 200,
         leftMobile: '50%', 
         leftDesktop: '65%',
         topMobile: '65%', 
@@ -523,12 +523,12 @@ const flavors: VapeFlavor[] = [
     vapeImage: '/vapes/strawberry/vape.webp',
     preroll: {
       src: '/vapes/strawberry/preroll.webp',
-      sizeMobile: 250,
-      sizeDesktop: 320,
+      sizeMobile: 130,
+      sizeDesktop: 180,
       leftMobile: '25%',
-      leftDesktop: '40%',
-      topMobile: '65%',
-      topDesktop: '65%',
+      leftDesktop: '37%',
+      topMobile: '58%',
+      topDesktop: '50%',
       rotate: -30,
       yOffset: -15,
       rotateAmount: -10,
@@ -537,12 +537,12 @@ const flavors: VapeFlavor[] = [
     },
     tube: {
       src: '/vapes/strawberry/tube.webp',
-      sizeMobile: 300,
-      sizeDesktop: 500,
-      leftMobile: '78%',
+       sizeMobile: 110,
+      sizeDesktop: 180,
+      leftMobile: '80%',
       leftDesktop: '65%',
-      topMobile: '35%',
-      topDesktop: '50%',
+      topMobile: '15%',
+      topDesktop: '20%',
       rotate: 8,
       yOffset: -18,
       rotateAmount: 6,
@@ -572,8 +572,8 @@ const flavors: VapeFlavor[] = [
       },
       { 
         src: '/vapes/strawberry/fruit3.webp', 
-        sizeMobile: 225, 
-        sizeDesktop: 260,
+        sizeMobile: 165, 
+        sizeDesktop: 200,
         leftMobile: '50%', 
         leftDesktop: '65%',
         topMobile: '65%', 
@@ -882,9 +882,13 @@ export default function VapePage() {
               </div>
             )}
 
-            {/* TUBE - за вейпом */}
+            {/* TUBE - за вейпом - выезжает слева */}
             <motion.div
               key={`tube-${activeFlavor.id}`}
+              initial={{ opacity: 0, x: -200 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 200 }}
+              transition={{ duration: 0.6, ease: "easeOut", delay: 0.1 }}
               className="absolute pointer-events-none"
               style={{
                 left: getElementStyles(activeFlavor.tube).left,
@@ -895,49 +899,63 @@ export default function VapePage() {
                 marginTop: getElementStyles(activeFlavor.tube).marginTop,
                 zIndex: activeFlavor.tube.zIndex || 10,
               }}
-              animate={{
-                y: [0, activeFlavor.tube.yOffset || -15, 0],
-                rotate: [activeFlavor.tube.rotate || 0, (activeFlavor.tube.rotate || 0) + (activeFlavor.tube.rotateAmount || 5), activeFlavor.tube.rotate || 0],
-              }}
-              transition={{
-                duration: activeFlavor.tube.duration || 6,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
             >
-              <img src={activeFlavor.tube.src} alt="" className="w-full h-full object-contain drop-shadow-xl" />
+              <motion.div
+                animate={{
+                  y: [0, activeFlavor.tube.yOffset || -15, 0],
+                  rotate: [activeFlavor.tube.rotate || 0, (activeFlavor.tube.rotate || 0) + (activeFlavor.tube.rotateAmount || 5), activeFlavor.tube.rotate || 0],
+                }}
+                transition={{
+                  duration: activeFlavor.tube.duration || 6,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+              >
+                <img src={activeFlavor.tube.src} alt="" className="w-full h-full object-contain drop-shadow-xl" />
+              </motion.div>
             </motion.div>
 
-            {/* FRUIT3 - ЗА вейпом (zIndex: 21, ниже чем у vape который z-20) */}
+            {/* FRUIT3 - ЗА вейпом - выезжает справа */}
             {activeFlavor.fruits[2] && (
               <motion.div
                 key={`fruit3-${activeFlavor.id}`}
+                initial={{ opacity: 0, x: 200 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -200 }}
+                transition={{ duration: 0.6, ease: "easeOut", delay: 0.2 }}
                 className="absolute pointer-events-none"
                 style={{ 
                   left: getFruitStyles(activeFlavor.fruits[2]).left, 
                   top: getFruitStyles(activeFlavor.fruits[2]).top, 
                   width: getFruitStyles(activeFlavor.fruits[2]).size, 
                   height: getFruitStyles(activeFlavor.fruits[2]).size, 
-                  zIndex: 21
-                }}
-                animate={{
-                  y: [0, -35, 0],
-                  rotate: [activeFlavor.fruits[2].rotate || 0, (activeFlavor.fruits[2].rotate || 0) + 20, activeFlavor.fruits[2].rotate || 0],
-                }}
-                transition={{
-                  duration: 7.5 + 2,
-                  repeat: Infinity,
-                  delay: activeFlavor.fruits[2].delay,
-                  ease: "easeInOut",
+                  zIndex: 19
                 }}
               >
-                <img src={activeFlavor.fruits[2].src} alt="" className="w-full h-full object-contain drop-shadow-2xl" />
+                <motion.div
+                  animate={{
+                    y: [0, -35, 0],
+                    rotate: [activeFlavor.fruits[2].rotate || 0, (activeFlavor.fruits[2].rotate || 0) + 20, activeFlavor.fruits[2].rotate || 0],
+                  }}
+                  transition={{
+                    duration: 7.5 + 2,
+                    repeat: Infinity,
+                    delay: activeFlavor.fruits[2].delay,
+                    ease: "easeInOut",
+                  }}
+                >
+                  <img src={activeFlavor.fruits[2].src} alt="" className="w-full h-full object-contain drop-shadow-2xl" />
+                </motion.div>
               </motion.div>
             )}
 
-            {/* PREROLL - перед вейпом */}
+            {/* PREROLL - перед вейпом - выезжает сверху */}
             <motion.div
               key={`preroll-${activeFlavor.id}`}
+              initial={{ opacity: 0, y: -200 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 200 }}
+              transition={{ duration: 0.6, ease: "easeOut", delay: 0.15 }}
               className="absolute pointer-events-none"
               style={{
                 left: getElementStyles(activeFlavor.preroll).left,
@@ -948,22 +966,24 @@ export default function VapePage() {
                 marginTop: getElementStyles(activeFlavor.preroll).marginTop,
                 zIndex: activeFlavor.preroll.zIndex || 30,
               }}
-              animate={{
-                y: [0, activeFlavor.preroll.yOffset || -15, 0],
-                rotate: [activeFlavor.preroll.rotate || 0, (activeFlavor.preroll.rotate || 0) + (activeFlavor.preroll.rotateAmount || -10), activeFlavor.preroll.rotate || 0],
-              }}
-              transition={{
-                duration: activeFlavor.preroll.duration || 6,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
             >
-              <img src={activeFlavor.preroll.src} alt="" className="w-full h-full object-contain drop-shadow-2xl" />
+              <motion.div
+                animate={{
+                  y: [0, activeFlavor.preroll.yOffset || -15, 0],
+                  rotate: [activeFlavor.preroll.rotate || 0, (activeFlavor.preroll.rotate || 0) + (activeFlavor.preroll.rotateAmount || -10), activeFlavor.preroll.rotate || 0],
+                }}
+                transition={{
+                  duration: activeFlavor.preroll.duration || 6,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+              >
+                <img src={activeFlavor.preroll.src} alt="" className="w-full h-full object-contain drop-shadow-2xl" />
+              </motion.div>
             </motion.div>
 
-            {/* Остальные фрукты (fruit1, fruit2, fruit4) - СКРЫТЫ НА ПК (временно) */}
+            {/* Остальные фрукты (fruit1, fruit2, fruit4) - СКРЫТЫ */}
             {false && activeFlavor.fruits.map((fruit, i) => {
-              // Пропускаем fruit3 (индекс 2), так как он уже отрендерен выше
               if (i === 2) return null;
               return (
                 <motion.div
