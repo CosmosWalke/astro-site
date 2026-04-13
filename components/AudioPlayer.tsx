@@ -12,7 +12,21 @@ export function AudioPlayer() {
   const [isOpen, setIsOpen] = useState(false)
   const [isCollapsed, setIsCollapsed] = useState(false)
   const hideTimeoutRef = useRef<NodeJS.Timeout | null>(null)
-  const audioRef = useRef<HTMLAudioElement>(null)
+  const audioRef = useRef<HTMLAudioElement | null>(null)
+
+  // Создаем аудио элемент один раз при монтировании
+  useEffect(() => {
+    audioRef.current = new Audio('/audio/Audio1.mp3')
+    audioRef.current.loop = true
+    audioRef.current.volume = 0.07
+    
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause()
+        audioRef.current = null
+      }
+    }
+  }, [])
 
   // Определяем мобильное устройство
   useEffect(() => {
@@ -34,15 +48,15 @@ export function AudioPlayer() {
     }
   }, [isMobile, isSoundEnabled])
 
-  // Для мобильных - запускаем таймер на сворачивание
+  // Для мобильных - запускаем таймер на сворачивание (не останавливая музыку)
   useEffect(() => {
-    if (isMobile === true && !isOpen && !isCollapsed) {
+    if (isMobile === true && !isOpen && !isCollapsed && isSoundEnabled) {
       const timer = setTimeout(() => {
         setIsCollapsed(true)
       }, 3000)
       return () => clearTimeout(timer)
     }
-  }, [isMobile, isOpen, isCollapsed])
+  }, [isMobile, isOpen, isCollapsed, isSoundEnabled])
 
   // Останавливаем музыку при уходе с вкладки
   useEffect(() => {
@@ -83,7 +97,7 @@ export function AudioPlayer() {
 
   const enableSound = () => {
     if (audioRef.current && !isSoundEnabled) {
-      audioRef.current.volume = 0.07
+      audioRef.current.volume = volume
       audioRef.current.play()
         .then(() => {
           setIsPlaying(true)
@@ -106,8 +120,10 @@ export function AudioPlayer() {
       }
       setIsPlaying(!isPlaying)
     }
-    cancelHideTimer()
-    startHideTimer()
+    if (!isMobile) {
+      cancelHideTimer()
+      startHideTimer()
+    }
   }
 
   const toggleMute = () => {
@@ -124,8 +140,10 @@ export function AudioPlayer() {
         setIsMuted(true)
       }
     }
-    cancelHideTimer()
-    startHideTimer()
+    if (!isMobile) {
+      cancelHideTimer()
+      startHideTimer()
+    }
   }
 
   const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -141,15 +159,11 @@ export function AudioPlayer() {
         setIsMuted(false)
       }
     }
-    cancelHideTimer()
-    startHideTimer()
-  }
-
-  useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.volume = 0.07
+    if (!isMobile) {
+      cancelHideTimer()
+      startHideTimer()
     }
-  }, [])
+  }
 
   const handleCustomCursorActivate = () => {
     if (!isSoundEnabled) {
@@ -199,13 +213,6 @@ export function AudioPlayer() {
           onMouseLeave={startHideTimer}
         >
           <div className="flex items-center gap-3 bg-black/80 backdrop-blur-md border border-[#00d4ff] rounded-full px-4 py-2 shadow-[0_0_15px_rgba(0,212,255,0.3)] transition-all duration-300">
-            <audio
-              ref={audioRef}
-              src="/audio/Audio1.mp3"
-              loop
-              preload="auto"
-            />
-            
             <button
               onClick={togglePlay}
               className={`relative w-8 h-8 flex items-center justify-center rounded-full transition-all duration-300 ${
@@ -289,7 +296,7 @@ export function AudioPlayer() {
 
   // ========== МОБИЛЬНАЯ ВЕРСИЯ ==========
   
-  // Свернутая кнопка на мобильных (очень маленькая)
+  // Свернутая кнопка на мобильных (очень маленькая) - музыка продолжает играть
   if (isCollapsed && !isOpen) {
     return (
       <>
@@ -328,19 +335,15 @@ export function AudioPlayer() {
           className="fixed inset-0 z-[60] bg-black/50 backdrop-blur-sm"
           onClick={() => {
             setIsOpen(false)
-            // Запускаем таймер на сворачивание после закрытия
-            setTimeout(() => {
-              setIsCollapsed(true)
-            }, 3000)
+            // Запускаем таймер на сворачивание после закрытия, если звук включен
+            if (isSoundEnabled) {
+              setTimeout(() => {
+                setIsCollapsed(true)
+              }, 3000)
+            }
           }}
         />
         <div className="fixed bottom-24 right-6 z-[70] bg-black/90 backdrop-blur-md border border-[#00d4ff] rounded-2xl p-4 shadow-[0_0_30px_rgba(0,212,255,0.3)]">
-          <audio
-            ref={audioRef}
-            src="/audio/Audio1.mp3"
-            loop
-            preload="auto"
-          />
           <div className="flex items-center gap-4">
             <button
               onClick={togglePlay}
