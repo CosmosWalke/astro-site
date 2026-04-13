@@ -13,13 +13,16 @@ export function ComicSection() {
   const flairLeftRef = useRef<HTMLImageElement>(null)
   const flairRightRef = useRef<HTMLImageElement>(null)
 
+  // Общая ссылка на комикс
+  const comicUrl = "https://heyzine.com/flip-book/d2e1bcc5d9.html#page/1"
+
   const panels = [
-    { title: 'Star Trek #1 (Gold Key)', img: '/image/comi1.png', large: true },
-    { title: 'Action Comics #37', img: '/image/comi2.png', large: true },
-    { title: 'Superman vs. Spider-Man', img: '/image/comi3.png' },
-    { title: 'Wolverine: Jungle Adventure', img: '/image/comi4.png' },
-    { title: 'Daredevil #217', img: '/image/comi5.png' },
-    { title: 'Batman #426', img: '/image/comi6.png'},
+    { title: 'Chapter 1: The Void', img: '/image/comi1.png', large: true },
+    { title: 'Chapter 2: The Awakening', img: '/image/comi2.png', large: true },
+    { title: 'Chapter 3: The Journey', img: '/image/comi3.png' },
+    { title: 'Chapter 4: The Battle', img: '/image/comi4.png' },
+    { title: 'Chapter 5: The Revelation', img: '/image/comi5.png' },
+    { title: 'Chapter 6: The New Dawn', img: '/image/comi6.png' },
   ]
 
   useEffect(() => {
@@ -85,10 +88,10 @@ export function ComicSection() {
           sizes="100vw"
           quality={90}
         />
-        {/* Затемнение поверх фона - регулируй opacity под свои нужды */}
+        {/* Затемнение поверх фона */}
         <div className="absolute inset-0 bg-black/50" />
         
-        {/* Дополнительный эффект винтажной зернистости (опционально) */}
+        {/* Дополнительный эффект винтажной зернистости */}
         <div 
           className="absolute inset-0 opacity-20 mix-blend-overlay pointer-events-none"
           style={{ 
@@ -98,7 +101,7 @@ export function ComicSection() {
         />
       </div>
 
-      {/* Decorative flair - Left - overlapping behind content */}
+      {/* Decorative flair - Left */}
       <img 
         ref={flairLeftRef}
         src= '/image/leftcomi.webp'
@@ -107,7 +110,7 @@ export function ComicSection() {
         style={{ zIndex: 5, left: 'calc(50% - 610px)' }}
       />
       
-      {/* Decorative flair - Right - overlapping behind content */}
+      {/* Decorative flair - Right */}
       <img 
         ref={flairRightRef}
         src='/image/rightcomi.webp' 
@@ -116,7 +119,7 @@ export function ComicSection() {
         style={{ zIndex: 5, right: 'calc(50% - 610px)' }}
       />
 
-      {/* Main content - ABOVE the background */}
+      {/* Main content */}
       <main 
         ref={mainContentRef}
         className="relative max-w-[800px] mx-auto px-4"
@@ -139,12 +142,12 @@ export function ComicSection() {
           />
           
           {/* Logo banner */}
- <img 
-  src="/image/comiheader.webp" 
-  alt="We Read Comics" 
-  className="relative z-[2] block w-full h-auto mx-auto py-4"
-  style={{ width: '100%', height: 'auto', objectFit: 'cover' }}
-/>
+          <img 
+            src="/image/comiheader.webp" 
+            alt="We Read Comics" 
+            className="relative z-[2] block w-full h-auto mx-auto py-4"
+            style={{ width: '100%', height: 'auto', objectFit: 'cover' }}
+          />
           
           {/* Issue number */}
           <div className="absolute right-4 top-4 z-[3]">
@@ -199,7 +202,7 @@ export function ComicSection() {
           </div>
         </nav>
 
-        {/* Comic panels grid */}
+        {/* Comic panels grid - каждая панель обернута в ссылку */}
         <div 
           className="grid gap-3 p-4"
           style={{ 
@@ -210,56 +213,62 @@ export function ComicSection() {
           }}
         >
           {panels.map((panel, i) => (
-            <div 
+            <a
               key={i}
-              className="relative group cursor-pointer overflow-hidden"
+              href={comicUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group cursor-pointer overflow-hidden block"
               style={{ 
                 border: '3px solid hsl(188, 9%, 17%)',
-                backgroundColor: 'white'
+                backgroundColor: 'white',
+                textDecoration: 'none'
               }}
             >
-              {/* Panel title */}
-              <div 
-                className="absolute top-2 left-2 z-10 px-2 py-1"
-                style={{ 
-                  fontFamily: '"Patrick Hand SC", cursive',
-                  fontSize: '0.9rem',
-                  backgroundColor: i % 2 === 0 ? 'hsl(48, 70%, 57%)' : 'hsl(345, 54%, 59%)',
-                  border: '2px solid hsl(188, 9%, 17%)',
-                  boxShadow: '3px 3px 0 hsla(188, 9%, 17%, 0.5)',
-                  color: 'hsl(188, 9%, 17%)'
-                }}
-              >
-                <span className="font-bold">{panel.title}</span>
-                <span className="block text-[10px] italic">(Click to Read More)</span>
+              <div className="relative">
+                {/* Panel title */}
+                <div 
+                  className="absolute top-2 left-2 z-10 px-2 py-1"
+                  style={{ 
+                    fontFamily: '"Patrick Hand SC", cursive',
+                    fontSize: '0.9rem',
+                    backgroundColor: i % 2 === 0 ? 'hsl(48, 70%, 57%)' : 'hsl(345, 54%, 59%)',
+                    border: '2px solid hsl(188, 9%, 17%)',
+                    boxShadow: '3px 3px 0 hsla(188, 9%, 17%, 0.5)',
+                    color: 'hsl(188, 9%, 17%)'
+                  }}
+                >
+                  <span className="font-bold">{panel.title}</span>
+                  <span className="block text-[10px] italic">(Click to Read More)</span>
+                </div>
+                
+                {/* Panel image */}
+                <img 
+                  src={panel.img} 
+                  alt={panel.title}
+                  className="w-full h-48 object-cover transition-all duration-300 group-hover:scale-105"
+                  style={{ 
+                    objectPosition: '50% 20%',
+                    filter: 'grayscale(70%) sepia(20%)'
+                  }}
+                />
+                
+                {/* Halftone overlay on hover */}
+                <div 
+                  className="absolute inset-0 opacity-0 group-hover:opacity-30 transition-opacity duration-300 pointer-events-none"
+                  style={{
+                    backgroundImage: 'radial-gradient(circle, hsl(188, 9%, 17%) 1px, transparent 1px)',
+                    backgroundSize: '4px 4px'
+                  }}
+                />
               </div>
-              
-              {/* Panel image */}
-              <img 
-                src={panel.img} 
-                alt={panel.title}
-                className="w-full h-48 object-cover transition-all duration-300 group-hover:scale-105"
-                style={{ 
-                  objectPosition: '50% 20%',
-                  filter: 'grayscale(70%) sepia(20%)'
-                }}
-              />
-              
-              {/* Halftone overlay on hover */}
-              <div 
-                className="absolute inset-0 opacity-0 group-hover:opacity-30 transition-opacity duration-300 pointer-events-none"
-                style={{
-                  backgroundImage: 'radial-gradient(circle, hsl(188, 9%, 17%) 1px, transparent 1px)',
-                  backgroundSize: '4px 4px'
-                }}
-              />
-            </div>
+            </a>
           ))}
         </div>
 
-        {/* Footer - кликабельная кнопка с шрифтом CCUltimatum */}
+        {/* Footer */}
         <a
-          href="https://heyzine.com/flip-book/d2e1bcc5d9.html#page/1"
+          href={comicUrl}
           target="_blank"
           rel="noopener noreferrer"
           className="block"

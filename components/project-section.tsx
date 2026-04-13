@@ -24,7 +24,7 @@ const projectData = [
   {
     id: '003',
     title: 'PREROLLS',
-    description: 'Diverse groups united under the Protocol. Each faction brings unique skills and perspectives to the collective mission of survival.',
+    description: 'Quad Infuse Dark Matter Preroll Experience a supernova of flavor and potency, featuring a perfect fusion of premium flower strains.Features:6x0.75g (4.5g total)Ice Water Bubble HashLive Resin infusedNatural Terpenes.reat Taste, Extra Strength',
     image: '/image/prerolls.webp',
     stats: { factions: '7', members: '12.5K', alliance: 'ACTIVE' },
     slug: '/prerolls'

@@ -60,29 +60,28 @@ interface PrerollFlavor {
 }
 
 const featuresData: Record<string, FeatureInfo> = {
-  vape: {
-    title: '2g Dual Tank Vape',
-    description: 'A stellar blend of two cosmic strains, ready to launch your senses.',
-    featuresList: [
-      '60-Day Cured Live Resin Liquid Diamonds',
-      '3-in-One Dual Chamber Vape',
-      'Inhale activated with LED screen',
-      'Switch between 2 flavors or activate both to get a 3rd flavor',
-      'Display provides puff count and strain indicator',
-      'Great Taste, Extra Strength',
-      'Rechargeable USB type C'
-    ]
-  },
   preroll: {
-    title: '.6g Quad-Infused Preroll',
+    title: 'Quad Infuse Dark Matter Preroll',
     description: 'Experience a supernova of flavor and potency, featuring a perfect fusion of premium flower strains.',
     featuresList: [
-      'Premium indoor flower',
+      '6x0.75g (4.5g total)',
       'Ice Water Bubble Hash',
       'THCA coated',
       'Live Resin infused',
       'Natural Terpenes',
       'Great Taste, Extra Strength'
+    ]
+  },
+  gummies: {
+    title: 'Rosin Gummies',
+    description: 'Secret encrypted galactic flavor that will transport your taste buds to another dimension.',
+    featuresList: [
+      'Solventless rosin infusion',
+      'Secret encrypted galactic flavor',
+      'Vegan & gluten-free',
+      'Lab-tested for potency',
+      'Fast-acting formula',
+      'Delicious cosmic taste'
     ]
   },
   card: {
@@ -100,8 +99,8 @@ const featuresData: Record<string, FeatureInfo> = {
 
 const flavors: PrerollFlavor[] = [
   {
-    id: 'solar-flare',
-    name: 'SOLAR FLARE',
+    id: 'cosmic-selection',
+    name: 'COSMIC SELECTION',
     bgImage: '/prerolls/solar-flare/bg.webp',
     bgImageMobile: '/prerolls/solar-flare/bgmobile.webp',
     prerollMainImage: '/prerolls/solar-flare/prerollmain.webp',
@@ -178,444 +177,22 @@ const flavors: PrerollFlavor[] = [
     ],
     flavorsList: [
       {
-        name: 'Dark Matter Diesel',
+        name: 'Watermelon',
+        type: 'Hybrid',
+        description: 'Sweet and juicy watermelon flavor with a refreshing finish.',
+        fullDescription: 'Watermelon is a deliciously sweet and fruity Hybrid strain that delivers the nostalgic taste of fresh-cut watermelon on a summer day. The flavor profile features ripe melon notes with subtle candy-like sweetness and a hint of tropical fruit. Effects are uplifting and relaxing, providing a balanced experience that soothes the body while keeping the mind clear and focused. Perfect for daytime relaxation or social gatherings where you want to feel good without being overwhelmed.'
+      },
+      {
+        name: 'Fruit Punch',
         type: 'Sativa',
-        description: 'A cosmic journey through notes of diesel fuel and dark berries, with a sharp, energizing exhale.',
-        fullDescription: 'Dark Matter Diesel is a potent Sativa-dominant strain that launches you into a focused, creative orbit. Its complex terpene profile features gassy diesel undertones complemented by hints of dark berries and spice. Users report an immediate cerebral rush followed by sustained energy and mental clarity—perfect for daytime adventures and creative exploration.'
+        description: 'An explosive blend of tropical fruits with an energizing punch.',
+        fullDescription: 'Fruit Punch is an invigorating Sativa-dominant strain that delivers a vibrant explosion of mixed tropical flavors. The taste profile features sweet pineapple, tangy orange, juicy mango, and hints of passionfruit, creating a complex and refreshing experience. Effects are energetic and uplifting, promoting creativity, focus, and social energy. Ideal for morning sessions, creative projects, or any time you need a burst of motivation and good vibes.'
       },
       {
-        name: 'Marsmallow Kush',
+        name: 'Blue Raspberry',
         type: 'Indica',
-        description: 'Sweet and creamy marshmallow clouds with earthy kush undertones.',
-        fullDescription: 'Marsmallow Kush delivers a smooth, relaxing body high that melts away stress. This Indica-dominant hybrid combines sweet, creamy notes of vanilla and toasted sugar with classic earthy kush undertones. Ideal for evening unwinding, it soothes muscles and calms the mind without heavy sedation.'
-      },
-      {
-        name: 'Lunar Lemonade',
-        type: 'Sativa',
-        description: 'Zesty lemonade bursting with citrus freshness, balanced by a sweet moonlit haze.',
-        fullDescription: 'Lunar Lemonade offers an uplifting, focused experience that brightens even the darkest days. This Sativa features bright citrus notes of fresh-squeezed lemons and tangy orange peel, balanced by a subtle sweet haze on the finish. Perfect for morning sessions or afternoon pick-me-ups.'
-      },
-      {
-        name: 'Galactic GDP',
-        type: 'Indica',
-        description: 'Deep grape and berry notes with a hint of interstellar mystery.',
-        fullDescription: 'Galactic GDP is a heavy-hitting Indica that wraps you in a blanket of interstellar calm. Rich notes of concord grape, blackberry, and plum create a deeply fruity profile. Best enjoyed in the evening as it gently guides you toward restful sleep.'
-      }
-    ],
-  },
-  {
-    id: 'nebula-green',
-    name: 'NEBULA GREEN',
-    bgImage: '/prerolls/nebula-green/bg.webp',
-    bgImageMobile: '/prerolls/nebula-green/bgmobile.webp',
-    prerollMainImage: '/prerolls/nebula-green/prerollmain.webp',
-    preroll: {
-      src: '/prerolls/nebula-green/preroll.webp',
-      sizeMobile: 130,
-      sizeDesktop: 180,
-      leftMobile: '25%',
-      leftDesktop: '37%',
-      topMobile: '58%',
-      topDesktop: '50%',
-      rotate: -30,
-      yOffset: -15,
-      rotateAmount: -10,
-      duration: 6,
-      zIndex: 30,
-    },
-    tube: {
-      src: '/prerolls/nebula-green/tube.webp',
-      sizeMobile: 110,
-      sizeDesktop: 180,
-      leftMobile: '80%',
-      leftDesktop: '65%',
-      topMobile: '15%',
-      topDesktop: '20%',
-      rotate: 8,
-      yOffset: -18,
-      rotateAmount: 6,
-      duration: 6.5,
-      zIndex: 10,
-    },
-    fruits: [
-      { 
-        src: '/prerolls/nebula-green/fruit1.webp', 
-        sizeMobile: 135, 
-        sizeDesktop: 275,
-        leftMobile: '15%', 
-        leftDesktop: '25%',
-        topMobile: '20%', 
-        topDesktop: '10%',
-        delay: 0 
-      },
-      { 
-        src: '/prerolls/nebula-green/fruit2.webp', 
-        sizeMobile: 100, 
-        sizeDesktop: 130,
-        leftMobile: '77%', 
-        leftDesktop: '77%',
-        topMobile: '28%', 
-        topDesktop: '28%',
-        delay: 1.3 
-      },
-      { 
-        src: '/prerolls/nebula-green/fruit3.webp', 
-        sizeMobile: 165, 
-        sizeDesktop: 200,
-        leftMobile: '50%', 
-        leftDesktop: '65%',
-        topMobile: '65%', 
-        topDesktop: '65%',
-        delay: 0.8, 
-        rotate: -18 
-      },
-      { 
-        src: '/prerolls/nebula-green/fruit4.webp', 
-        sizeMobile: 90, 
-        sizeDesktop: 320,
-        leftMobile: '70%', 
-        leftDesktop: '65%',
-        topMobile: '72%', 
-        topDesktop: '62%',
-        delay: 2 
-      },
-    ],
-    flavorsList: [
-      {
-        name: 'Stardust Sour',
-        type: 'Sativa',
-        description: 'Tangy green apple candy with a cosmic sour punch.',
-        fullDescription: 'Stardust Sour combines nostalgic sour green apple candy flavor with a cosmic energy boost. Features tart Granny Smith apple notes with hints of citrus and sugar. Effects are immediate and uplifting—expect heightened focus, creative flow, and a burst of euphoric energy.'
-      },
-      {
-        name: 'Sacuramochi',
-        type: 'Hybrid',
-        description: 'Sweet cherry blossom and soft mochi rice cake, perfectly balanced.',
-        fullDescription: 'Sacuramochi offers a beautifully balanced Hybrid experience. Features delicate cherry blossom notes combined with sweet, subtle taste of soft mochi rice cake. Effects are evenly split between cerebral uplift and physical relaxation.'
-      },
-      {
-        name: 'Supernova Citrus Burst',
-        type: 'Sativa',
-        description: 'Explosive blend of mandarin, lemon, and grapefruit.',
-        fullDescription: 'Supernova Citrus Burst delivers an explosive combination of mandarin orange, fresh lemon, and pink grapefruit. This Sativa-dominant strain delivers immediate energy and mental clarity. The bright, zesty flavors awaken the senses.'
-      },
-      {
-        name: 'Nebula Nectar',
-        type: 'Hybrid',
-        description: 'Honey-sweet nectar with floral undertones, floating through a cloud of balance.',
-        fullDescription: 'Nebula Nectar is a beautifully balanced Hybrid that floats like a cloud. Features sweet honey nectar complemented by delicate floral notes of jasmine and honeysuckle. Effects are smoothly balanced—a gentle cerebral lift paired with full-body relaxation.'
-      }
-    ],
-  },
-  {
-    id: 'galaxy-purple',
-    name: 'GALAXY PURPLE',
-    bgImage: '/prerolls/galaxy-purple/bg.webp',
-    bgImageMobile: '/prerolls/galaxy-purple/bgmobile.webp',
-    prerollMainImage: '/prerolls/galaxy-purple/prerollmain.webp',
-    preroll: {
-      src: '/prerolls/galaxy-purple/preroll.webp',
-      sizeMobile: 130,
-      sizeDesktop: 180,
-      leftMobile: '25%',
-      leftDesktop: '37%',
-      topMobile: '58%',
-      topDesktop: '50%',
-      rotate: -30,
-      yOffset: -15,
-      rotateAmount: -10,
-      duration: 6,
-      zIndex: 30,
-    },
-    tube: {
-      src: '/prerolls/galaxy-purple/tube.webp',
-       sizeMobile: 110,
-      sizeDesktop: 180,
-      leftMobile: '80%',
-      leftDesktop: '65%',
-      topMobile: '15%',
-      topDesktop: '20%',
-      rotate: 8,
-      yOffset: -18,
-      rotateAmount: 6,
-      duration: 6.5,
-      zIndex: 10,
-    },
-    fruits: [
-      { 
-        src: '/prerolls/galaxy-purple/fruit1.webp', 
-        sizeMobile: 130, 
-        sizeDesktop: 170,
-        leftMobile: '12%', 
-        leftDesktop: '12%',
-        topMobile: '18%', 
-        topDesktop: '18%',
-        delay: 0 
-      },
-      { 
-        src: '/prerolls/galaxy-purple/fruit2.webp', 
-        sizeMobile: 105, 
-        sizeDesktop: 135,
-        leftMobile: '80%', 
-        leftDesktop: '80%',
-        topMobile: '30%', 
-        topDesktop: '30%',
-        delay: 1.1 
-      },
-      { 
-        src: '/prerolls/galaxy-purple/fruit3.webp', 
-        sizeMobile: 165, 
-        sizeDesktop: 200,
-        leftMobile: '50%', 
-        leftDesktop: '65%',
-        topMobile: '65%', 
-        topDesktop: '65%',
-        delay: 0.7, 
-        rotate: -18 
-      },
-      { 
-        src: '/prerolls/galaxy-purple/fruit4.webp', 
-        sizeMobile: 88, 
-        sizeDesktop: 115,
-        leftMobile: '70%', 
-        leftDesktop: '70%',
-        topMobile: '73%', 
-        topDesktop: '73%',
-        delay: 2.2 
-      },
-    ],
-    flavorsList: [
-      {
-        name: 'Skywalker OG',
-        type: 'Indica',
-        description: 'Earthy pine and citrus with a touch of spice, known for deeply relaxing effects.',
-        fullDescription: 'Skywalker OG is a legendary Indica-dominant strain. Features earthy pine and fresh citrus with subtle spicy kick. Effects are profoundly relaxing—a gentle wave of calm that starts in the head and spreads throughout the body.'
-      },
-      {
-        name: 'Italian Ice',
-        type: 'Hybrid',
-        description: 'Sweet lemon and creamy vanilla dessert notes, perfectly balanced.',
-        fullDescription: 'Italian Ice delivers a perfectly balanced Hybrid experience. Features bright, sweet lemon notes combined with smooth, creamy vanilla. Effects are evenly split—a gentle cerebral euphoria paired with full-body comfort.'
-      },
-      {
-        name: 'Comet Crasher Cookies',
-        type: 'Indica',
-        description: 'Sweet dough and chocolate chip cookie flavor with a cosmic twist.',
-        fullDescription: 'Comet Crasher Cookies is a decadent Indica-dominant strain. Features sweet cookie dough, rich chocolate chips, and a hint of nutty warmth. Effects are deeply relaxing and slightly sedating—ideal for evening use.'
-      },
-      {
-        name: 'Pluto Super Punch',
-        type: 'Hybrid',
-        description: 'Tropical fruit punch explosion with notes of passionfruit, orange, and guava.',
-        fullDescription: 'Pluto Super Punch is an energetic Hybrid delivering tropical fruit explosion. Features sweet passionfruit, tangy orange, and exotic guava. Effects are uplifting and euphoric—a balanced head-and-body high.'
-      }
-    ],
-  },
-  {
-    id: 'neptune-pulse',
-    name: 'NEPTUNE PULSE',
-    bgImage: '/prerolls/neptune-pulse/bg.webp',
-    bgImageMobile: '/prerolls/neptune-pulse/bgmobile.webp',
-    prerollMainImage: '/prerolls/neptune-pulse/prerollmain.webp',
-    preroll: {
-      src: '/prerolls/neptune-pulse/preroll.webp',
-      sizeMobile: 130,
-      sizeDesktop: 180,
-      leftMobile: '25%',
-      leftDesktop: '37%',
-      topMobile: '58%',
-      topDesktop: '50%',
-      rotate: -30,
-      yOffset: -15,
-      rotateAmount: -10,
-      duration: 6,
-      zIndex: 30,
-    },
-    tube: {
-      src: '/prerolls/neptune-pulse/tube.webp',
-      sizeMobile: 110,
-      sizeDesktop: 180,
-      leftMobile: '80%',
-      leftDesktop: '65%',
-      topMobile: '15%',
-      topDesktop: '20%',
-      rotate: 8,
-      yOffset: -18,
-      rotateAmount: 6,
-      duration: 6.5,
-      zIndex: 10,
-    },
-    fruits: [
-      { 
-        src: '/prerolls/neptune-pulse/fruit1.webp', 
-        sizeMobile: 135, 
-        sizeDesktop: 175,
-        leftMobile: '18%', 
-        leftDesktop: '18%',
-        topMobile: '22%', 
-        topDesktop: '22%',
-        delay: 0 
-      },
-      { 
-        src: '/prerolls/neptune-pulse/fruit2.webp', 
-        sizeMobile: 95, 
-        sizeDesktop: 125,
-        leftMobile: '75%', 
-        leftDesktop: '75%',
-        topMobile: '25%', 
-        topDesktop: '25%',
-        delay: 1.4 
-      },
-      { 
-        src: '/prerolls/neptune-pulse/fruit3.webp', 
-        sizeMobile: 165, 
-        sizeDesktop: 200,
-        leftMobile: '50%', 
-        leftDesktop: '65%',
-        topMobile: '65%', 
-        topDesktop: '65%',
-        delay: 0.9, 
-        rotate: -18 
-      },
-      { 
-        src: '/prerolls/neptune-pulse/fruit4.webp', 
-        sizeMobile: 85, 
-        sizeDesktop: 110,
-        leftMobile: '72%', 
-        leftDesktop: '72%',
-        topMobile: '68%', 
-        topDesktop: '68%',
-        delay: 2 
-      },
-    ],
-    flavorsList: [
-      {
-        name: 'Galactic Blue Dream',
-        type: 'Sativa',
-        description: 'Sweet blueberry and floral notes with a hint of interstellar haze.',
-        fullDescription: 'Galactic Blue Dream is a Sativa-dominant strain offering sweet, dreamy escape. Features ripe blueberries, delicate floral notes, and a hint of cosmic haze. Effects are creative and energizing—a clear-headed euphoria.'
-      },
-      {
-        name: 'Alien Gas',
-        type: 'Indica',
-        description: 'Diesel-fueled funk with earthy undertones and a mysterious alien twist.',
-        fullDescription: 'Alien Gas is a potent Indica delivering otherworldly relaxation. Features intense diesel fuel notes with earthy undertones. Effects are deeply sedating—a heavy body load that melts away physical discomfort.'
-      },
-      {
-        name: 'Supernova Strawberry Haze',
-        type: 'Sativa',
-        description: 'Ripe strawberries wrapped in a cosmic citrus haze.',
-        fullDescription: 'Supernova Strawberry Haze explodes with bright, fruity flavor and energetic effects. Features ripe, juicy strawberries wrapped in layers of citrus haze. Effects are intensely energizing—a cerebral rush that sparks creativity.'
-      },
-      {
-        name: 'Orbit Higashi',
-        type: 'Indica',
-        description: 'Sweet incense and exotic spice blend, sending you on a peaceful journey.',
-        fullDescription: 'Orbit Higashi offers a unique Indica experience. Features sweet, sandalwood-like incense notes combined with exotic spices. Effects are deeply calming and meditative—a gentle body high.'
-      }
-    ],
-  },
-  {
-    id: 'nebula-crimson',
-    name: 'NEBULA CRIMSON',
-    bgImage: '/prerolls/nebula-crimson/bg.webp',
-    bgImageMobile: '/prerolls/nebula-crimson/bgmobile.webp',
-    prerollMainImage: '/prerolls/nebula-crimson/prerollmain.webp',
-    preroll: {
-      src: '/prerolls/nebula-crimson/preroll.webp',
-      sizeMobile: 130,
-      sizeDesktop: 180,
-      leftMobile: '25%',
-      leftDesktop: '37%',
-      topMobile: '58%',
-      topDesktop: '50%',
-      rotate: -30,
-      yOffset: -15,
-      rotateAmount: -10,
-      duration: 6,
-      zIndex: 30,
-    },
-    tube: {
-      src: '/prerolls/nebula-crimson/tube.webp',
-       sizeMobile: 110,
-      sizeDesktop: 180,
-      leftMobile: '80%',
-      leftDesktop: '65%',
-      topMobile: '15%',
-      topDesktop: '20%',
-      rotate: 8,
-      yOffset: -18,
-      rotateAmount: 6,
-      duration: 6.5,
-      zIndex: 10,
-    },
-    fruits: [
-      { 
-        src: '/prerolls/nebula-crimson/fruit1.webp', 
-        sizeMobile: 130, 
-        sizeDesktop: 170,
-        leftMobile: '13%', 
-        leftDesktop: '13%',
-        topMobile: '19%', 
-        topDesktop: '19%',
-        delay: 0 
-      },
-      { 
-        src: '/prerolls/nebula-crimson/fruit2.webp', 
-        sizeMobile: 98, 
-        sizeDesktop: 130,
-        leftMobile: '77%', 
-        leftDesktop: '77%',
-        topMobile: '27%', 
-        topDesktop: '27%',
-        delay: 1.2 
-      },
-      { 
-        src: '/prerolls/nebula-crimson/fruit3.webp', 
-        sizeMobile: 165, 
-        sizeDesktop: 200,
-        leftMobile: '50%', 
-        leftDesktop: '65%',
-        topMobile: '65%', 
-        topDesktop: '65%',
-        delay: 0.6, 
-        rotate: -18 
-      },
-      { 
-        src: '/prerolls/nebula-crimson/fruit4.webp', 
-        sizeMobile: 82, 
-        sizeDesktop: 110,
-        leftMobile: '71%', 
-        leftDesktop: '71%',
-        topMobile: '73%', 
-        topDesktop: '73%',
-        delay: 2.3 
-      },
-    ],
-    flavorsList: [
-      {
-        name: 'Stargazer Sherbet Runtz',
-        type: 'Hybrid',
-        description: 'Creamy sherbet and sweet candy runt flavors, perfectly balanced.',
-        fullDescription: 'Stargazer Sherbet Runtz combines creamy sherbet with sweet candy runt flavors. Effects are balanced, offering both mental uplift and physical comfort. Provides a calming and euphoric high.'
-      },
-      {
-        name: 'WatermelonZ Space Blast',
-        type: 'Hybrid',
-        description: 'Juicy watermelon with a cosmic blast of sweet berries.',
-        fullDescription: 'WatermelonZ Space Blast delivers juicy watermelon flavor complemented by sweet berry notes. Offers a fun, uplifting experience that balances cerebral energy with full-body comfort.'
-      },
-      {
-        name: 'Black Hole Berry',
-        type: 'Hybrid',
-        description: 'Deep, dark mixed berries pulling you into a vortex of sweet and tart bliss.',
-        fullDescription: 'Black Hole Berry draws you into deep, dark berry flavors—blackberry, blueberry, and boysenberry. Offers a perfectly balanced experience: gentle cerebral lift paired with soothing body effects.'
-      },
-      {
-        name: 'Celestial Cotton Candy',
-        type: 'Hybrid',
-        description: 'Fluffy pink and blue cotton candy floating through the cosmos.',
-        fullDescription: 'Celestial Cotton Candy features fluffy pink and blue cotton candy notes with hints of vanilla. Effects are gently euphoric and uplifting, promoting happiness and social engagement.'
+        description: 'Sweet and tart blue raspberry candy flavor with deeply relaxing effects.',
+        fullDescription: 'Blue Raspberry is a deliciously nostalgic Indica-dominant strain that captures the sweet and tart essence of classic blue raspberry candy. The flavor profile features bold blueberry and raspberry notes with a hint of candy-like sweetness on the exhale. Effects are deeply relaxing and soothing, melting away stress and tension while promoting a sense of calm and tranquility. Perfect for evening use when you want to unwind, relax, and enjoy a flavorful journey.'
       }
     ],
   },
@@ -727,21 +304,21 @@ export default function PrerollsPage() {
   const DescriptionContent = () => (
     <div className="space-y-6 md:space-y-8">
       <div>
-        <h3 className="text-2xl md:text-4xl font-bold text-white mb-3 md:mb-4">Astro Kit contains</h3>
+        <h3 className="text-2xl md:text-4xl font-bold text-white mb-3 md:mb-4">Booster pack contains</h3>
         <div className="space-y-4 md:space-y-6">
-          <button
-            onClick={() => setSelectedFeature('vape')}
-            className="w-full text-left group cursor-pointer"
-          >
-            <p className="font-semibold text-[#00d4ff] text-base md:text-xl group-hover:text-[#00d4ff]/80 transition-colors">2g Dual Tank</p>
-            <p className="text-sm md:text-base leading-relaxed text-gray-300">60 Days Cured Live Resin Liquid Diamonds Vape<br />A stellar blend of two cosmic strains, ready to launch your senses.</p>
-          </button>
           <button
             onClick={() => setSelectedFeature('preroll')}
             className="w-full text-left group cursor-pointer"
           >
-            <p className="font-semibold text-[#00d4ff] text-base md:text-xl group-hover:text-[#00d4ff]/80 transition-colors">.6g Quad-Infused Preroll</p>
-            <p className="text-sm md:text-base leading-relaxed text-gray-300">Experience a supernova of flavor and potency, featuring a perfect fusion of premium flower strains.</p>
+            <p className="font-semibold text-[#00d4ff] text-base md:text-xl group-hover:text-[#00d4ff]/80 transition-colors">Quad Infuse Dark Matter Preroll</p>
+            <p className="text-sm md:text-base leading-relaxed text-gray-300">6x0.75g (4.5g total)</p>
+          </button>
+          <button
+            onClick={() => setSelectedFeature('gummies')}
+            className="w-full text-left group cursor-pointer"
+          >
+            <p className="font-semibold text-[#00d4ff] text-base md:text-xl group-hover:text-[#00d4ff]/80 transition-colors">Rosin Gummies</p>
+            <p className="text-sm md:text-base leading-relaxed text-gray-300">Secret encrypted galactic flavor</p>
           </button>
           <button
             onClick={() => setSelectedFeature('card')}
@@ -757,16 +334,16 @@ export default function PrerollsPage() {
         <h3 className="text-xl md:text-3xl font-bold text-white mb-3 md:mb-4">Features:</h3>
         <div className="flex flex-wrap gap-2 md:gap-3">
           <button
-            onClick={() => setSelectedFeature('vape')}
-            className="px-3 py-1 md:px-4 md:py-2 bg-[#00d4ff]/20 border border-[#00d4ff]/50 rounded-full text-sm md:text-base text-[#00d4ff] hover:bg-[#00d4ff]/30 transition-all cursor-pointer"
-          >
-            Vape
-          </button>
-          <button
             onClick={() => setSelectedFeature('preroll')}
             className="px-3 py-1 md:px-4 md:py-2 bg-[#00d4ff]/20 border border-[#00d4ff]/50 rounded-full text-sm md:text-base text-[#00d4ff] hover:bg-[#00d4ff]/30 transition-all cursor-pointer"
           >
-            Pre-roll
+            Preroll
+          </button>
+          <button
+            onClick={() => setSelectedFeature('gummies')}
+            className="px-3 py-1 md:px-4 md:py-2 bg-[#00d4ff]/20 border border-[#00d4ff]/50 rounded-full text-sm md:text-base text-[#00d4ff] hover:bg-[#00d4ff]/30 transition-all cursor-pointer"
+          >
+            Gummies
           </button>
           <button
             onClick={() => setSelectedFeature('card')}
@@ -1115,7 +692,7 @@ export default function PrerollsPage() {
           )}
         </AnimatePresence>
 
-         {/* Текст сверху - для мобильных по центру и выше, для ПК - в правом верхнем углу */}
+        {/* Текст сверху - для мобильных по центру и выше, для ПК - в правом верхнем углу */}
         <AnimatePresence mode="wait">
           <motion.div
             key={`text-${activeFlavor.id}`}
@@ -1129,10 +706,10 @@ export default function PrerollsPage() {
             exit={{ opacity: 0, y: 20 }}
             transition={{ duration: 0.4 }}
           >
-            {/* Скрываем ASTRO KIT на мобильных */}
+            {/* Скрываем Booster pack на мобильных */}
             {!isMobile && (
               <div className={`uppercase tracking-[5px] text-sm mb-4 opacity-80 ${!isMobile && 'text-right'}`}>
-                ASTRO KIT
+                BOOSTER PACK
               </div>
             )}
             <h2 className={`font-black tracking-tighter drop-shadow-lg ${
@@ -1163,32 +740,6 @@ export default function PrerollsPage() {
           </div>
         </div>
       </div>
-
-      {/* Кнопки-миниатюры - нет, так как одно главное изображение */}
-      {/* <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50">
-        <div className="flex gap-3 md:gap-4 bg-black/30 backdrop-blur-md px-4 py-3 md:px-6 md:py-4 rounded-full">
-          {flavors.map((flavor, index) => (
-            <motion.button
-              key={flavor.id}
-              onClick={() => setActiveIndex(index)}
-              whileHover={{ scale: 1.15, y: -4 }}
-              whileTap={{ scale: 0.95 }}
-              className="relative"
-            >
-              <div className={`w-14 h-14 md:w-20 md:h-20 transition-all duration-300 ${activeIndex === index ? 'scale-110 drop-shadow-xl' : 'opacity-60 hover:opacity-100'}`}>
-                <img src={flavor.prerollMainImage} alt={flavor.name} className="w-full h-full object-contain" />
-              </div>
-              {activeIndex === index && (
-                <motion.div
-                  layoutId="activeDot"
-                  className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-white"
-                  transition={{ duration: 0.3 }}
-                />
-              )}
-            </motion.button>
-          ))}
-        </div>
-      </div> */}
 
       {/* Стили для скроллбара */}
       <style jsx>{`

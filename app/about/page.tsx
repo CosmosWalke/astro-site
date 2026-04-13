@@ -7,9 +7,8 @@ import { Header } from '@/components/header'
 import { HeroStoryCombined } from '@/components/hero-story-combined'
 import { ComicSection } from '@/components/comic-section'
 import { ProjectSection } from '@/components/project-section'
-import { FactionsSection } from '@/components/factions-section'
 import { CardsSection } from '@/components/CardsSection'
-import { MapSection } from '@/components/MapSection'  // Убедитесь, что путь правильный
+import { MapSection } from '@/components/MapSection'
 import { GallerySection } from '@/components/gallery-section'
 import { Footer } from '@/components/footer'
 import { ScrollProgress } from '@/components/ScrollProgress'
@@ -44,14 +43,16 @@ export default function Home() {
             <HeroStoryCombined />
           </div>
 
-          {/* World/Map Section - после Universe, перед Comic */}
-<div id="world" className="relative">
-  <MapSection />
-</div>
- {/* Card section */}
-<div id="cards" className="relative">
-  <CardsSection />
-</div>
+          {/* World/Map Section */}
+          <div id="world" className="relative">
+            <MapSection />
+          </div>
+          
+          {/* Card section */}
+          <div id="cards" className="relative">
+            <CardsSection />
+          </div>
+          
           {/* Comic Section */}
           <div id="comic" className="relative">
             <ComicSection />
@@ -62,12 +63,7 @@ export default function Home() {
             <ProjectSection />
           </div>
 
-          {/* Factions Section */}
-          <div id="factions" className="relative">
-            <FactionsSection />
-          </div>
-
-          {/* Media/Gallery Section */}
+          {/* Media/Gallery Section - теперь сразу после Products */}
           <div id="media" className="relative">
             <GallerySection />
           </div>
@@ -88,10 +84,6 @@ export default function Home() {
 function CursorFollower() {
   const cursorRef = useRef<HTMLDivElement>(null)
   const followerRef = useRef<HTMLDivElement>(null)
-
-
-
-
 
   useEffect(() => {
     const cursor = cursorRef.current
