@@ -19,7 +19,7 @@ interface CardColor {
   id: string
   video: string
   image: string
-  category: string  // Добавляем категорию для фильтрации
+  category: string
 }
 
 const cardColors: CardColor[] = [
@@ -32,7 +32,7 @@ const cardColors: CardColor[] = [
     id: 'NW-001', 
     video: '/video/cards/1.webm',
     image: '/image/cards/Astranauts.webp',
-    category: 'ASTRONAUTS'  // Категория для фильтра
+    category: 'ASTRONAUTS'
   },
   { 
     glow: '#9945ff', 
@@ -43,7 +43,7 @@ const cardColors: CardColor[] = [
     id: 'CG-002', 
     video: '/video/cards/2.webm',
     image: '/image/cards/aliens.webp',
-    category: 'ALIENS'  // Категория для фильтра
+    category: 'ALIENS'
   },
   { 
     glow: '#14f195', 
@@ -54,7 +54,7 @@ const cardColors: CardColor[] = [
     id: 'FK-003', 
     video: '/video/cards/3.webm',
     image: '/image/cards/ship.webp',
-    category: 'SHIPS'  // Категория для фильтра
+    category: 'SHIPS'
   },
   { 
     glow: '#ff6b35', 
@@ -65,7 +65,7 @@ const cardColors: CardColor[] = [
     id: 'SW-004', 
     video: '/video/cards/4.webm',
     image: '/image/cards/planet.webp',
-    category: 'PLANETS'  // Категория для фильтра
+    category: 'PLANETS'
   }
 ]
 
@@ -81,10 +81,16 @@ export function CardsSection() {
   const cardsSectionRef = useRef<HTMLDivElement>(null)
   const splitCardsRef = useRef<(HTMLDivElement | null)[]>([])
 
-  // Функция для перехода на страницу карт с нужной категорией
+  // Функция для перехода - добавили обработку ошибок
   const handleExploreClick = (category: string) => {
-    // Передаем категорию через query параметр
-    router.push(`/cards?category=${category}`)
+    console.log('Navigating to cards with category:', category) // Для отладки
+    try {
+      router.push(`/cards?category=${encodeURIComponent(category)}`)
+    } catch (error) {
+      console.error('Navigation error:', error)
+      // Fallback - используем window.location
+      window.location.href = `/cards?category=${encodeURIComponent(category)}`
+    }
   }
 
   useEffect(() => {
@@ -141,7 +147,6 @@ export function CardsSection() {
     if (isMobile || !cardsSectionRef.current) return
 
     const ctx = gsap.context(() => {
-      // Анимация появления карточек
       gsap.fromTo(cardsSectionRef.current,
         { opacity: 0 },
         { 
@@ -155,7 +160,6 @@ export function CardsSection() {
         }
       )
 
-      // Анимация карточек при скролле
       splitCardsRef.current.forEach((card, i) => {
         if (!card) return
         
@@ -238,7 +242,6 @@ export function CardsSection() {
                 <div className="absolute bottom-3 left-3 w-5 h-5 border-b-2 border-l-2" style={{ borderColor: adaptiveCardColors[mobileCardIndex].glow }} />
                 <div className="absolute bottom-3 right-3 w-5 h-5 border-b-2 border-r-2" style={{ borderColor: adaptiveCardColors[mobileCardIndex].glow }} />
                 
-                {/* Текст в правом нижнем углу для мобильных */}
                 <div className="absolute bottom-5 right-5 text-right">
                   <div className="flex items-center justify-end gap-2 mb-1">
                     <span className="text-[9px] font-mono" style={{ color: adaptiveCardColors[mobileCardIndex].glow }}>{adaptiveCardColors[mobileCardIndex].id}</span>
@@ -368,13 +371,11 @@ export function CardsSection() {
                       />
                     )}
                     
-                    {/* Угловые элементы */}
                     <div className="absolute top-3 left-3 w-5 h-5 border-t-2 border-l-2 transition-all duration-300" style={{ borderColor: isActive ? cardColor.glow : `rgba(${cardColor.glowRgb}, 0.5)` }} />
                     <div className="absolute top-3 right-3 w-5 h-5 border-t-2 border-r-2 transition-all duration-300" style={{ borderColor: isActive ? cardColor.glow : `rgba(${cardColor.glowRgb}, 0.5)` }} />
                     <div className="absolute bottom-3 left-3 w-5 h-5 border-b-2 border-l-2 transition-all duration-300" style={{ borderColor: isActive ? cardColor.glow : `rgba(${cardColor.glowRgb}, 0.5)` }} />
                     <div className="absolute bottom-3 right-3 w-5 h-5 border-b-2 border-r-2 transition-all duration-300" style={{ borderColor: isActive ? cardColor.glow : `rgba(${cardColor.glowRgb}, 0.5)` }} />
                     
-                    {/* Текст в правом нижнем углу для десктопа */}
                     <div className="absolute bottom-5 right-5 text-right">
                       <div className="flex items-center justify-end gap-2 mb-1">
                         <span className="text-[9px] font-mono" style={{ color: cardColor.glow }}>{cardColor.id}</span>
@@ -385,7 +386,7 @@ export function CardsSection() {
                     </div>
                   </div>
                   
-                  {/* Десктопная кнопка Explore */}
+                  {/* Десктопная кнопка Explore - ИСПРАВЛЕНА */}
                   <div 
                     className="absolute -bottom-12 left-1/2 transition-all duration-500"
                     style={{
@@ -395,14 +396,19 @@ export function CardsSection() {
                     }}
                   >
                     <button
-                      onClick={() => handleExploreClick(cardColor.category)}
+                      onClick={(e) => {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        handleExploreClick(cardColor.category)
+                      }}
                       className="group relative px-6 py-2 rounded-full text-xs font-bold tracking-wider uppercase transition-all duration-300 hover:scale-105 overflow-hidden"
                       style={{
                         background: `linear-gradient(135deg, ${cardColor.glow}20, ${cardColor.glow}05)`,
                         border: `1px solid ${cardColor.glow}`,
                         color: cardColor.glow,
                         boxShadow: `0 0 15px ${cardColor.glow}60`,
-                        backdropFilter: 'blur(4px)'
+                        backdropFilter: 'blur(4px)',
+                        cursor: 'pointer'
                       }}
                     >
                       <span className="relative z-10">Explore</span>
