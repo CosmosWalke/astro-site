@@ -160,10 +160,10 @@ const flavors: FlowerFlavor[] = [
       },
       { 
         src: '/flowers/blue-zlurpee/fruit3.webp', 
-        sizeMobile: 125, 
-        sizeDesktop: 160,
-        leftMobile: '25%', 
-        leftDesktop: '25%',
+        sizeMobile: 225, 
+        sizeDesktop: 260,
+        leftMobile: '50%', 
+        leftDesktop: '20%',
         topMobile: '65%', 
         topDesktop: '65%',
         delay: 0.6, 
@@ -175,7 +175,7 @@ const flavors: FlowerFlavor[] = [
         sizeDesktop: 210,
         leftMobile: '60%', 
         leftDesktop: '72%',
-        topMobile: '65%', 
+        topMobile: '35%', 
         topDesktop: '73%',
         delay: 2.1 
       },
@@ -245,21 +245,22 @@ const flavors: FlowerFlavor[] = [
       },
       { 
         src: '/flowers/frosted-mochi/fruit3.webp', 
-        sizeMobile: 118, 
-        sizeDesktop: 150,
-        leftMobile: '26%', 
-        leftDesktop: '26%',
-        topMobile: '66%', 
-        topDesktop: '66%',
-        delay: 0.6 
+        sizeMobile: 225, 
+        sizeDesktop: 260,
+        leftMobile: '50%', 
+        leftDesktop: '20%',
+        topMobile: '65%', 
+        topDesktop: '65%',
+        delay: 0.6, 
+        rotate: -18 
       },
       { 
         src: '/flowers/frosted-mochi/fruit4.webp', 
         sizeMobile: 150, 
         sizeDesktop: 210,
         leftMobile: '60%', 
-        leftDesktop: '71%',
-        topMobile: '63%', 
+        leftDesktop: '72%',
+        topMobile: '35%', 
         topDesktop: '73%',
         delay: 2.3 
       },
@@ -329,22 +330,23 @@ const flavors: FlowerFlavor[] = [
       },
       { 
         src: '/flowers/cartier-cush/fruit3.webp', 
-        sizeMobile: 115, 
-        sizeDesktop: 150,
-        leftMobile: '28%', 
-        leftDesktop: '28%',
-        topMobile: '67%', 
-        topDesktop: '67%',
-        delay: 0.8 
+        sizeMobile: 225, 
+        sizeDesktop: 260,
+        leftMobile: '50%', 
+        leftDesktop: '20%',
+        topMobile: '65%', 
+        topDesktop: '65%',
+        delay: 0.6, 
+        rotate: -18 
       },
       { 
         src: '/flowers/cartier-cush/fruit4.webp', 
         sizeMobile: 160, 
         sizeDesktop: 220,
         leftMobile: '60%', 
-        leftDesktop: '70%',
-        topMobile: '62%', 
-        topDesktop: '72%',
+        leftDesktop: '72%',
+        topMobile: '35%', 
+        topDesktop: '73%',
         delay: 2 
       },
     ],
@@ -413,22 +415,23 @@ const flavors: FlowerFlavor[] = [
       },
       { 
         src: '/flowers/milkyway-runtz/fruit3.webp', 
-        sizeMobile: 115, 
-        sizeDesktop: 150,
-        leftMobile: '28%', 
-        leftDesktop: '28%',
-        topMobile: '67%', 
-        topDesktop: '67%',
-        delay: 0.8 
+        sizeMobile: 225, 
+        sizeDesktop: 260,
+        leftMobile: '50%', 
+        leftDesktop: '20%',
+        topMobile: '65%', 
+        topDesktop: '65%',
+        delay: 0.8, 
+        rotate: -18 
       },
       { 
         src: '/flowers/milkyway-runtz/fruit4.webp', 
         sizeMobile: 160, 
         sizeDesktop: 220,
         leftMobile: '60%', 
-        leftDesktop: '70%',
-        topMobile: '62%', 
-        topDesktop: '72%',
+        leftDesktop: '72%',
+        topMobile: '35%', 
+        topDesktop: '73%',
         delay: 2 
       },
     ],
@@ -497,22 +500,23 @@ const flavors: FlowerFlavor[] = [
       },
       { 
         src: '/flowers/eternal-zlushy/fruit3.webp', 
-        sizeMobile: 120, 
-        sizeDesktop: 155,
-        leftMobile: '27%', 
-        leftDesktop: '27%',
-        topMobile: '70%', 
-        topDesktop: '70%',
-        delay: 0.9 
+        sizeMobile: 225, 
+        sizeDesktop: 260,
+        leftMobile: '50%', 
+        leftDesktop: '20%',
+        topMobile: '65%', 
+        topDesktop: '65%',
+        delay: 0.9, 
+        rotate: -18 
       },
       { 
         src: '/flowers/eternal-zlushy/fruit4.webp', 
         sizeMobile: 165, 
         sizeDesktop: 215,
-        leftMobile: '62%', 
-        leftDesktop: '71%',
-        topMobile: '60%', 
-        topDesktop: '68%',
+        leftMobile: '60%', 
+        leftDesktop: '72%',
+        topMobile: '35%', 
+        topDesktop: '73%',
         delay: 2 
       },
     ],
@@ -581,21 +585,22 @@ const flavors: FlowerFlavor[] = [
       },
       { 
         src: '/flowers/astro-berry-gelato/fruit3.webp', 
-        sizeMobile: 118, 
-        sizeDesktop: 150,
-        leftMobile: '26%', 
-        leftDesktop: '26%',
-        topMobile: '66%', 
-        topDesktop: '66%',
-        delay: 0.6 
+        sizeMobile: 225, 
+        sizeDesktop: 260,
+        leftMobile: '50%', 
+        leftDesktop: '20%',
+        topMobile: '65%', 
+        topDesktop: '65%',
+        delay: 0.6, 
+        rotate: -18 
       },
       { 
         src: '/flowers/astro-berry-gelato/fruit4.webp', 
         sizeMobile: 162, 
         sizeDesktop: 210,
-        leftMobile: '61%', 
-        leftDesktop: '71%',
-        topMobile: '63%', 
+        leftMobile: '60%', 
+        leftDesktop: '72%',
+        topMobile: '35%', 
         topDesktop: '73%',
         delay: 2.3 
       },
@@ -665,10 +670,10 @@ const flavors: FlowerFlavor[] = [
       },
       { 
         src: '/flowers/higashi/fruit3.webp', 
-        sizeMobile: 125, 
-        sizeDesktop: 160,
-        leftMobile: '25%', 
-        leftDesktop: '25%',
+        sizeMobile: 225, 
+        sizeDesktop: 260,
+        leftMobile: '50%', 
+        leftDesktop: '20%',
         topMobile: '65%', 
         topDesktop: '65%',
         delay: 0.6, 
@@ -678,10 +683,10 @@ const flavors: FlowerFlavor[] = [
         src: '/flowers/higashi/fruit4.webp', 
         sizeMobile: 165, 
         sizeDesktop: 210,
-        leftMobile: '62%', 
+        leftMobile: '60%', 
         leftDesktop: '72%',
-        topMobile: '60%', 
-        topDesktop: '70%',
+        topMobile: '35%', 
+        topDesktop: '73%',
         delay: 2.1 
       },
     ],
@@ -750,21 +755,22 @@ const flavors: FlowerFlavor[] = [
       },
       { 
         src: '/flowers/cosmic-caviar/fruit3.webp', 
-        sizeMobile: 110, 
-        sizeDesktop: 145,
-        leftMobile: '25%', 
-        leftDesktop: '25%',
-        topMobile: '67%', 
-        topDesktop: '67%',
-        delay: 0.7 
+        sizeMobile: 225, 
+        sizeDesktop: 260,
+        leftMobile: '50%', 
+        leftDesktop: '20%',
+        topMobile: '65%', 
+        topDesktop: '65%',
+        delay: 0.7, 
+        rotate: -18 
       },
       { 
         src: '/flowers/cosmic-caviar/fruit4.webp', 
         sizeMobile: 168, 
         sizeDesktop: 215,
         leftMobile: '60%', 
-        leftDesktop: '70%',
-        topMobile: '63%', 
+        leftDesktop: '72%',
+        topMobile: '35%', 
         topDesktop: '73%',
         delay: 2.2 
       },
@@ -1038,7 +1044,34 @@ export default function FlowersPage() {
               <img src={activeFlavor.tube.src} alt="" className="w-full h-full object-contain drop-shadow-xl" />
             </motion.div>
 
-            {/* PREROLL - in front of flower */}
+            {/* FRUIT3 - ЗА flower (zIndex: 15, ниже чем у flower который z-20) */}
+            {activeFlavor.fruits[2] && (
+              <motion.div
+                key={`fruit3-${activeFlavor.id}`}
+                className="absolute pointer-events-none"
+                style={{ 
+                  left: getFruitStyles(activeFlavor.fruits[2]).left, 
+                  top: getFruitStyles(activeFlavor.fruits[2]).top, 
+                  width: getFruitStyles(activeFlavor.fruits[2]).size, 
+                  height: getFruitStyles(activeFlavor.fruits[2]).size, 
+                  zIndex: 21
+                }}
+                animate={{
+                  y: [0, -35, 0],
+                  rotate: [activeFlavor.fruits[2].rotate || 0, (activeFlavor.fruits[2].rotate || 0) + 20, activeFlavor.fruits[2].rotate || 0],
+                }}
+                transition={{
+                  duration: 7.5 + 2,
+                  repeat: Infinity,
+                  delay: activeFlavor.fruits[2].delay,
+                  ease: "easeInOut",
+                }}
+              >
+                <img src={activeFlavor.fruits[2].src} alt="" className="w-full h-full object-contain drop-shadow-2xl" />
+              </motion.div>
+            )}
+
+            {/* PREROLL - перед flower */}
             <motion.div
               key={`preroll-${activeFlavor.id}`}
               className="absolute pointer-events-none"
@@ -1064,32 +1097,36 @@ export default function FlowersPage() {
               <img src={activeFlavor.preroll.src} alt="" className="w-full h-full object-contain drop-shadow-2xl" />
             </motion.div>
 
-            {/* Floating fruits - now with responsive sizes and positions */}
-            {activeFlavor.fruits.map((fruit, i) => (
-              <motion.div
-                key={i}
-                className="absolute pointer-events-none"
-                style={{ 
-                  left: getFruitStyles(fruit).left, 
-                  top: getFruitStyles(fruit).top, 
-                  width: getFruitStyles(fruit).size, 
-                  height: getFruitStyles(fruit).size, 
-                  zIndex: 100 
-                }}
-                animate={{
-                  y: [0, -35, 0],
-                  rotate: [fruit.rotate || 0, (fruit.rotate || 0) + 20, fruit.rotate || 0],
-                }}
-                transition={{
-                  duration: 7.5 + i,
-                  repeat: Infinity,
-                  delay: fruit.delay,
-                  ease: "easeInOut",
-                }}
-              >
-                <img src={fruit.src} alt="" className="w-full h-full object-contain drop-shadow-2xl" />
-              </motion.div>
-            ))}
+            {/* Остальные фрукты (fruit1, fruit2, fruit4) - ПЕРЕД flower (zIndex: 100) */}
+            {activeFlavor.fruits.map((fruit, i) => {
+              // Пропускаем fruit3 (индекс 2), так как он уже отрендерен выше
+              if (i === 2) return null;
+              return (
+                <motion.div
+                  key={i}
+                  className="absolute pointer-events-none"
+                  style={{ 
+                    left: getFruitStyles(fruit).left, 
+                    top: getFruitStyles(fruit).top, 
+                    width: getFruitStyles(fruit).size, 
+                    height: getFruitStyles(fruit).size, 
+                    zIndex: 100
+                  }}
+                  animate={{
+                    y: [0, -35, 0],
+                    rotate: [fruit.rotate || 0, (fruit.rotate || 0) + 20, fruit.rotate || 0],
+                  }}
+                  transition={{
+                    duration: 7.5 + i,
+                    repeat: Infinity,
+                    delay: fruit.delay,
+                    ease: "easeInOut",
+                  }}
+                >
+                  <img src={fruit.src} alt="" className="w-full h-full object-contain drop-shadow-2xl" />
+                </motion.div>
+              );
+            })}
           </motion.div>
         </AnimatePresence>
 
@@ -1211,7 +1248,7 @@ export default function FlowersPage() {
             {/* Hide "ASTRO KIT" on mobile, only show product name */}
             {!isMobile && (
               <div className={`uppercase tracking-[5px] text-sm mb-4 opacity-80 ${!isMobile && 'text-right'}`}>
-                ASTRO KIT
+                ASTRO FUEL KIT
               </div>
             )}
             <h2 className={`font-black tracking-tighter drop-shadow-lg ${

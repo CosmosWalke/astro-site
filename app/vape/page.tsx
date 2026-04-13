@@ -1083,7 +1083,7 @@ export default function VapePage() {
 
         {/* Центральное изображение вейпа */}
         <div className="relative z-20 flex items-center justify-center">
-          <div className="relative w-[300px] h-[300px] md:w-[645px] md:h-[645px]">
+          <div className="relative w-[300px] h-[300px] md:w-[500px] md:h-[500px]">
             <img
               src={prevFlavor.vapeImage}
               alt=""

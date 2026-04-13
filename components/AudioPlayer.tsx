@@ -38,15 +38,25 @@ export function AudioPlayer() {
     return () => window.removeEventListener('resize', checkMobile)
   }, [])
 
-  // Запускаем таймер на сворачивание после монтирования (только для десктопа)
+  // Для десктопа - запускаем таймер на сворачивание через 3 секунды после появления
   useEffect(() => {
-    if (isMobile === false && !isSoundEnabled) {
+    if (isMobile === false && !isCollapsed) {
+      const timer = setTimeout(() => {
+        setIsCollapsed(true)
+      }, 3000)
+      return () => clearTimeout(timer)
+    }
+  }, [isMobile, isCollapsed])
+
+  // Для десктопа - когда плеер развернут (не свернут), запускаем таймер на сворачивание при бездействии
+  useEffect(() => {
+    if (isMobile === false && !isCollapsed) {
       startHideTimer()
     }
     return () => {
       if (hideTimeoutRef.current) clearTimeout(hideTimeoutRef.current)
     }
-  }, [isMobile, isSoundEnabled])
+  }, [isMobile, isCollapsed])
 
   // Для мобильных - запускаем таймер на сворачивание (не останавливая музыку)
   useEffect(() => {
