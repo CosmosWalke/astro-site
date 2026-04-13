@@ -71,7 +71,7 @@ const cardColors: CardColor[] = [
 
 export function CardsSection() {
   const router = useRouter()
-  const [isMobile, setIsMobile] = useState(false)
+  const [isMobile, setIsMobile] = useState<boolean | null>(null) // ← ИЗМЕНЕНО: null вместо false
   const [hoveredCard, setHoveredCard] = useState<number | null>(null)
   const [activeCardIndex, setActiveCardIndex] = useState<number>(0)
   const [mobileCardIndex, setMobileCardIndex] = useState<number>(0)
@@ -81,18 +81,17 @@ export function CardsSection() {
   const cardsSectionRef = useRef<HTMLDivElement>(null)
   const splitCardsRef = useRef<(HTMLDivElement | null)[]>([])
 
-  // Функция для перехода - добавили обработку ошибок
   const handleExploreClick = (category: string) => {
-    console.log('Navigating to cards with category:', category) // Для отладки
+    console.log('Navigating to cards with category:', category)
     try {
       router.push(`/cards?category=${encodeURIComponent(category)}`)
     } catch (error) {
       console.error('Navigation error:', error)
-      // Fallback - используем window.location
       window.location.href = `/cards?category=${encodeURIComponent(category)}`
     }
   }
 
+  // Определяем устройство ТОЛЬКО на клиенте
   useEffect(() => {
     const checkDevice = () => {
       setIsMobile(window.innerWidth < 768)
@@ -102,11 +101,14 @@ export function CardsSection() {
     return () => window.removeEventListener('resize', checkDevice)
   }, [])
 
-  // Адаптивные x координаты для мобильных
-  const adaptiveCardColors = cardColors.map((card, index) => ({
-    ...card,
-    x: isMobile ? 0 : card.x
-  }))
+  // Не рендерим ничего, пока не определили устройство (избегаем гидратации)
+  if (isMobile === null) {
+    return (
+      <div className="relative min-h-screen bg-[#050508] overflow-hidden py-32 flex items-center justify-center">
+        <div className="w-12 h-12 border-2 border-[#00d4ff] border-t-transparent rounded-full animate-spin" />
+      </div>
+    )
+  }
 
   const cardWidth = isMobile ? 260 : 280
   const cardHeight = isMobile ? 480 : 520
@@ -121,7 +123,6 @@ export function CardsSection() {
     setActiveCardIndex(mobileCardIndex - 1)
   }
 
-  // Автопрокрутка карусели на мобильных
   useEffect(() => {
     if (!isMobile) return;
     
@@ -140,7 +141,7 @@ export function CardsSection() {
         clearInterval(autoPlayIntervalRef.current);
       }
     };
-  }, [isMobile, isAutoPlaying, cardColors.length]);
+  }, [isMobile, isAutoPlaying]);
 
   // GSAP анимация для десктопа
   useEffect(() => {
@@ -218,12 +219,12 @@ export function CardsSection() {
                 style={{
                   width: cardWidth,
                   height: cardHeight,
-                  border: `2px solid ${adaptiveCardColors[mobileCardIndex].glow}`,
-                  boxShadow: `0 0 30px ${adaptiveCardColors[mobileCardIndex].glow}`,
+                  border: `2px solid ${cardColors[mobileCardIndex].glow}`,
+                  boxShadow: `0 0 30px ${cardColors[mobileCardIndex].glow}`,
                 }}
               >
                 <video
-                  src={adaptiveCardColors[mobileCardIndex].video}
+                  src={cardColors[mobileCardIndex].video}
                   autoPlay
                   loop
                   muted
@@ -234,20 +235,20 @@ export function CardsSection() {
                 
                 <div 
                   className="absolute inset-0 opacity-20"
-                  style={{ background: `radial-gradient(circle at center, ${adaptiveCardColors[mobileCardIndex].glow}40 0%, transparent 80%)` }}
+                  style={{ background: `radial-gradient(circle at center, ${cardColors[mobileCardIndex].glow}40 0%, transparent 80%)` }}
                 />
                 
-                <div className="absolute top-3 left-3 w-5 h-5 border-t-2 border-l-2" style={{ borderColor: adaptiveCardColors[mobileCardIndex].glow }} />
-                <div className="absolute top-3 right-3 w-5 h-5 border-t-2 border-r-2" style={{ borderColor: adaptiveCardColors[mobileCardIndex].glow }} />
-                <div className="absolute bottom-3 left-3 w-5 h-5 border-b-2 border-l-2" style={{ borderColor: adaptiveCardColors[mobileCardIndex].glow }} />
-                <div className="absolute bottom-3 right-3 w-5 h-5 border-b-2 border-r-2" style={{ borderColor: adaptiveCardColors[mobileCardIndex].glow }} />
+                <div className="absolute top-3 left-3 w-5 h-5 border-t-2 border-l-2" style={{ borderColor: cardColors[mobileCardIndex].glow }} />
+                <div className="absolute top-3 right-3 w-5 h-5 border-t-2 border-r-2" style={{ borderColor: cardColors[mobileCardIndex].glow }} />
+                <div className="absolute bottom-3 left-3 w-5 h-5 border-b-2 border-l-2" style={{ borderColor: cardColors[mobileCardIndex].glow }} />
+                <div className="absolute bottom-3 right-3 w-5 h-5 border-b-2 border-r-2" style={{ borderColor: cardColors[mobileCardIndex].glow }} />
                 
                 <div className="absolute bottom-5 right-5 text-right">
                   <div className="flex items-center justify-end gap-2 mb-1">
-                    <span className="text-[9px] font-mono" style={{ color: adaptiveCardColors[mobileCardIndex].glow }}>{adaptiveCardColors[mobileCardIndex].id}</span>
+                    <span className="text-[9px] font-mono" style={{ color: cardColors[mobileCardIndex].glow }}>{cardColors[mobileCardIndex].id}</span>
                     <span className="text-[9px] font-mono text-[#ff6b35]">ID:</span>
                   </div>
-                  <div className="text-base font-bold text-[#e8e8ec] tracking-wide">{adaptiveCardColors[mobileCardIndex].subtitle}</div>
+                  <div className="text-base font-bold text-[#e8e8ec] tracking-wide">{cardColors[mobileCardIndex].subtitle}</div>
                   <div className="w-8 h-px bg-gradient-to-l from-[#00d4ff] to-transparent mt-2 ml-auto" />
                 </div>
               </div>
@@ -281,7 +282,7 @@ export function CardsSection() {
               </button>
               
               <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 flex gap-2">
-                {adaptiveCardColors.map((_, idx) => (
+                {cardColors.map((_, idx) => (
                   <button
                     key={idx}
                     onClick={() => {
@@ -297,15 +298,14 @@ export function CardsSection() {
               </div>
             </div>
             
-            {/* Мобильная кнопка Explore */}
             <button
-              onClick={() => handleExploreClick(adaptiveCardColors[mobileCardIndex].category)}
+              onClick={() => handleExploreClick(cardColors[mobileCardIndex].category)}
               className="mt-12 relative px-6 py-2 rounded-full text-xs font-bold tracking-wider uppercase transition-all duration-300 hover:scale-105"
               style={{
-                background: `linear-gradient(135deg, ${adaptiveCardColors[mobileCardIndex].glow}20, ${adaptiveCardColors[mobileCardIndex].glow}05)`,
-                border: `1px solid ${adaptiveCardColors[mobileCardIndex].glow}`,
-                color: adaptiveCardColors[mobileCardIndex].glow,
-                boxShadow: `0 0 15px ${adaptiveCardColors[mobileCardIndex].glow}60`,
+                background: `linear-gradient(135deg, ${cardColors[mobileCardIndex].glow}20, ${cardColors[mobileCardIndex].glow}05)`,
+                border: `1px solid ${cardColors[mobileCardIndex].glow}`,
+                color: cardColors[mobileCardIndex].glow,
+                boxShadow: `0 0 15px ${cardColors[mobileCardIndex].glow}60`,
               }}
             >
               Explore
@@ -314,7 +314,7 @@ export function CardsSection() {
         ) : (
           // Десктоп версия - 4 карты
           <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center">
-            {adaptiveCardColors.map((cardColor, i) => {
+            {cardColors.map((cardColor, i) => {
               const isActive = hoveredCard !== null ? hoveredCard === i : activeCardIndex === i
               return (
                 <div
@@ -386,7 +386,6 @@ export function CardsSection() {
                     </div>
                   </div>
                   
-                  {/* Десктопная кнопка Explore - ИСПРАВЛЕНА */}
                   <div 
                     className="absolute -bottom-12 left-1/2 transition-all duration-500"
                     style={{
