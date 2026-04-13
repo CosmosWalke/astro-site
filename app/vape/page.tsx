@@ -137,29 +137,29 @@ const flavors: VapeFlavor[] = [
       { 
         src: '/vapes/peach/fruit1.webp', 
         sizeMobile: 140, 
-        sizeDesktop: 180,
-        leftMobile: '10%', 
-        leftDesktop: '10%',
+        sizeDesktop: 280,
+        leftMobile: '20%', 
+        leftDesktop: '25%',
         topMobile: '18%', 
-        topDesktop: '18%',
+        topDesktop: '08%',
         delay: 0 
       },
       { 
         src: '/vapes/peach/fruit2.webp', 
         sizeMobile: 95, 
         sizeDesktop: 130,
-        leftMobile: '78%', 
-        leftDesktop: '78%',
+        leftMobile: '68%', 
+        leftDesktop: '70%',
         topMobile: '25%', 
-        topDesktop: '25%',
+        topDesktop: '35%',
         delay: 1.2 
       },
       { 
         src: '/vapes/peach/fruit3.webp', 
-        sizeMobile: 125, 
-        sizeDesktop: 160,
-        leftMobile: '25%', 
-        leftDesktop: '25%',
+        sizeMobile: 225, 
+        sizeDesktop: 260,
+        leftMobile: '50%', 
+        leftDesktop: '65%',
         topMobile: '65%', 
         topDesktop: '65%',
         delay: 0.6, 
@@ -168,9 +168,9 @@ const flavors: VapeFlavor[] = [
       { 
         src: '/vapes/peach/fruit4.webp', 
         sizeMobile: 85, 
-        sizeDesktop: 110,
+        sizeDesktop: 250,
         leftMobile: '72%', 
-        leftDesktop: '72%',
+        leftDesktop: '67%',
         topMobile: '70%', 
         topDesktop: '70%',
         delay: 2.1 
@@ -241,11 +241,11 @@ const flavors: VapeFlavor[] = [
       { 
         src: '/vapes/green-apple/fruit1.webp', 
         sizeMobile: 135, 
-        sizeDesktop: 175,
+        sizeDesktop: 275,
         leftMobile: '15%', 
-        leftDesktop: '15%',
+        leftDesktop: '25%',
         topMobile: '20%', 
-        topDesktop: '20%',
+        topDesktop: '10%',
         delay: 0 
       },
       { 
@@ -260,22 +260,23 @@ const flavors: VapeFlavor[] = [
       },
       { 
         src: '/vapes/green-apple/fruit3.webp', 
-        sizeMobile: 115, 
-        sizeDesktop: 150,
-        leftMobile: '28%', 
-        leftDesktop: '28%',
-        topMobile: '67%', 
-        topDesktop: '67%',
-        delay: 0.8 
+        sizeMobile: 225, 
+        sizeDesktop: 260,
+        leftMobile: '50%', 
+        leftDesktop: '65%',
+        topMobile: '65%', 
+        topDesktop: '65%',
+        delay: 0.8, 
+        rotate: -18 
       },
       { 
         src: '/vapes/green-apple/fruit4.webp', 
         sizeMobile: 90, 
-        sizeDesktop: 120,
+        sizeDesktop: 320,
         leftMobile: '70%', 
-        leftDesktop: '70%',
+        leftDesktop: '65%',
         topMobile: '72%', 
-        topDesktop: '72%',
+        topDesktop: '62%',
         delay: 2 
       },
     ],
@@ -363,13 +364,14 @@ const flavors: VapeFlavor[] = [
       },
       { 
         src: '/vapes/passion-fruit/fruit3.webp', 
-        sizeMobile: 110, 
-        sizeDesktop: 145,
-        leftMobile: '25%', 
-        leftDesktop: '25%',
-        topMobile: '67%', 
-        topDesktop: '67%',
-        delay: 0.7 
+        sizeMobile: 225, 
+        sizeDesktop: 260,
+        leftMobile: '50%', 
+        leftDesktop: '65%',
+        topMobile: '65%', 
+        topDesktop: '65%',
+        delay: 0.7, 
+        rotate: -18 
       },
       { 
         src: '/vapes/passion-fruit/fruit4.webp', 
@@ -466,13 +468,14 @@ const flavors: VapeFlavor[] = [
       },
       { 
         src: '/vapes/dragon-fruit/fruit3.webp', 
-        sizeMobile: 120, 
-        sizeDesktop: 155,
-        leftMobile: '27%', 
-        leftDesktop: '27%',
-        topMobile: '70%', 
-        topDesktop: '70%',
-        delay: 0.9 
+        sizeMobile: 225, 
+        sizeDesktop: 260,
+        leftMobile: '50%', 
+        leftDesktop: '65%',
+        topMobile: '65%', 
+        topDesktop: '65%',
+        delay: 0.9, 
+        rotate: -18 
       },
       { 
         src: '/vapes/dragon-fruit/fruit4.webp', 
@@ -569,13 +572,14 @@ const flavors: VapeFlavor[] = [
       },
       { 
         src: '/vapes/strawberry/fruit3.webp', 
-        sizeMobile: 118, 
-        sizeDesktop: 150,
-        leftMobile: '26%', 
-        leftDesktop: '26%',
-        topMobile: '66%', 
-        topDesktop: '66%',
-        delay: 0.6 
+        sizeMobile: 225, 
+        sizeDesktop: 260,
+        leftMobile: '50%', 
+        leftDesktop: '65%',
+        topMobile: '65%', 
+        topDesktop: '65%',
+        delay: 0.6, 
+        rotate: -18 
       },
       { 
         src: '/vapes/strawberry/fruit4.webp', 
@@ -904,6 +908,33 @@ export default function VapePage() {
               <img src={activeFlavor.tube.src} alt="" className="w-full h-full object-contain drop-shadow-xl" />
             </motion.div>
 
+            {/* FRUIT3 - ЗА вейпом (zIndex: 21, ниже чем у vape который z-20) */}
+            {activeFlavor.fruits[2] && (
+              <motion.div
+                key={`fruit3-${activeFlavor.id}`}
+                className="absolute pointer-events-none"
+                style={{ 
+                  left: getFruitStyles(activeFlavor.fruits[2]).left, 
+                  top: getFruitStyles(activeFlavor.fruits[2]).top, 
+                  width: getFruitStyles(activeFlavor.fruits[2]).size, 
+                  height: getFruitStyles(activeFlavor.fruits[2]).size, 
+                  zIndex: 21
+                }}
+                animate={{
+                  y: [0, -35, 0],
+                  rotate: [activeFlavor.fruits[2].rotate || 0, (activeFlavor.fruits[2].rotate || 0) + 20, activeFlavor.fruits[2].rotate || 0],
+                }}
+                transition={{
+                  duration: 7.5 + 2,
+                  repeat: Infinity,
+                  delay: activeFlavor.fruits[2].delay,
+                  ease: "easeInOut",
+                }}
+              >
+                <img src={activeFlavor.fruits[2].src} alt="" className="w-full h-full object-contain drop-shadow-2xl" />
+              </motion.div>
+            )}
+
             {/* PREROLL - перед вейпом */}
             <motion.div
               key={`preroll-${activeFlavor.id}`}
@@ -930,32 +961,36 @@ export default function VapePage() {
               <img src={activeFlavor.preroll.src} alt="" className="w-full h-full object-contain drop-shadow-2xl" />
             </motion.div>
 
-            {/* Плавающие фрукты - теперь с адаптивными размерами и позициями */}
-            {activeFlavor.fruits.map((fruit, i) => (
-              <motion.div
-                key={i}
-                className="absolute pointer-events-none"
-                style={{ 
-                  left: getFruitStyles(fruit).left, 
-                  top: getFruitStyles(fruit).top, 
-                  width: getFruitStyles(fruit).size, 
-                  height: getFruitStyles(fruit).size, 
-                  zIndex: 100 
-                }}
-                animate={{
-                  y: [0, -35, 0],
-                  rotate: [fruit.rotate || 0, (fruit.rotate || 0) + 20, fruit.rotate || 0],
-                }}
-                transition={{
-                  duration: 7.5 + i,
-                  repeat: Infinity,
-                  delay: fruit.delay,
-                  ease: "easeInOut",
-                }}
-              >
-                <img src={fruit.src} alt="" className="w-full h-full object-contain drop-shadow-2xl" />
-              </motion.div>
-            ))}
+            {/* Остальные фрукты (fruit1, fruit2, fruit4) - СКРЫТЫ НА ПК (временно) */}
+            {false && activeFlavor.fruits.map((fruit, i) => {
+              // Пропускаем fruit3 (индекс 2), так как он уже отрендерен выше
+              if (i === 2) return null;
+              return (
+                <motion.div
+                  key={i}
+                  className="absolute pointer-events-none"
+                  style={{ 
+                    left: getFruitStyles(fruit).left, 
+                    top: getFruitStyles(fruit).top, 
+                    width: getFruitStyles(fruit).size, 
+                    height: getFruitStyles(fruit).size, 
+                    zIndex: 100
+                  }}
+                  animate={{
+                    y: [0, -35, 0],
+                    rotate: [fruit.rotate || 0, (fruit.rotate || 0) + 20, fruit.rotate || 0],
+                  }}
+                  transition={{
+                    duration: 7.5 + i,
+                    repeat: Infinity,
+                    delay: fruit.delay,
+                    ease: "easeInOut",
+                  }}
+                >
+                  <img src={fruit.src} alt="" className="w-full h-full object-contain drop-shadow-2xl" />
+                </motion.div>
+              );
+            })}
           </motion.div>
         </AnimatePresence>
 
