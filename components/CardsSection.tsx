@@ -14,15 +14,53 @@ interface CardColor {
   glowRgb: string
   x: number
   title: string
+  subtitle: string
   id: string
   video: string
+  image: string
 }
 
 const cardColors: CardColor[] = [
-  { glow: '#00d4ff', glowRgb: '0, 212, 255', x: -480, title: 'The Nexus Walker', id: 'NW-001', video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4' },
-  { glow: '#9945ff', glowRgb: '153, 69, 255', x: -160, title: 'Crystal Guardian', id: 'CG-002', video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4' },
-  { glow: '#14f195', glowRgb: '20, 241, 149', x: 160, title: 'Flame Keeper', id: 'FK-003', video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4' },
-  { glow: '#ff6b35', glowRgb: '255, 107, 53', x: 480, title: 'Shadow Weaver', id: 'SW-004', video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/SubaruOutbackOnStreetAndDirt.mp4' }
+  { 
+    glow: '#00d4ff', 
+    glowRgb: '0, 212, 255', 
+    x: -480, 
+    title: 'The Nexus Walker',
+    subtitle: 'ASTRONAUTS',
+    id: 'NW-001', 
+    video: '/video/cards/1.webm',
+    image: '/image/cards/Astranauts.webp'
+  },
+  { 
+    glow: '#9945ff', 
+    glowRgb: '153, 69, 255', 
+    x: -160, 
+    title: 'Crystal Guardian',
+    subtitle: 'ALIENS',
+    id: 'CG-002', 
+    video: '/video/cards/2.webm',
+    image: '/image/cards/aliens.webp'
+  },
+  { 
+    glow: '#14f195', 
+    glowRgb: '20, 241, 149', 
+    x: 160, 
+    title: 'Flame Keeper',
+    subtitle: 'SHIPS',
+    id: 'FK-003', 
+    video: '/video/cards/3.webm',
+    image: '/image/cards/ship.webp'
+  },
+  { 
+    glow: '#ff6b35', 
+    glowRgb: '255, 107, 53', 
+    x: 480, 
+    title: 'Shadow Weaver',
+    subtitle: 'PLANETS',
+    id: 'SW-004', 
+    video: '/video/cards/4.webm',
+    image: '/image/cards/planet.webp'
+  }
 ]
 
 export function CardsSection() {
@@ -146,8 +184,6 @@ export function CardsSection() {
             <span className="font-mono text-xs text-[#00d4ff] tracking-[1.8em]">CARDS</span>
             <div className="h-px w-16 bg-gradient-to-l from-transparent to-[#00d4ff]/50" />
           </div>
-
-      
         </div>
         
         {isMobile ? (
@@ -189,13 +225,14 @@ export function CardsSection() {
                 <div className="absolute bottom-3 left-3 w-5 h-5 border-b-2 border-l-2" style={{ borderColor: adaptiveCardColors[mobileCardIndex].glow }} />
                 <div className="absolute bottom-3 right-3 w-5 h-5 border-b-2 border-r-2" style={{ borderColor: adaptiveCardColors[mobileCardIndex].glow }} />
                 
-                <div className="absolute bottom-5 left-5 right-5">
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="text-[9px] font-mono text-[#ff6b35]">ID:</span>
+                {/* Текст в правом нижнем углу для мобильных */}
+                <div className="absolute bottom-5 right-5 text-right">
+                  <div className="flex items-center justify-end gap-2 mb-1">
                     <span className="text-[9px] font-mono" style={{ color: adaptiveCardColors[mobileCardIndex].glow }}>{adaptiveCardColors[mobileCardIndex].id}</span>
+                    <span className="text-[9px] font-mono text-[#ff6b35]">ID:</span>
                   </div>
-                  <div className="text-base font-bold text-[#e8e8ec] tracking-wide">{adaptiveCardColors[mobileCardIndex].title}</div>
-                  <div className="w-8 h-px bg-gradient-to-r from-[#00d4ff] to-transparent mt-2" />
+                  <div className="text-base font-bold text-[#e8e8ec] tracking-wide">{adaptiveCardColors[mobileCardIndex].subtitle}</div>
+                  <div className="w-8 h-px bg-gradient-to-l from-[#00d4ff] to-transparent mt-2 ml-auto" />
                 </div>
               </div>
               
@@ -301,7 +338,7 @@ export function CardsSection() {
                       />
                     ) : (
                       <img
-                        src={`https://images.unsplash.com/photo-${i === 0 ? '1507003211169-0a1dd7228f2d' : i === 1 ? '1534528741775-53994a69daeb' : i === 2 ? '1531746020798-e6953c6e8e04' : '1534447677768-be436bb09401'}?w=560&h=1040&fit=crop`}
+                        src={cardColor.image}
                         alt="Character Card"
                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                       />
@@ -316,18 +353,20 @@ export function CardsSection() {
                       />
                     )}
                     
+                    {/* Угловые элементы - без изменений */}
                     <div className="absolute top-3 left-3 w-5 h-5 border-t-2 border-l-2 transition-all duration-300" style={{ borderColor: isActive ? cardColor.glow : `rgba(${cardColor.glowRgb}, 0.5)` }} />
                     <div className="absolute top-3 right-3 w-5 h-5 border-t-2 border-r-2 transition-all duration-300" style={{ borderColor: isActive ? cardColor.glow : `rgba(${cardColor.glowRgb}, 0.5)` }} />
                     <div className="absolute bottom-3 left-3 w-5 h-5 border-b-2 border-l-2 transition-all duration-300" style={{ borderColor: isActive ? cardColor.glow : `rgba(${cardColor.glowRgb}, 0.5)` }} />
                     <div className="absolute bottom-3 right-3 w-5 h-5 border-b-2 border-r-2 transition-all duration-300" style={{ borderColor: isActive ? cardColor.glow : `rgba(${cardColor.glowRgb}, 0.5)` }} />
                     
-                    <div className="absolute bottom-5 left-5 right-5">
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className="text-[9px] font-mono tracking-wider text-[#ff6b35]">ID:</span>
+                    {/* Текст в правом нижнем углу для десктопа */}
+                    <div className="absolute bottom-5 right-5 text-right">
+                      <div className="flex items-center justify-end gap-2 mb-1">
                         <span className="text-[9px] font-mono" style={{ color: cardColor.glow }}>{cardColor.id}</span>
+                        <span className="text-[9px] font-mono text-[#ff6b35]">ID:</span>
                       </div>
-                      <div className="text-sm font-bold text-[#e8e8ec] tracking-wide">{cardColor.title}</div>
-                      <div className="w-8 h-px bg-gradient-to-r from-[#00d4ff] to-transparent mt-2" />
+                      <div className="text-sm font-bold text-[#e8e8ec] tracking-wide">{cardColor.subtitle}</div>
+                      <div className="w-8 h-px bg-gradient-to-l from-[#00d4ff] to-transparent mt-2 ml-auto" />
                     </div>
                   </div>
                   
