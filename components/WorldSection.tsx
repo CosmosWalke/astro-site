@@ -7,16 +7,81 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { TextScramble } from "@/components/ui/text-scramble"
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 
-// Данные локаций (скопируйте из hero-story-combined.tsx)
-const worldLocations = [ ... ] // ваши данные
-const getStatusColor = (status: string) => { ... } // ваша функция
+// Данные локаций
+const worldLocations = [
+  {
+    id: "NOVA-01",
+    name: "NEXUS PRIME",
+    type: "HUB WORLD",
+    status: "ACTIVE",
+    description: "The central hub of the Astro Universe. A massive space station where travelers gather, trade, and begin their journeys.",
+    coordinates: { x: 50, y: 45 }
+  },
+  {
+    id: "CRYSTAL-02",
+    name: "CRYSTAL CAVERNS",
+    type: "MINING COLONY",
+    status: "PROTECTED",
+    description: "Underground caverns filled with rare energy crystals. The primary source of power for the entire sector.",
+    coordinates: { x: 25, y: 60 }
+  },
+  {
+    id: "NEBULA-03",
+    name: "NEBULA OUTPOST",
+    type: "RESEARCH STATION",
+    status: "UNDER_ATTACK",
+    description: "A research facility studying the mysterious Nebula anomalies. Currently under threat from unknown forces.",
+    coordinates: { x: 75, y: 30 }
+  },
+  {
+    id: "VOID-04",
+    name: "THE VOID EDGE",
+    type: "DANGER ZONE",
+    status: "RESTRICTED",
+    description: "The border between known space and the uncharted void. Extremely dangerous, only for experienced travelers.",
+    coordinates: { x: 85, y: 75 }
+  },
+  {
+    id: "ASTRO-05",
+    name: "ASTRO CITY",
+    type: "CAPITAL",
+    status: "ACTIVE",
+    description: "The capital city of the Astro Universe. Home to the Council and the most advanced technology in the sector.",
+    coordinates: { x: 40, y: 25 }
+  },
+  {
+    id: "DARK-06",
+    name: "DARK SECTOR",
+    type: "ABANDONED",
+    status: "ABANDONED",
+    description: "A once-thriving colony now abandoned. Rumors of strange phenomena keep even the bravest away.",
+    coordinates: { x: 15, y: 80 }
+  }
+]
+
+// Функция для получения цвета статуса
+const getStatusColor = (status: string): string => {
+  switch (status) {
+    case 'ACTIVE':
+      return '#14f195' // зеленый
+    case 'PROTECTED':
+      return '#00d4ff' // голубой
+    case 'UNDER_ATTACK':
+      return '#ff6b35' // оранжевый
+    case 'RESTRICTED':
+      return '#ff006e' // розовый
+    case 'ABANDONED':
+      return '#6b6b7b' // серый
+    default:
+      return '#00d4ff'
+  }
+}
 
 export function WorldSection() {
   const [isMobile, setIsMobile] = useState(false)
   const [activeLocation, setActiveLocation] = useState<string | null>(null)
   const [hoveredLocation, setHoveredLocation] = useState<string | null>(null)
   const [mobileLocationIndex, setMobileLocationIndex] = useState<number>(0)
-  const [glitchText, setGlitchText] = useState(false)
   
   const sectionRef = useRef<HTMLDivElement>(null)
   const mapRef = useRef<HTMLDivElement>(null)
@@ -168,7 +233,7 @@ export function WorldSection() {
             ref={panelRef}
             className="w-full lg:w-80 space-y-4"
           >
-            {/* КНОПКА EXPLORE MAP - всегда активна, только когда панель видна */}
+            {/* КНОПКА EXPLORE MAP */}
             <a 
               href="/galaxy-map-demo"
               target="_blank"
@@ -218,7 +283,7 @@ export function WorldSection() {
                   <span className="px-2 py-1 text-[10px] font-mono rounded bg-[#00d4ff]/20 text-[#00d4ff]">
                     {activeLocationData.type}
                   </span>
-                  <span className="text-[10px] font-mono text-[#00d4ff]">
+                  <span className="text-[10px] font-mono" style={{ color: getStatusColor(activeLocationData.status) }}>
                     {activeLocationData.status}
                   </span>
                 </div>

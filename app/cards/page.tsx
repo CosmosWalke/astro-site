@@ -1,7 +1,7 @@
 // app/cards/page.tsx
 'use client';
 
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef, Suspense } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { ArrowLeft, Search, Sparkles, Zap, Globe, User, Rocket, Star, X, ChevronDown } from 'lucide-react';
@@ -351,8 +351,8 @@ const EnlargedModal = ({ card, onClose }: { card: Card | null; onClose: () => vo
   );
 };
 
-// --- ОСНОВНОЙ КОМПОНЕНТ СТРАНИЦЫ ---
-export default function CardsPage() {
+// --- КОМПОНЕНТ СОДЕРЖИМОГО СТРАНИЦЫ (ОБЕРНУТ В SUSPENSE) ---
+function CardsPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   
@@ -612,5 +612,18 @@ export default function CardsPage() {
         <span className="text-sm font-medium text-white/90 group-hover:text-white">Back</span>
       </motion.button>
     </main>
+  );
+}
+
+// --- ОСНОВНОЙ ЭКСПОРТ С SUSPENSE ---
+export default function CardsPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="w-12 h-12 border-2 border-cyan-500/30 border-t-cyan-500 rounded-full animate-spin" />
+      </div>
+    }>
+      <CardsPageContent />
+    </Suspense>
   );
 }
