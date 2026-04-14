@@ -613,7 +613,7 @@ export default function PanoramaPage() {
 
       {/* Первое видео - autoPlay включён */}
       <div id="intro-video-1" className="intro-video">
-        <img id="static-bg-1" src="/images/space-bg.jpg" alt="Static door scene" className="static-bg" />
+        <img id="static-bg-1" src="/images/space-bg.webp" alt="Static door scene" className="static-bg" />
         <video autoPlay muted playsInline id="intro-video-player-1">
           <source src="/videos/intro-fly.mp4" type="video/mp4" />
         </video>
@@ -624,7 +624,7 @@ export default function PanoramaPage() {
 
       {/* Второе видео */}
       <div id="intro-video-2" className="intro-video" style={{ opacity: 0, pointerEvents: 'none' }}>
-        <img id="static-bg-2" src="/images/panorama-1-center.jpg" alt="Static bridge scene" className="static-bg" />
+        <img id="static-bg-2" src="/images/panorama-1-center.webp" alt="Static bridge scene" className="static-bg" />
         <video muted playsInline id="intro-video-player-2">
           <source src="/videos/intro-enter.mp4" type="video/mp4" />
         </video>
@@ -683,7 +683,7 @@ export default function PanoramaPage() {
             {/* ==================== BRIDGE ==================== */}
             <div className="location active" id="loc-1">
               <div className="panorama-wrapper">
-                <img src="/images/panorama-bridge.jpg" className="panorama-img" alt="Bridge" />
+                <img src="/images/panorama-bridge.webp" className="panorama-img" alt="Bridge" />
               </div>
 
               <div className="layer-interactive">
@@ -714,7 +714,7 @@ export default function PanoramaPage() {
             {/* ==================== COMMUNITY ==================== */}
             <div className="location" id="loc-2">
               <div className="panorama-wrapper">
-                <img src="/images/panorama-bridge.jpg" className="panorama-img" alt="Community" />
+                <img src="/images/panorama-bridge.webp" className="panorama-img" alt="Community" />
               </div>
 
               <div className="layer-interactive">
@@ -742,7 +742,7 @@ export default function PanoramaPage() {
             {/* ==================== QUARTERS ==================== */}
             <div className="location" id="loc-3">
               <div className="panorama-wrapper">
-                <img src="/images/panorama-bridge.jpg" className="panorama-img" alt="Quarters" />
+                <img src="/images/panorama-bridge.webp" className="panorama-img" alt="Quarters" />
               </div>
 
               <div className="layer-interactive">

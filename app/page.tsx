@@ -146,8 +146,8 @@ const loadAllResources = async (onProgress: (progress: number) => void) => {
   
   // Список всех изображений панорам
   const panoramaImages = [
-    '/images/panorama-bridge.jpg',
-    '/images/panorama-bridge.jpg',
+    '/images/panorama-bridge.webp',
+    '/images/panorama-bridge.webp',
   ]
   
   // Список видео
@@ -893,7 +893,7 @@ const handleNavigate = (sectionId: string) => {
           <div id="panorama">
            <div className="location active" id="loc-1">
   <div className="panorama-wrapper">
-    <img src="/images/panorama-bridge.jpg" className="panorama-img" alt="Bridge" />
+    <img src="/images/panorama-bridge.webp" className="panorama-img" alt="Bridge" />
     <div className="layer-interactive">
       <div className="hotspot" data-percent-x="10.77" data-percent-y="51.80" data-label="COMMUNITY" onClick={() => window.enterLocation?.('loc-2', 'COMMUNITY')}>
         <div className="hotspot-dot"></div>
@@ -953,7 +953,7 @@ const handleNavigate = (sectionId: string) => {
             {/* ==================== COMMUNITY ==================== */}
             <div className="location" id="loc-2">
               <div className="panorama-wrapper">
-                <img src="/images/panorama-bridge.jpg" className="panorama-img" alt="Community" />
+                <img src="/images/panorama-bridge.webp" className="panorama-img" alt="Community" />
                 <div className="layer-interactive">
                   <div className="hotspot" data-percent-x="10" data-percent-y="55" data-label="BRIDGE" onClick={() => window.enterLocation?.('loc-1', 'BRIDGE')}>
                     <div className="hotspot-dot"></div>
@@ -979,7 +979,7 @@ const handleNavigate = (sectionId: string) => {
             {/* ==================== QUARTERS ==================== */}
             <div className="location" id="loc-3">
               <div className="panorama-wrapper">
-                <img src="/images/panorama-bridge.jpg" className="panorama-img" alt="Quarters" />
+                <img src="/images/panorama-bridge.webp" className="panorama-img" alt="Quarters" />
                 <div className="layer-interactive">
                   <div className="hotspot" data-percent-x="10" data-percent-y="55" data-label="COMMUNITY" onClick={() => window.enterLocation?.('loc-2', 'COMMUNITY')}>
                     <div className="hotspot-dot"></div>
@@ -1046,7 +1046,7 @@ const handleNavigate = (sectionId: string) => {
       </div>
 
       <div id="intro-video-1" className="intro-video">
-        <img id="static-bg-1" src="/images/space-bg.jpg" alt="Static door scene" className="static-bg" />
+        <img id="static-bg-1" src="/images/space-bg.webp" alt="Static door scene" className="static-bg" />
         <video muted playsInline id="intro-video-player-1">
           <source src="/videos/intro-fly.mp4" type="video/mp4" />
         </video>
@@ -1056,7 +1056,7 @@ const handleNavigate = (sectionId: string) => {
       </div>
 
       <div id="intro-video-2" className="intro-video" style={{ opacity: 0, pointerEvents: 'none' }}>
-        <img id="static-bg-2" src="/images/panorama-1-center.jpg" alt="Static bridge scene" className="static-bg" />
+        <img id="static-bg-2" src="/images/panorama-1-center.webp" alt="Static bridge scene" className="static-bg" />
         <video muted playsInline id="intro-video-player-2">
           <source src="/videos/intro-enter.mp4" type="video/mp4" />
         </video>
