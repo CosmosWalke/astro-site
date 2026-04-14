@@ -1134,7 +1134,7 @@ useEffect(() => {
 
 // Вставьте этот код в ваш PanoramaPage компонент, заменив существующее модальное окно COMMUNITY
 
-{/* Модальное окно COMMUNITY */}
+{/* Модальное окно COMMUNITY 
 <div id="modal-community" className="community-modal">
   <div className="community-modal-content">
     <div className="community-modal-close" onClick={() => window.closeCommunityModal()}>×</div>
@@ -1142,7 +1142,7 @@ useEffect(() => {
     <div className="community-subtitle">CONNECT WITH US</div>
     
     <div className="social-grid">
-      {/* INSTAGRAM */}
+  
       <a
         href="https://instagram.com/ваш_аккаунт"
         target="_blank"
@@ -1162,7 +1162,7 @@ useEffect(() => {
         <div className="social-arrow">→</div>
       </a>
 
-      {/* X (TWITTER) */}
+
       <a
         href="https://twitter.com/ваш_аккаунт"
         target="_blank"
@@ -1182,7 +1182,7 @@ useEffect(() => {
         <div className="social-arrow">→</div>
       </a>
 
-      {/* YOUTUBE */}
+    
       <a
         href="https://youtube.com/@ваш_канал"
         target="_blank"
@@ -1202,7 +1202,7 @@ useEffect(() => {
         <div className="social-arrow">→</div>
       </a>
 
-      {/* TELEGRAM */}
+   
       <a
         href="https://t.me/ваш_канал"
         target="_blank"
@@ -1222,7 +1222,7 @@ useEffect(() => {
         <div className="social-arrow">→</div>
       </a>
 
-      {/* DISCORD */}
+    
       <a
         href="https://discord.gg/ваш_сервер"
         target="_blank"
@@ -1242,7 +1242,6 @@ useEffect(() => {
         <div className="social-arrow">→</div>
       </a>
 
-      {/* WHATSAPP */}
       <a
         href="https://wa.me/1234567890"
         target="_blank"
@@ -1284,7 +1283,7 @@ useEffect(() => {
     </div>
   </div>
 </div>
-
+*/}
       <div id="main-content" style={{ display: 'none' }}>
         <div id="hud">
           <div className="scanline"></div>
