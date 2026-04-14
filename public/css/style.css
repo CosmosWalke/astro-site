@@ -100,7 +100,7 @@ body {
 .scene-background {
     position: absolute;
     inset: 0;
-    background: url('/images/space-bg.jpg') center/cover no-repeat;
+    background: url('/images/space-bg.webp') center/cover no-repeat;
 }
 
 .door-container {
