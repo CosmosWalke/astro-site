@@ -808,8 +808,15 @@ const masterTl = gsap.timeline({
     }
     
     // ВСЁ ОСТАЛЬНОЕ БЕЗ ИЗМЕНЕНИЙ
-    masterTl.to(text1Ref.current, { opacity: 1, y: 0, duration: 0.02 }, 0.20 + startDelay)
+    masterTl.to(text1Ref.current, { opacity: 1, y: 0, duration: 0.02 }, 0.15 + startDelay)
     
+    // Второй текст появляется с левой стороны
+masterTl.set(text2Ref.current, { 
+  left: isMobile ? '55px' : '55px', // Прижимаем к левому краю
+  right: 'auto',
+  textAlign: 'left',
+  maxWidth: isMobile ? '90%' : '600px'
+}, 0.18 + startDelay)
     if (!isMobile) {
       masterTl.to(uiPanelRef.current, { opacity: 1, x: 0, duration: 0.02 }, 0.21 + startDelay)
     }
@@ -1282,7 +1289,7 @@ const calculateOptimalMove = () => {
                 <span className="font-mono text-[10px] text-[#00d4ff] tracking-widest">002</span>
               </div>
               <h2 className={`font-bold text-white/90 leading-tight tracking-tight ${isMobile ? 'text-xs' : 'text-3xl md:text-5xl lg:text-6xl'}`}>
-                YOU ARE A KEEPER: AN AGENT OF POWER AND CHANGE IN THIS WORLD.
+                ECHO GRANTS UNIMAGINABLE POWER TO THOSE WHO HEAR IT.
               </h2>
             </div>
 
@@ -1342,7 +1349,7 @@ const calculateOptimalMove = () => {
                       </span>
                     </div>
                     <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-[#e8e8ec] leading-[1.05] max-w-5xl tracking-tight">
-                      A FAMILIAR WORLD... SET ON A DIFFERENT PATH.
+                     IN THE SILENT VOID OF SPACE, THE GREAT ECHO STIRRED...
                     </h2>
                   </div>
                 )}
@@ -1510,7 +1517,7 @@ const calculateOptimalMove = () => {
                   paddingRight: isMobile ? '20px' : '0',
                 }}
               >
-                A world forever changed. A power that could save or destroy.
+                We are all connected in the cosmic web. One signal can change everything
               </p>
               
               <div className="absolute inset-0 z-30 pointer-events-none">

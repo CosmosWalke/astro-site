@@ -910,3 +910,21 @@ html {
 .rotate-y-180 {
   transform: rotateY(180deg);
 }
+.social-icon {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: currentColor;
+}
+
+.social-card:hover .social-icon {
+  transform: scale(1.1);
+  transition: transform 0.3s ease;
+}
+
+
+.social-card:hover .social-icon {
+  color: inherit;
+}

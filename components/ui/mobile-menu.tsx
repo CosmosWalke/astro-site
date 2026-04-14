@@ -21,6 +21,8 @@ export function MobileMenu({ sections, onNavigate }: MobileMenuProps) {
   const [activeSection, setActiveSection] = useState<string>(sections[0]?.id || '')
   const [isScrolling, setIsScrolling] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
+  const [backgroundLoaded, setBackgroundLoaded] = useState(true) // По умолчанию true, чтобы не блокировать
+  const [preloadedImage, setPreloadedImage] = useState<string | null>(null)
   const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const menuRef = useRef<HTMLDivElement>(null)
 
@@ -34,6 +36,32 @@ export function MobileMenu({ sections, onNavigate }: MobileMenuProps) {
     return () => window.removeEventListener('resize', checkMobile)
   }, [])
 
+  // Предзагрузка изображения при открытии меню
+  useEffect(() => {
+    if (isMenuOpen) {
+      const imageUrl = `/image/${isMobile ? 'menu-mobile.webp' : 'menu.webp'}`
+      
+      // Если изображение уже предзагружено и совпадает с текущим, не загружаем заново
+      if (preloadedImage === imageUrl) {
+        setBackgroundLoaded(true)
+        return
+      }
+      
+      setBackgroundLoaded(false)
+      
+      const img = new Image()
+      img.src = imageUrl
+      img.onload = () => {
+        setPreloadedImage(imageUrl)
+        setBackgroundLoaded(true)
+      }
+      img.onerror = () => {
+        // Если ошибка загрузки, всё равно показываем меню
+        setBackgroundLoaded(true)
+      }
+    }
+  }, [isMenuOpen, isMobile, preloadedImage])
+
   // Скролл для определения прозрачности кнопки
   useEffect(() => {
     const handleScroll = () => {
@@ -43,9 +71,9 @@ export function MobileMenu({ sections, onNavigate }: MobileMenuProps) {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  // Анимация меню
+  // Анимация меню (только после загрузки фона)
   useEffect(() => {
-    if (menuRef.current && isMenuOpen) {
+    if (menuRef.current && isMenuOpen && backgroundLoaded) {
       gsap.fromTo(menuRef.current,
         { opacity: 0, y: -20 },
         { opacity: 1, y: 0, duration: 0.4, ease: 'power3.out' }
@@ -55,7 +83,7 @@ export function MobileMenu({ sections, onNavigate }: MobileMenuProps) {
         { opacity: 1, x: 0, duration: 0.4, stagger: 0.1, ease: 'power3.out' }
       )
     }
-  }, [isMenuOpen])
+  }, [isMenuOpen, backgroundLoaded])
 
   // Определение активной секции при скролле
   useEffect(() => {
@@ -96,68 +124,68 @@ export function MobileMenu({ sections, onNavigate }: MobileMenuProps) {
   }, [])
 
   // Функция навигации
-  const handleNavigate = (sectionId: string) => {
-    setIsScrolling(true)
-    setIsMenuOpen(false)
-    
-    if (scrollTimeoutRef.current) {
-      clearTimeout(scrollTimeoutRef.current)
+const handleNavigate = (sectionId: string, isPage?: boolean, href?: string) => {
+  if (isPage && href) {
+    // Для страниц типа ABOUT и CARGO BAY
+    window.location.href = href
+    // или если используете Next.js router:
+    // router.push(href)
+  } else {
+    // Для обычных секций на странице
+    const element = document.getElementById(sectionId)
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' })
     }
-
-    onNavigate(sectionId)
-
-    scrollTimeoutRef.current = setTimeout(() => {
-      setIsScrolling(false)
-    }, 1000)
   }
+}
 
   // Процентное позиционирование текста относительно фонового изображения
   const textPosition = isMobile
     ? { left: '27%', top: '20%' }
     : { left: '35%', top: '18%' }
 
+  // Получаем URL фона
+  const backgroundImageUrl = `/image/${isMobile ? 'menu-mobile.webp' : 'menu.webp'}`
+
   return (
     <>
       {/* Кнопка меню */}
-{/* Кнопка меню */}
-<button
-  onClick={() => setIsMenuOpen(!isMenuOpen)}
-  className="fixed z-50 transition-transform duration-300 hover:scale-105 active:scale-95"
-  aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
-  style={
-    isMenuOpen
-      ? {
-          // Стили для кнопки ЗАКРЫТИЯ (крестик)
-          top: isMobile ? '90px' : '24px',
-          right: isMobile ? '60px' : '25px',
-          width: isMobile ? '60px' : '80px',
-          height: isMobile ? '60px' : '80px',
-          padding: isMobile ? '8px' : '10px',
-          backgroundImage: `url('/image/menuxbutton.webp')`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
-          backgroundColor: 'transparent',
-          border: 'none',
-          cursor: `url('/images/handarrow.webp') 0 0, pointer`,  
+      <button
+        onClick={() => setIsMenuOpen(!isMenuOpen)}
+        className="fixed z-50 transition-transform duration-300 hover:scale-105 active:scale-95"
+        aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
+        style={
+          isMenuOpen
+            ? {
+                top: isMobile ? '90px' : '24px',
+                right: isMobile ? '60px' : '25px',
+                width: isMobile ? '60px' : '80px',
+                height: isMobile ? '60px' : '80px',
+                padding: isMobile ? '8px' : '10px',
+                backgroundImage: `url('/image/menuxbutton.webp')`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                backgroundRepeat: 'no-repeat',
+                backgroundColor: 'transparent',
+                border: 'none',
+                cursor: `url('/images/handarrow.webp') 0 0, pointer`,
+              }
+            : {
+                top: isMobile ? '16px' : '24px',
+                right: isMobile ? '16px' : '25px',
+                width: isMobile ? '60px' : '80px',
+                height: isMobile ? '60px' : '80px',
+                padding: isMobile ? '8px' : '10px',
+                backgroundImage: `url('/image/menubutton.webp')`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                backgroundRepeat: 'no-repeat',
+                backgroundColor: 'transparent',
+                border: 'none',
+                cursor: 'pointer',
+              }
         }
-      : {
-          // Стили для кнопки ОТКРЫТИЯ (бургер)
-          top: isMobile ? '16px' : '24px',
-          right: isMobile ? '16px' : '25px',
-          width: isMobile ? '60px' : '80px',
-          height: isMobile ? '60px' : '80px',
-          padding: isMobile ? '8px' : '10px',
-          backgroundImage: `url('/image/menubutton.webp')`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
-          backgroundColor: 'transparent',
-          border: 'none',
-          cursor: 'pointer',
-        }
-  }
-/>
+      />
 
       {/* Full Screen Menu */}
       {isMenuOpen && (
@@ -165,51 +193,56 @@ export function MobileMenu({ sections, onNavigate }: MobileMenuProps) {
           ref={menuRef}
           className="fixed inset-0 z-40"
           style={{
-            backgroundImage: `url('/image/${isMobile ? 'menu-mobile.webp' : 'menu.webp'}')`,
+            backgroundImage: backgroundLoaded ? `url(${backgroundImageUrl})` : 'none',
+            backgroundColor: !backgroundLoaded ? '#000' : 'transparent',
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             backgroundRepeat: 'no-repeat',
+            opacity: backgroundLoaded ? 1 : 0,
+            transition: 'opacity 0.2s ease-in-out',
           }}
         >
           {/* Паттерн поверх фона */}
           <div className="absolute inset-0 grid-pattern opacity-20 pointer-events-none" />
           
-          {/* Текст с процентным позиционированием */}
+          {/* Текст с процентным позиционированием - показываем только после загрузки фона */}
           <div 
             className="absolute"
             style={{
               left: textPosition.left,
               top: textPosition.top,
+              opacity: backgroundLoaded ? 1 : 0,
+              transition: 'opacity 0.3s ease-in-out',
             }}
           >
-<nav className="flex flex-col items-start gap-2">
-  {sections.map((section, index) => {
-    return (
-      <a
-        key={section.label}
-        href={section.href}
-        onClick={(e) => {
-          e.preventDefault()
-          onNavigate(section.id)
-        }}
-        className={`menu-item group relative py-4 px-8 cursor-pointer ${isScrolling ? 'pointer-events-none opacity-50' : ''}`}
-       style={{ cursor: `url('/images/handarrow.webp') 0 0, pointer` }}
-      >
-        <TextScramble 
-          text={section.label.toUpperCase()} 
-          className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-wide text-black group-hover:text-[#00d4ff] transition-colors duration-300"
-        />
-        
-        {/* Цифры только на ПК */}
-        {!isMobile && (
-          <span className="absolute -left-14 top-1/2 -translate-y-1/2 text-sm font-mono text-[#6b6b7b] group-hover:text-[#00d4ff] transition-colors duration-300">
-            0{index + 1}
-          </span>
-        )}
-      </a>
-    )
-  })}
-</nav>
+            <nav className="flex flex-col items-start gap-2">
+              {sections.map((section, index) => {
+                return (
+                  <a
+                    key={section.label}
+                    href={section.href}
+                    onClick={(e) => {
+                      e.preventDefault()
+                      onNavigate(section.id)
+                    }}
+                    className={`menu-item group relative py-4 px-8 cursor-pointer ${isScrolling ? 'pointer-events-none opacity-50' : ''}`}
+                    style={{ cursor: `url('/images/handarrow.webp') 0 0, pointer` }}
+                  >
+                    <TextScramble 
+                      text={section.label.toUpperCase()} 
+                      className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-wide text-black group-hover:text-[#00d4ff] transition-colors duration-300"
+                    />
+                    
+                    {/* Цифры только на ПК */}
+                    {!isMobile && (
+                      <span className="absolute -left-14 top-1/2 -translate-y-1/2 text-sm font-mono text-[#6b6b7b] group-hover:text-[#00d4ff] transition-colors duration-300">
+                        0{index + 1}
+                      </span>
+                    )}
+                  </a>
+                )
+              })}
+            </nav>
 
             {/* Социальные ссылки */}
             <div 
@@ -270,6 +303,13 @@ export function MobileMenu({ sections, onNavigate }: MobileMenuProps) {
               </div>
             )}
           </div>
+
+          {/* Индикатор загрузки (опционально) */}
+          {!backgroundLoaded && (
+            <div className="absolute inset-0 flex items-center justify-center bg-black/50">
+              <div className="w-8 h-8 border-2 border-[#00d4ff] border-t-transparent rounded-full animate-spin" />
+            </div>
+          )}
         </div>
       )}
     </>
