@@ -123,17 +123,32 @@ const licensedLocations: Location[] = [
 
 // Компонент карточки товара с шахматным порядком
 const CargoCard = ({ item, index }: { item: CargoItem; index: number }) => {
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  const handlePlay = () => {
-    setIsPlaying(true);
+  const handleMouseEnter = () => {
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+      hoverTimeoutRef.current = null;
+    }
+    
+    setIsHovered(true);
     if (videoRef.current) {
       videoRef.current.currentTime = 0;
       videoRef.current.play().catch(e => console.log('Video play failed:', e));
     }
+  };
+
+  const handleMouseLeave = () => {
+    hoverTimeoutRef.current = setTimeout(() => {
+      setIsHovered(false);
+      if (videoRef.current) {
+        videoRef.current.pause();
+      }
+    }, 100);
   };
 
   const handleFullscreen = async () => {
@@ -160,6 +175,9 @@ const CargoCard = ({ item, index }: { item: CargoItem; index: number }) => {
     document.addEventListener('fullscreenchange', handleFullscreenChange);
     return () => {
       document.removeEventListener('fullscreenchange', handleFullscreenChange);
+      if (hoverTimeoutRef.current) {
+        clearTimeout(hoverTimeoutRef.current);
+      }
     };
   }, []);
 
@@ -178,6 +196,8 @@ const CargoCard = ({ item, index }: { item: CargoItem; index: number }) => {
         <div className="w-full lg:w-[60%]" ref={containerRef}>
           <div 
             className="relative w-full rounded-2xl overflow-hidden bg-black group/video"
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
           >
             <div className="relative w-full aspect-video overflow-hidden">
               <video
@@ -186,17 +206,19 @@ const CargoCard = ({ item, index }: { item: CargoItem; index: number }) => {
                 muted={!isFullscreen}
                 loop
                 playsInline
-                className="absolute inset-0 w-full h-full object-cover z-10"
+                className={`absolute inset-0 w-full h-full object-cover z-10 transition-opacity duration-300 ${
+                  isHovered ? 'opacity-100' : 'opacity-0'
+                }`}
               />
               
-              {/* Постер (изображение) показывается только если видео не играет */}
-              {!isPlaying && (
-                <img 
-                  src={item.image}
-                  alt={item.name}
-                  className="absolute inset-0 w-full h-full object-cover z-0"
-                />
-              )}
+              {/* Постер (изображение) показывается только если видео не наведено */}
+              <img 
+                src={item.image}
+                alt={item.name}
+                className={`absolute inset-0 w-full h-full object-cover z-0 transition-opacity duration-300 ${
+                  isHovered ? 'opacity-0' : 'opacity-100'
+                }`}
+              />
               
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-20" />
               
@@ -213,20 +235,8 @@ const CargoCard = ({ item, index }: { item: CargoItem; index: number }) => {
                 </div>
               </div>
               
-              {/* Кнопка Play - показывается на мобильных, скрыта на ПК */}
-              {!isPlaying && (
-                <button
-                  onClick={handlePlay}
-                  className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-40 lg:hidden"
-                >
-                  <div className="w-16 h-16 rounded-full bg-[#00d4ff]/20 backdrop-blur-sm flex items-center justify-center border-2 border-[#00d4ff]">
-                    <Play className="w-8 h-8 text-[#00d4ff] ml-1" />
-                  </div>
-                </button>
-              )}
-              
               {/* Кнопка полного экрана - только на мобильных когда видео играет */}
-              {isPlaying && (
+              {isHovered && (
                 <button
                   onClick={handleFullscreen}
                   className="absolute bottom-4 right-4 z-40 lg:hidden bg-black/60 backdrop-blur-sm rounded-full p-2 border border-white/20"
@@ -385,6 +395,18 @@ const LocationCard = ({ location, index }: { location: Location; index: number }
 
 export default function CargoBayPage() {
   const [activeFilter, setActiveFilter] = useState<string>('all');
+  const [isDesktop, setIsDesktop] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    setIsDesktop(window.innerWidth >= 1024);
+    
+    const handleResize = () => {
+      setIsDesktop(window.innerWidth >= 1024);
+    };
+    
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const filteredLocations = licensedLocations.filter(location => {
     if (activeFilter === 'all') return true;
@@ -435,7 +457,7 @@ export default function CargoBayPage() {
         <div className="text-center mb-12">
           <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">Featured Products</h2>
           <p className="text-[#6b6b7b] text-sm max-w-2xl mx-auto">
-            {window.innerWidth >= 1024 ? 'Hover over any video to see it in action' : 'Tap the play button to watch'}
+            {isDesktop === null ? 'Loading...' : (isDesktop ? 'Hover over any video to see it in action' : 'Tap the play button to watch')}
           </p>
         </div>
         <div className="flex flex-col gap-20 md:gap-28">
