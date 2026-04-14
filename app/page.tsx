@@ -248,10 +248,8 @@ useEffect(() => {
     })
     
     setAllResourcesReady(true)
-    
-    setTimeout(() => {
-      setShowLoading(false)
-    }, 300)
+    // Loading screen is now hidden by the playback useEffect
+    // after video is confirmed ready — no more premature hide
   }
   
   startLoading()
@@ -261,20 +259,42 @@ useEffect(() => {
   useEffect(() => {
     if (!allResourcesReady) return
     
-    // Показываем main-content
-    const mainContent = document.getElementById('main-content')
-    if (mainContent) mainContent.style.display = 'block'
-    
-    // Запускаем первое видео
     const player1 = document.getElementById('intro-video-player-1') as HTMLVideoElement
     const audio1 = document.getElementById('audio-intro-1') as HTMLAudioElement
+    const mainContent = document.getElementById('main-content')
     
-    if (player1) {
-      player1.play().catch(e => console.log('Video 1 autoplay failed:', e))
+    // Wait for the actual player element to be ready before showing
+    const startPlayback = () => {
+      // Show main-content first (still behind loading screen)
+      if (mainContent) mainContent.style.display = 'block'
+      
+      // Start video
+      if (player1) {
+        player1.currentTime = 0
+        player1.play().catch(e => console.log('Video 1 autoplay failed:', e))
+      }
+      if (audio1) {
+        audio1.volume = 0.5
+        audio1.currentTime = 0
+        audio1.play().catch(e => console.log('Audio 1 autoplay failed:', e))
+      }
+      
+      // Only THEN hide loading screen (with slight delay for video to render first frame)
+      setTimeout(() => {
+        setShowLoading(false)
+      }, 150)
     }
-    if (audio1) {
-      audio1.volume = 0.5
-      audio1.play().catch(e => console.log('Audio 1 autoplay failed:', e))
+    
+    if (player1 && player1.readyState >= 3) {
+      // Video already buffered enough
+      startPlayback()
+    } else if (player1) {
+      // Wait for video to be ready
+      player1.addEventListener('canplaythrough', startPlayback, { once: true })
+      // Fallback: don't wait forever
+      setTimeout(startPlayback, 3000)
+    } else {
+      startPlayback()
     }
     
   }, [allResourcesReady])
