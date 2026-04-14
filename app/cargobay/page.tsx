@@ -3,7 +3,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Package, Box, Truck, MapPin, Store, Building2, ShoppingBag, ExternalLink, Play, Maximize, X } from 'lucide-react';
+import { ArrowLeft, MapPin, Store, Building2, ShoppingBag, Play, Maximize, X } from 'lucide-react';
 import Link from 'next/link';
 
 interface CargoItem {
@@ -57,7 +57,6 @@ const cargoItems: CargoItem[] = [
   }
 ];
 
-// Лицензированные точки продаж
 const licensedLocations: Location[] = [
   {
     id: 'loc-1',
@@ -121,13 +120,17 @@ const licensedLocations: Location[] = [
   }
 ];
 
-// Компонент карточки товара с шахматным порядком
 const CargoCard = ({ item, index }: { item: CargoItem; index: number }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isClient, setIsClient] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const handleMouseEnter = () => {
     if (hoverTimeoutRef.current) {
@@ -192,7 +195,6 @@ const CargoCard = ({ item, index }: { item: CargoItem; index: number }) => {
       className="w-full"
     >
       <div className={`flex flex-col lg:flex-row gap-8 lg:gap-12 items-center ${isEven ? 'lg:flex-row' : 'lg:flex-row-reverse'}`}>
-        {/* Видео блок - 60% ширины */}
         <div className="w-full lg:w-[60%]" ref={containerRef}>
           <div 
             className="relative w-full rounded-2xl overflow-hidden bg-black group/video"
@@ -200,18 +202,19 @@ const CargoCard = ({ item, index }: { item: CargoItem; index: number }) => {
             onMouseLeave={handleMouseLeave}
           >
             <div className="relative w-full aspect-video overflow-hidden">
-              <video
-                ref={videoRef}
-                src={item.video}
-                muted={!isFullscreen}
-                loop
-                playsInline
-                className={`absolute inset-0 w-full h-full object-cover z-10 transition-opacity duration-300 ${
-                  isHovered ? 'opacity-100' : 'opacity-0'
-                }`}
-              />
+              {isClient && (
+                <video
+                  ref={videoRef}
+                  src={item.video}
+                  muted={!isFullscreen}
+                  loop
+                  playsInline
+                  className={`absolute inset-0 w-full h-full object-cover z-10 transition-opacity duration-300 ${
+                    isHovered ? 'opacity-100' : 'opacity-0'
+                  }`}
+                />
+              )}
               
-              {/* Постер (изображение) показывается только если видео не наведено */}
               <img 
                 src={item.image}
                 alt={item.name}
@@ -222,21 +225,18 @@ const CargoCard = ({ item, index }: { item: CargoItem; index: number }) => {
               
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-20" />
               
-              {/* Декоративные уголки - скрыты на мобильных */}
               <div className="absolute top-4 left-4 w-8 h-8 border-t-2 border-l-2 border-[#00d4ff] z-30 hidden lg:block" />
               <div className="absolute top-4 right-4 w-8 h-8 border-t-2 border-r-2 border-[#00d4ff] z-30 hidden lg:block" />
               <div className="absolute bottom-4 left-4 w-8 h-8 border-b-2 border-l-2 border-[#00d4ff] z-30 hidden lg:block" />
               <div className="absolute bottom-4 right-4 w-8 h-8 border-b-2 border-r-2 border-[#00d4ff] z-30 hidden lg:block" />
               
-              {/* ID товара - скрыт на мобильных */}
               <div className="absolute top-4 left-4 z-40 hidden lg:block">
                 <div className="px-3 py-1.5 bg-black/60 backdrop-blur-sm border border-[#00d4ff]/50 font-mono text-xs text-[#00d4ff] rounded">
                   ID: {item.id}
                 </div>
               </div>
               
-              {/* Кнопка полного экрана - только на мобильных когда видео играет */}
-              {isHovered && (
+              {isClient && isHovered && (
                 <button
                   onClick={handleFullscreen}
                   className="absolute bottom-4 right-4 z-40 lg:hidden bg-black/60 backdrop-blur-sm rounded-full p-2 border border-white/20"
@@ -245,7 +245,6 @@ const CargoCard = ({ item, index }: { item: CargoItem; index: number }) => {
                 </button>
               )}
               
-              {/* Подсказка на ПК */}
               <div className="absolute bottom-4 right-4 z-30 hidden lg:block">
                 <div className="px-2 py-1 bg-black/60 text-[10px] text-[#6b6b7b] rounded">
                   Hover to play
@@ -255,7 +254,6 @@ const CargoCard = ({ item, index }: { item: CargoItem; index: number }) => {
           </div>
         </div>
 
-        {/* Блок с описанием - 40% ширины */}
         <div className="w-full lg:w-[40%] space-y-6">
           <div className="space-y-4">
             <div className="flex items-center gap-2">
@@ -302,7 +300,6 @@ const CargoCard = ({ item, index }: { item: CargoItem; index: number }) => {
   );
 };
 
-// Компонент карточки локации
 const LocationCard = ({ location, index }: { location: Location; index: number }) => {
   const getTypeIcon = (type: string) => {
     switch (type) {
@@ -395,9 +392,11 @@ const LocationCard = ({ location, index }: { location: Location; index: number }
 
 export default function CargoBayPage() {
   const [activeFilter, setActiveFilter] = useState<string>('all');
-  const [isDesktop, setIsDesktop] = useState<boolean | null>(null);
+  const [isDesktop, setIsDesktop] = useState<boolean>(true);
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
+    setIsMounted(true);
     setIsDesktop(window.innerWidth >= 1024);
     
     const handleResize = () => {
@@ -419,7 +418,6 @@ export default function CargoBayPage() {
 
   return (
     <main className="min-h-screen bg-[#050508]">
-      {/* Кнопка Back - теперь вверху слева */}
       <button
         onClick={goToHome}
         className="fixed top-6 left-6 z-50 flex items-center gap-2 px-4 py-2 bg-black/50 backdrop-blur-md rounded-full border border-white/20 hover:border-white/40 transition-all duration-300 group"
@@ -428,7 +426,6 @@ export default function CargoBayPage() {
         <span className="text-sm font-medium text-white/90 group-hover:text-white">Back to Bridge</span>
       </button>
 
-      {/* Hero Section */}
       <div className="relative h-[40vh] md:h-[50vh] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0">
           <div className="absolute inset-0 bg-gradient-to-b from-[#00d4ff]/20 via-[#050508] to-[#050508]" />
@@ -452,12 +449,11 @@ export default function CargoBayPage() {
         </div>
       </div>
 
-      {/* Большие видео товары с шахматным порядком */}
       <div className="max-w-7xl mx-auto px-4 md:px-8 py-16 md:py-24">
         <div className="text-center mb-12">
           <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">Featured Products</h2>
           <p className="text-[#6b6b7b] text-sm max-w-2xl mx-auto">
-            {isDesktop === null ? 'Loading...' : (isDesktop ? 'Hover over any video to see it in action' : 'Tap the play button to watch')}
+            {!isMounted ? 'Loading...' : (isDesktop ? 'Hover over any video to see it in action' : 'Tap the play button to watch')}
           </p>
         </div>
         <div className="flex flex-col gap-20 md:gap-28">
@@ -467,7 +463,6 @@ export default function CargoBayPage() {
         </div>
       </div>
 
-      {/* Лицензированные точки продаж */}
       <div className="relative py-16 md:py-24 bg-gradient-to-b from-[#050508] to-[#0a0a10] border-t border-[#1a1a24] border-b border-[#1a1a24]">
         <div className="max-w-7xl mx-auto px-4 md:px-8">
           <div className="text-center mb-12">
@@ -482,7 +477,6 @@ export default function CargoBayPage() {
             </p>
           </div>
 
-          {/* Фильтры */}
           <div className="flex flex-wrap justify-center gap-2 mb-8">
             <button
               onClick={() => setActiveFilter('all')}
@@ -526,14 +520,12 @@ export default function CargoBayPage() {
             </button>
           </div>
 
-          {/* Сетка локаций */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {filteredLocations.map((location, index) => (
               <LocationCard key={location.id} location={location} index={index} />
             ))}
           </div>
 
-          {/* Информация о лицензиях */}
           <div className="mt-8 text-center">
             <p className="text-[10px] font-mono text-[#6b6b7b]">
               All locations are fully licensed and compliant with local regulations. 
@@ -543,7 +535,6 @@ export default function CargoBayPage() {
         </div>
       </div>
 
-      {/* Информационная секция */}
       <div className="max-w-7xl mx-auto px-4 md:px-8 py-12">
         <div className="text-center">
           <h3 className="text-xl font-bold text-white mb-2">Astro Cargo Bay</h3>
