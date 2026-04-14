@@ -1282,7 +1282,7 @@ useEffect(() => {
       </div>
     </div>
   </div>
-</div>
+</div
 */}
       <div id="main-content" style={{ display: 'none' }}>
         <div id="hud">
