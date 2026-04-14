@@ -122,7 +122,7 @@ export function FactionsSection() {
           <span className="text-[#e8e8ec]">The </span>
           <span className="text-[#ff6b35] text-glow-orange">FLAVORS</span>
         </h2>
-        <p className="text-center text-[#6b6b7b] max-w-2xl mx-auto">
+        <p className="text-center text-[#8b8b9b] max-w-2xl mx-auto">
           Welcome to Astro Universe — where we take your experience to a whole new dimension. Our premium cannabis products are crafted to launch your mind, body, and spirit into the cosmos. Get ready to explore bold flavors, stellar highs, and an otherworldly vibe. The universe is vast, and your journey is just beginning. Buckle up — it’s time to elevate with Astro Universe!
         </p>
       </div>
@@ -181,7 +181,7 @@ export function FactionsSection() {
                       >
                         {faction.status}
                       </div>
-                      <div className="text-xs font-mono text-[#6b6b7b]">
+                      <div className="text-xs font-mono text-[#8b8b9b]">
                         {faction.members} members
                       </div>
                     </div>
@@ -193,14 +193,14 @@ export function FactionsSection() {
                   </h3>
 
                   {/* Description */}
-                  <p className="text-sm text-[#6b6b7b] leading-relaxed flex-1">
+                  <p className="text-sm text-[#8b8b9b] leading-relaxed flex-1">
                     {faction.description}
                   </p>
 
                   {/* Footer */}
                   <div className="mt-4 pt-4 border-t border-[#1a1a24]">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-mono text-[#6b6b7b]">
+                      <span className="text-xs font-mono text-[#8b8b9b]">
                         ID: {faction.id}
                       </span>
                       <div 
@@ -257,19 +257,19 @@ export function FactionsSection() {
         <div className="flex flex-wrap justify-center gap-8 md:gap-16 py-8 border-t border-b border-[#1a1a24]">
           <div className="text-center">
             <div className="text-3xl font-bold text-[#00d4ff]">5</div>
-            <div className="text-xs font-mono text-[#6b6b7b] uppercase">Factions</div>
+            <div className="text-xs font-mono text-[#8b8b9b] uppercase">Factions</div>
           </div>
           <div className="text-center">
             <div className="text-3xl font-bold text-[#ff6b35]">9,650</div>
-            <div className="text-xs font-mono text-[#6b6b7b] uppercase">Total Members</div>
+            <div className="text-xs font-mono text-[#8b8b9b] uppercase">Total Members</div>
           </div>
           <div className="text-center">
             <div className="text-3xl font-bold text-[#14f195]">100%</div>
-            <div className="text-xs font-mono text-[#6b6b7b] uppercase">Alliance Status</div>
+            <div className="text-xs font-mono text-[#8b8b9b] uppercase">Alliance Status</div>
           </div>
           <div className="text-center">
             <div className="text-3xl font-bold text-[#9945ff]">ACTIVE</div>
-            <div className="text-xs font-mono text-[#6b6b7b] uppercase">Protocol Status</div>
+            <div className="text-xs font-mono text-[#8b8b9b] uppercase">Protocol Status</div>
           </div>
         </div>
       </div>

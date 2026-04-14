@@ -71,7 +71,7 @@ const getStatusColor = (status: string) => {
     case 'HOSTILE':
       return '#ff6b35'
     default:
-      return '#6b6b7b'
+      return '#8b8b9b'
   }
 }
 
@@ -293,7 +293,7 @@ const updatePositions = () => {
       videoRef.current.muted = true
       videoRef.current.playsInline = true
       videoRef.current.disablePictureInPicture = true
-      videoRef.current.play().catch(e => console.log('Video autoplay failed:', e))
+      videoRef.current.play().catch(() => {})
     }
   }, [])
 
@@ -1025,7 +1025,7 @@ return (
                       <span className="text-[#e8e8ec]">The </span>
                       <span className="text-[#00d4ff]">World</span>
                     </h2>
-                    <p className="text-center text-[#6b6b7b] text-sm mt-4 max-w-md mx-auto">
+                    <p className="text-center text-[#8b8b9b] text-sm mt-4 max-w-md mx-auto">
                       Explore the territories under the Protocol&apos;s protection
                     </p>
                   </div>
@@ -1102,7 +1102,7 @@ return (
                       <div className="absolute top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-[#050508]/80 rounded-full">
                         <span className="font-mono text-xs text-[#00d4ff]">PROTOCOL NETWORK MAP v2.4</span>
                       </div>
-                      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 font-mono text-xs text-[#6b6b7b]">
+                      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 font-mono text-xs text-[#8b8b9b]">
                         {hoveredLocation ? (
                           <span>X: {worldLocations.find(l => l.id === hoveredLocation)?.coordinates.x} | Y: {worldLocations.find(l => l.id === hoveredLocation)?.coordinates.y}</span>
                         ) : (
@@ -1119,10 +1119,10 @@ return (
                             <span className="text-xs font-mono" style={{ color: getStatusColor(activeLocationData.status) }}>{activeLocationData.status}</span>
                           </div>
                           <h3 className="text-xl font-bold text-[#e8e8ec] mb-2">{activeLocationData.name}</h3>
-                          <p className="text-sm text-[#6b6b7b] mb-4">{activeLocationData.description}</p>
+                          <p className="text-sm text-[#8b8b9b] mb-4">{activeLocationData.description}</p>
                           <div className="pt-4 border-t border-[#1a1a24]">
                             <div className="flex justify-between text-xs font-mono">
-                              <span className="text-[#6b6b7b]">COORDINATES</span>
+                              <span className="text-[#8b8b9b]">COORDINATES</span>
                               <span className="text-[#00d4ff]">{activeLocationData.coordinates.x}, {activeLocationData.coordinates.y}</span>
                             </div>
                           </div>
@@ -1132,7 +1132,7 @@ return (
                         </div>
                       ) : (
                         <div className="p-6 bg-[#0a0a0f]/80 border border-[#1a1a24] text-center rounded-xl">
-                          <div className="text-[#6b6b7b] text-sm mb-2">Select a location on the map</div>
+                          <div className="text-[#8b8b9b] text-sm mb-2">Select a location on the map</div>
                           <div className="font-mono text-xs text-[#00d4ff]">{worldLocations.length} LOCATIONS AVAILABLE</div>
                         </div>
                       )}
@@ -1150,7 +1150,7 @@ return (
                               <div className="w-2 h-2 rounded-full" style={{ backgroundColor: getStatusColor(location.status) }} />
                               <span className="text-xs text-[#e8e8ec]">{location.name}</span>
                             </div>
-                            <span className="text-[10px] font-mono text-[#6b6b7b]">{location.id}</span>
+                            <span className="text-[10px] font-mono text-[#8b8b9b]">{location.id}</span>
                           </button>
                         ))}
                       </div>
@@ -1509,10 +1509,10 @@ return (
 
             <div ref={uiPanelRef} className="absolute top-1/2 -translate-y-1/2 right-8 md:right-16 z-20" style={{ opacity: isMobile ? 0 : 1 }}>
               <div className="bg-[#0a0a12]/60 backdrop-blur-sm border border-[#2a2a3a] rounded-lg p-4 font-mono text-xs">
-                <div className="text-[#6b6b7b] mb-2">// INITIALIZING</div>
+                <div className="text-[#8b8b9b] mb-2">// INITIALIZING</div>
                 <div className="text-[#00d4ff] mb-1">KEEPER_STORY</div>
                 <div className="text-[#4a4a5a] mb-3">LOADING... [47%]</div>
-                <div className="space-y-1 text-[#6b6b7b]">
+                <div className="space-y-1 text-[#8b8b9b]">
                   <div>LOCATION_DATA</div>
                   <div>CHARACTER_ATTRIBUTES</div>
                   <div>KLNK_TRANSMISSIONS</div>
@@ -1596,7 +1596,7 @@ return (
                     </div>
                     
                     <p 
-                      className="mt-6 text-sm text-[#6b6b7b] leading-relaxed"
+                      className="mt-6 text-sm text-[#8b8b9b] leading-relaxed"
                       style={{
                         maxWidth: isMobile ? '120px' : '180px',
                         fontSize: isMobile ? '11px' : '14px',

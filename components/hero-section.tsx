@@ -160,7 +160,7 @@ export function HeroSection() {
           <span className="text-[#e8e8ec]">WELCOME TO THE </span>
           <span className="text-[#00d4ff] text-glow-cyan">ASTROUNIVERSE</span>
         </h1>
-        <p className="text-[#6b6b7b] text-lg md:text-xl max-w-2xl mx-auto">
+        <p className="text-[#8b8b9b] text-lg md:text-xl max-w-2xl mx-auto">
           Protocol guardians of the last civilization
         </p>
       </div>
@@ -202,7 +202,7 @@ export function HeroSection() {
                 {/* Content */}
                 <div className="absolute bottom-0 left-0 right-0 p-4">
                   <div className="font-mono text-xs text-[#00d4ff] mb-1">{image.title}</div>
-                  <div className="text-sm text-[#6b6b7b]">{image.subtitle}</div>
+                  <div className="text-sm text-[#8b8b9b]">{image.subtitle}</div>
                 </div>
 
                 {/* Corner decorations */}
@@ -241,7 +241,7 @@ export function HeroSection() {
       <div className="relative z-10 mt-12">
         <a 
           href="#discover"
-          className="group inline-flex flex-col items-center gap-2 text-[#6b6b7b] hover:text-[#00d4ff] transition-colors duration-300"
+          className="group inline-flex flex-col items-center gap-2 text-[#8b8b9b] hover:text-[#00d4ff] transition-colors duration-300"
         >
           <span className="text-sm font-medium tracking-wider">Discover More</span>
           <ChevronDown className="w-5 h-5 animate-bounce" />
@@ -250,7 +250,7 @@ export function HeroSection() {
 
       {/* Side Info Panels */}
       <div className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 hidden lg:flex flex-col gap-4">
-        <div className="font-mono text-xs text-[#6b6b7b] writing-mode-vertical transform -rotate-180" style={{ writingMode: 'vertical-rl' }}>
+        <div className="font-mono text-xs text-[#8b8b9b] writing-mode-vertical transform -rotate-180" style={{ writingMode: 'vertical-rl' }}>
           KPCO / KAI-14 / REACTOR
         </div>
       </div>
@@ -266,7 +266,7 @@ export function HeroSection() {
       {/* Bottom Terminal */}
       <div className="absolute bottom-8 left-4 md:left-8 right-4 md:right-8">
         <div className="max-w-4xl mx-auto">
-          <div className="flex items-center gap-2 font-mono text-xs text-[#6b6b7b]">
+          <div className="flex items-center gap-2 font-mono text-xs text-[#8b8b9b]">
             <span className="text-[#00d4ff]">&gt;</span>
             <span className="typing-effect">Type Your Command</span>
           </div>

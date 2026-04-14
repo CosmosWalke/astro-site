@@ -158,7 +158,7 @@ export default function GalaxyMapDemo() {
       case 'HOSTILE':
         return '#ff6b35'
       default:
-        return '#6b6b7b'
+        return '#8b8b9b'
     }
   }
 
@@ -204,7 +204,7 @@ export default function GalaxyMapDemo() {
           <span className="text-[#e8e8ec]">The </span>
           <span className="text-[#00d4ff]">World</span>
         </h1>
-        <p className="text-center text-[#6b6b7b] mt-4 max-w-2xl mx-auto">
+        <p className="text-center text-[#8b8b9b] mt-4 max-w-2xl mx-auto">
           Interactive Map with Traveling Ships • Click on any planet
         </p>
       </div>
@@ -386,22 +386,22 @@ export default function GalaxyMapDemo() {
             <>
               <p className="text-2xl font-bold text-[#e8e8ec]">{activePlanet.name}</p>
               <div className="flex flex-wrap gap-4 mt-2">
-                <span className="text-xs font-mono text-[#6b6b7b]">TYPE: {activePlanet.type}</span>
+                <span className="text-xs font-mono text-[#8b8b9b]">TYPE: {activePlanet.type}</span>
                 <span className="text-xs font-mono" style={{ color: getStatusColor(activePlanet.status) }}>
                   STATUS: {activePlanet.status}
                 </span>
               </div>
-              <p className="text-sm text-[#6b6b7b] mt-3">Coordinates: {activePlanet.x}, {activePlanet.y}</p>
+              <p className="text-sm text-[#8b8b9b] mt-3">Coordinates: {activePlanet.x}, {activePlanet.y}</p>
             </>
           ) : (
-            <p className="text-sm text-[#6b6b7b] font-mono">Select a location on the map</p>
+            <p className="text-sm text-[#8b8b9b] font-mono">Select a location on the map</p>
           )}
         </div>
       </div>
 
       {/* Legend */}
       <div className="max-w-6xl mx-auto px-4 md:px-8 pb-16">
-        <div className="flex flex-wrap justify-center gap-6 text-xs font-mono text-[#6b6b7b]">
+        <div className="flex flex-wrap justify-center gap-6 text-xs font-mono text-[#8b8b9b]">
           <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-[#00d4ff]" /><span>Core / Active</span></div>
           <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-[#14f195]" /><span>Secure / Protected</span></div>
           <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-[#ff6b35]" /><span>Hostile Zone</span></div>

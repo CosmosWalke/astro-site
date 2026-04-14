@@ -77,7 +77,7 @@ export function AudioPlayer() {
         }
       } else {
         if (audioRef.current && isPlaying && isSoundEnabled) {
-          audioRef.current.play().catch(e => console.log('Resume play failed:', e))
+          audioRef.current.play().catch(() => {})
         }
       }
     }
@@ -113,7 +113,7 @@ export function AudioPlayer() {
           setIsPlaying(true)
           setIsSoundEnabled(true)
         })
-        .catch(e => console.log('Failed to enable sound:', e))
+        .catch(() => {})
     }
   }
 
@@ -126,7 +126,7 @@ export function AudioPlayer() {
       if (isPlaying) {
         audioRef.current.pause()
       } else {
-        audioRef.current.play().catch(e => console.log('Audio play failed:', e))
+        audioRef.current.play().catch(() => {})
       }
       setIsPlaying(!isPlaying)
     }

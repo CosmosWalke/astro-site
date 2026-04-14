@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
+import { useRouter } from 'next/navigation'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
@@ -18,21 +19,20 @@ const footerLinks = {
     { label: 'Media', href: '#media' },
   ],
   community: [
-    { label: 'Telegram', href: 'https://t.me/ваш_канал', external: true },
-    { label: 'Instagram', href: 'https://instagram.com/ваш_аккаунт', external: true },
-    { label: 'Discord', href: 'https://discord.gg/ваш_сервер', external: true },
-    { label: 'Newsletter', href: '#newsletter', external: false },
+    { label: 'Telegram', href: '#', external: false },
+    { label: 'Instagram', href: '#', external: false },
+    { label: 'Discord', href: '#', external: false },
   ],
   legal: [
-    { label: 'Privacy Policy', href: '#privacy' },
-    { label: 'Terms of Service', href: '#terms' },
-    { label: 'Legal License', href: '#license' },
+    { label: 'Privacy Policy', href: '/privacy' },
+    { label: 'Terms of Service', href: '/terms' },
   ]
 }
 
 export function Footer() {
   const footerRef = useRef<HTMLElement>(null)
   const contentRef = useRef<HTMLDivElement>(null)
+  const router = useRouter()
 
   const smoothScrollTo = (elementId: string) => {
     const element = document.getElementById(elementId)
@@ -111,7 +111,7 @@ export function Footer() {
                     <li key={link.label}>
                       <button 
                         onClick={() => smoothScrollTo(link.href.replace('#', ''))}
-                        className="text-sm text-[#6b6b7b] hover:text-[#e8e8ec] transition-colors duration-300 cursor-pointer"
+                        className="text-sm text-[#8b8b9b] hover:text-[#e8e8ec] transition-colors duration-300 cursor-pointer"
                       >
                         {link.label}
                       </button>
@@ -130,7 +130,7 @@ export function Footer() {
                     <li key={link.label}>
                       <button 
                         onClick={() => handleLinkClick(link.href, link.external)}
-                        className="text-sm text-[#6b6b7b] hover:text-[#e8e8ec] transition-colors duration-300 cursor-pointer flex items-center gap-2"
+                        className="text-sm text-[#8b8b9b] hover:text-[#e8e8ec] transition-colors duration-300 cursor-pointer flex items-center gap-2"
                       >
                         {link.label}
                         {link.external && (
@@ -150,7 +150,7 @@ export function Footer() {
                   MORE DETAILS
                 </h3>
                 <div className="space-y-4">
-                  <p className="text-sm text-[#6b6b7b]">Contact us at</p>
+                  <p className="text-sm text-[#8b8b9b]">Contact us at</p>
                   <a 
                     href="mailto:hello@astroverse.com"
                     className="block text-sm text-[#e8e8ec] hover:text-[#00d4ff] transition-colors duration-300"
@@ -214,7 +214,7 @@ export function Footer() {
                     <li key={link.label}>
                       <button 
                         onClick={() => handleLinkClick(link.href, link.external)}
-                        className="text-base text-[#6b6b7b] hover:text-[#e8e8ec] transition-colors duration-300 cursor-pointer flex items-center gap-2"
+                        className="text-base text-[#8b8b9b] hover:text-[#e8e8ec] transition-colors duration-300 cursor-pointer flex items-center gap-2"
                       >
                         {link.label}
                         {link.external && (
@@ -234,7 +234,7 @@ export function Footer() {
                   MORE DETAILS
                 </h3>
                 <div className="space-y-3 mb-6">
-                  <p className="text-base text-[#6b6b7b]">Contact us at</p>
+                  <p className="text-base text-[#8b8b9b]">Contact us at</p>
                   <a 
                     href="mailto:hello@astroverse.com"
                     className="block text-base text-[#e8e8ec] hover:text-[#00d4ff] transition-colors duration-300"
@@ -276,7 +276,7 @@ export function Footer() {
                 {footerLinks.legal.map((link, index) => (
                   <span key={link.label} className="flex items-center gap-3 md:gap-4">
                     <button 
-                      onClick={() => smoothScrollTo(link.href.replace('#', ''))}
+                      onClick={() => router.push(link.href)}
                       className="hover:text-[#e8e8ec] transition-colors duration-300 cursor-pointer text-base md:text-xs"
                     >
                       {link.label}
@@ -287,7 +287,7 @@ export function Footer() {
                   </span>
                 ))}
               </div>
-              <div className="text-base md:text-xs text-[#6b6b7b]">
+              <div className="text-base md:text-xs text-[#8b8b9b]">
                 &copy; 2026 ASTRO Protocol. All rights reserved.
               </div>
             </div>

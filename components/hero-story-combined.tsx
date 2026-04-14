@@ -52,7 +52,6 @@ const barcodeWidths = [2, 1, 2, 1, 1, 2, 1, 2, 2, 1, 1, 2, 1, 1, 2, 2, 1, 2, 1, 
 
 // Функция загрузки всех ресурсов
 const loadAllResources = async (onProgress: (progress: number) => void) => {
-  console.log('🚀 НАЧАЛО ЗАГРУЗКИ ВСЕХ РЕСУРСОВ...')
   
   const resourcesToLoad: Promise<unknown>[] = []
   
@@ -103,7 +102,6 @@ const loadAllResources = async (onProgress: (progress: number) => void) => {
   const updateProgress = (resourceName: string) => {
     loadedCount++
     const progress = Math.floor((loadedCount / totalCount) * 100)
-    console.log(`✅ Загружено: ${resourceName} (${loadedCount}/${totalCount}) - ${progress}%`)
     onProgress(progress)
   }
   
@@ -111,15 +109,12 @@ const loadAllResources = async (onProgress: (progress: number) => void) => {
   heroImages.forEach(({ src, name }) => {
     const img = new Image()
     img.src = src
-    console.log(`🖼️ Начинаю загрузку: ${name} (${src})`)
     const promise = new Promise((resolve) => {
       if (img.complete) {
-        console.log(`⚡ ${name} - уже в кеше`)
         updateProgress(name)
         resolve(true)
       } else {
         img.onload = () => {
-          console.log(`📷 ${name} - загружено!`)
           updateProgress(name)
           resolve(true)
         }
@@ -138,7 +133,6 @@ const loadAllResources = async (onProgress: (progress: number) => void) => {
     const img = new Image()
     img.src = src
     const name = `Panorama Desktop: ${src.split('/').pop()}`
-    console.log(`🖼️ Начинаю загрузку: ${name}`)
     const promise = new Promise((resolve) => {
       if (img.complete) {
         updateProgress(name)
@@ -162,7 +156,6 @@ const loadAllResources = async (onProgress: (progress: number) => void) => {
     const img = new Image()
     img.src = src
     const name = `Panorama Mobile: ${src.split('/').pop()}`
-    console.log(`🖼️ Начинаю загрузку: ${name}`)
     const promise = new Promise((resolve) => {
       if (img.complete) {
         updateProgress(name)
@@ -183,7 +176,6 @@ const loadAllResources = async (onProgress: (progress: number) => void) => {
   
   // Загрузка видео панорамы
   panoramaVideos.forEach(({ src, name }) => {
-    console.log(`🎬 Начинаю загрузку: ${name} (${src})`)
     const promise = new Promise((resolve) => {
       const video = document.createElement('video')
       video.preload = 'auto'
@@ -194,7 +186,6 @@ const loadAllResources = async (onProgress: (progress: number) => void) => {
       video.addEventListener('canplaythrough', () => {
         if (!resolved) {
           resolved = true
-          console.log(`📹 ${name} - загружено!`)
           updateProgress(name)
           resolve(true)
         }
@@ -222,7 +213,6 @@ const loadAllResources = async (onProgress: (progress: number) => void) => {
   })
   
   // Загрузка видео для флип карты
-  console.log(`🎬 Начинаю загрузку: ${flipVideo.name} (${flipVideo.src})`)
   const flipVideoPromise = new Promise((resolve) => {
     const video = document.createElement('video')
     video.preload = 'auto'
@@ -233,7 +223,6 @@ const loadAllResources = async (onProgress: (progress: number) => void) => {
     video.addEventListener('canplaythrough', () => {
       if (!resolved) {
         resolved = true
-        console.log(`📹 ${flipVideo.name} - загружено!`)
         updateProgress(flipVideo.name)
         resolve(true)
       }
@@ -260,7 +249,6 @@ const loadAllResources = async (onProgress: (progress: number) => void) => {
   resourcesToLoad.push(flipVideoPromise)
   
   // Загрузка загрузочного видео
-  console.log(`🎬 Начинаю загрузку: ${loadingVideo.name} (${loadingVideo.src})`)
   const loadingVideoPromise = new Promise((resolve) => {
     const video = document.createElement('video')
     video.preload = 'auto'
@@ -271,7 +259,6 @@ const loadAllResources = async (onProgress: (progress: number) => void) => {
     video.addEventListener('canplaythrough', () => {
       if (!resolved) {
         resolved = true
-        console.log(`📹 ${loadingVideo.name} - загружено!`)
         updateProgress(loadingVideo.name)
         resolve(true)
       }
@@ -297,9 +284,7 @@ const loadAllResources = async (onProgress: (progress: number) => void) => {
   })
   resourcesToLoad.push(loadingVideoPromise)
   
-  console.log('⏳ Ожидание загрузки всех ресурсов...')
   await Promise.all(resourcesToLoad)
-  console.log('🎉 ВСЕ РЕСУРСЫ ЗАГРУЖЕНЫ!')
   return true
 }
 
@@ -471,7 +456,7 @@ useEffect(() => {
       videoRef.current.muted = true
       videoRef.current.playsInline = true
       videoRef.current.disablePictureInPicture = true
-      videoRef.current.play().catch(e => console.log('Video autoplay failed:', e))
+      videoRef.current.play().catch(() => {})
     }
   }, [])
 
@@ -1301,10 +1286,10 @@ const calculateOptimalMove = () => {
 
             <div ref={uiPanelRef} className="absolute top-1/2 -translate-y-1/2 right-8 md:right-16 z-20" style={{ opacity: isMobile ? 0 : 1 }}>
               <div className="bg-[#0a0a12]/60 backdrop-blur-sm border border-[#2a2a3a] rounded-lg p-4 font-mono text-xs">
-                <div className="text-[#6b6b7b] mb-2">// INITIALIZING</div>
+                <div className="text-[#8b8b9b] mb-2">// INITIALIZING</div>
                 <div className="text-[#00d4ff] mb-1">KEEPER_STORY</div>
                 <div className="text-[#4a4a5a] mb-3">LOADING... [47%]</div>
-                <div className="space-y-1 text-[#6b6b7b]">
+                <div className="space-y-1 text-[#8b8b9b]">
                   <div>LOCATION_DATA</div>
                   <div>CHARACTER_ATTRIBUTES</div>
                   <div>KLNK_TRANSMISSIONS</div>
@@ -1392,7 +1377,7 @@ const calculateOptimalMove = () => {
                     </div>
                     
                     <p 
-                      className="mt-6 text-sm text-[#6b6b7b] leading-relaxed"
+                      className="mt-6 text-sm text-[#8b8b9b] leading-relaxed"
                       style={{
                         maxWidth: isMobile ? '120px' : '180px',
                         fontSize: isMobile ? '11px' : '14px',

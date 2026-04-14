@@ -127,7 +127,7 @@ export function GallerySection() {
           <span className="text-[#e8e8ec]">The </span>
           <span className="text-[#ff6b35] text-glow-orange">Gallery</span>
         </h2>
-        <p className="text-center text-[#6b6b7b] max-w-2xl mx-auto mb-8">
+        <p className="text-center text-[#8b8b9b] max-w-2xl mx-auto mb-8">
           Visual archives from the Protocol. Documented moments from our journey.
         </p>
 
@@ -140,7 +140,7 @@ export function GallerySection() {
               className={`px-4 py-2 text-xs font-mono transition-all duration-300 ${
                 filter === f
                   ? 'bg-[#ff6b35] text-[#050508]'
-                  : 'bg-transparent border border-[#2a2a38] text-[#6b6b7b] hover:border-[#ff6b35] hover:text-[#ff6b35]'
+                  : 'bg-transparent border border-[#2a2a38] text-[#8b8b9b] hover:border-[#ff6b35] hover:text-[#ff6b35]'
               }`}
             >
               {f}
@@ -188,7 +188,7 @@ export function GallerySection() {
                     <span className="px-2 py-1 bg-[#050508]/80 border border-[#ff6b35]/30 text-xs font-mono text-[#ff6b35]">
                       {item.category}
                     </span>
-                    <span className="text-xs font-mono text-[#6b6b7b]">
+                    <span className="text-xs font-mono text-[#8b8b9b]">
                       {item.date}
                     </span>
                   </div>
@@ -200,7 +200,7 @@ export function GallerySection() {
                     }`}>
                       {item.title}
                     </h3>
-                    <div className="flex items-center gap-2 text-xs font-mono text-[#6b6b7b] group-hover:text-[#ff6b35] transition-colors duration-300">
+                    <div className="flex items-center gap-2 text-xs font-mono text-[#8b8b9b] group-hover:text-[#ff6b35] transition-colors duration-300">
                       <span>View Details</span>
                       <svg 
                         className="w-3 h-3 group-hover:translate-x-1 transition-transform duration-300" 

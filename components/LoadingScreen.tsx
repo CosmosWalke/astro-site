@@ -8,7 +8,6 @@ interface LoadingScreenProps {
 const barcodeWidths = [2, 1, 2, 1, 1, 2, 1, 2, 2, 1, 1, 2, 1, 1, 2, 2, 1, 2, 1, 1, 2, 1, 2, 1, 1, 2, 2, 1, 1, 2];
 
 export function LoadingScreen({ progress, isVisible }: LoadingScreenProps) {
-  console.log('LoadingScreen render:', { progress, isVisible });
   
   if (!isVisible) return null;
   

@@ -32,18 +32,15 @@ let doorHotspotActive = false;
 
 // Функция инициализации всего (заменяет window.addEventListener('load', ...))
 function initMain() {
-    console.log("initMain called, checking elements...");
     
     const player1 = document.getElementById('intro-video-player-1');
     
     // Если элементы ещё не созданы - ждём
     if (!player1) {
-        console.log("Elements not ready, retrying in 100ms...");
         setTimeout(initMain, 100);
         return;
     }
     
-    console.log("Main.js initialized, elements ready");
     
     const introVideo1 = document.getElementById('intro-video-1');
     const audio1 = document.getElementById('audio-intro-1');
@@ -83,7 +80,7 @@ function initMain() {
     player1.addEventListener('play', () => {
         if (audio1) {
             audio1.currentTime = player1.currentTime;
-            audio1.play().catch(e => console.log("Audio blocked:", e));
+            audio1.play().catch(() => {});
         }
     });
 
@@ -95,7 +92,6 @@ function initMain() {
     });
 
     player1.addEventListener('ended', () => {
-        console.log("Video 1 ended - showing door");
         if (audio1) {
             audio1.pause();
             audio1.currentTime = 0;
@@ -113,7 +109,6 @@ function initMain() {
 
     setTimeout(() => {
         if (introVideo1 && introVideo1.style.display !== 'none') {
-            console.log("Fallback: forcing door to show");
             if (audio1) audio1.pause();
             if (introVideo1) introVideo1.style.display = 'none';
             if (introScreen) {
@@ -129,7 +124,7 @@ function initMain() {
         player2.addEventListener('play', () => {
             if (audio2) {
                 audio2.currentTime = player2.currentTime;
-                audio2.play().catch(e => console.log("Audio blocked:", e));
+                audio2.play().catch(() => {});
             }
             preparePanoramaDuringVideo();
         });
@@ -142,7 +137,6 @@ function initMain() {
         });
 
         player2.addEventListener('ended', () => {
-            console.log("Video 2 ended - finalizing panorama");
             if (audio2) {
                 audio2.pause();
                 audio2.currentTime = 0;
@@ -154,17 +148,14 @@ function initMain() {
 }
 
 function initDoorHotspot() {
-    console.log("initDoorHotspot called");
     
     const doorHotspot = document.querySelector('.hotspot-door');
     
     if (!doorHotspot) {
-        console.log("Door hotspot not found, retrying in 100ms...");
         setTimeout(initDoorHotspot, 100);
         return;
     }
     
-    console.log("Door hotspot found, initializing...");
     
     const isMobile = window.innerWidth <= 768;
     
@@ -194,7 +185,6 @@ function initDoorHotspot() {
     doorHotspot.style.pointerEvents = 'all';
     doorHotspotActive = true;
     
-    console.log("Door hotspot initialized successfully");
 }
 
 // Скрытие хотспота двери (при наведении)
@@ -230,7 +220,6 @@ function disableDoorHotspot() {
 }
 
 function handleDoorMouseEnter(e) {
-    console.log("Door hotspot mouse enter - showing ENTER THE SHIP");
     // Скрываем точку хотспота
     hideDoorHotspot();
     
@@ -242,7 +231,6 @@ function handleDoorMouseEnter(e) {
 }
 
 function handleDoorMouseLeave(e) {
-    console.log("Door hotspot mouse leave - hiding");
     // Показываем точку хотспота обратно
     showDoorHotspot();
     
@@ -260,7 +248,6 @@ function handleDoorMouseMove(e) {
 }
 
 function preparePanoramaDuringVideo() {
-    console.log("preparePanoramaDuringVideo called");
     // Отключаем хотспот двери, чтобы он не мешал
     disableDoorHotspot();
     
@@ -293,7 +280,6 @@ function preparePanoramaDuringVideo() {
 }
 
 function setupPanorama() {
-    console.log("setupPanorama called");
     updateView();
     storeHotspotPositions();
     initAnimations();
@@ -301,7 +287,6 @@ function setupPanorama() {
 }
 
 function finalizePanorama() {
-    console.log("finalizePanorama called - zoom out animation");
         // ====== ОТКЛЮЧАЕМ ХОТСПОТ ДВЕРИ ======
             // Удаляем хотспот двери из DOM
 const doorHotspot = document.querySelector('.hotspot-door');
@@ -392,7 +377,6 @@ function positionHotspotsOnce() {
     });
     
     isHotspotsPositioned = true;
-    console.log("Hotspots positioned");
 }
 
 function updateAllHotspotsPosition() {
@@ -440,7 +424,6 @@ function updateAllHotspotsPosition() {
 }
 
 window.openDoorWithVideo = function() {
-    console.log("openDoorWithVideo called");
     const introScreen = document.getElementById('intro-screen');
     const introVideo2 = document.getElementById('intro-video-2');
     const player2 = document.getElementById('intro-video-player-2');
@@ -456,12 +439,12 @@ window.openDoorWithVideo = function() {
     }
     if (player2) {
         player2.currentTime = 0;
-        player2.play().catch(e => console.log("Video 2 play error:", e));
+        player2.play().catch(() => {});
     }
     if (audio2) {
         audio2.currentTime = 0;
         audio2.volume = 0.5;
-        audio2.play().catch(e => console.log("Audio 2 play error:", e));
+        audio2.play().catch(() => {});
     }
 };
 

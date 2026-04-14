@@ -14,6 +14,9 @@ declare global {
     openDoorWithVideo: () => void
     updateView: () => void
     fixPanoramaScale: () => void
+    finalizePanorama: () => void
+    setupPanorama: () => void
+    preparePanoramaDuringVideo: () => void
     currentView: number
     panoramaReady: boolean
   }
@@ -34,6 +37,8 @@ export default function PanoramaPage() {
   const [showLoading, setShowLoading] = useState(true)
   const [gyroActive, setGyroActive] = useState(false)
   const [allResourcesReady, setAllResourcesReady] = useState(false)
+  const [showSkipButton, setShowSkipButton] = useState(false)
+  const [introSkipped, setIntroSkipped] = useState(false)
 
   let ringAnimationFrame: number | null = null
   let viewLoopId: number | null = null
@@ -271,17 +276,18 @@ useEffect(() => {
       // Start video
       if (player1) {
         player1.currentTime = 0
-        player1.play().catch(e => console.log('Video 1 autoplay failed:', e))
+        player1.play().catch(() => {})
       }
       if (audio1) {
         audio1.volume = 0.5
         audio1.currentTime = 0
-        audio1.play().catch(e => console.log('Audio 1 autoplay failed:', e))
+        audio1.play().catch(() => {})
       }
       
       // Only THEN hide loading screen (with slight delay for video to render first frame)
       setTimeout(() => {
         setShowLoading(false)
+        setShowSkipButton(true)
       }, 150)
     }
     
@@ -523,7 +529,6 @@ useEffect(() => {
           initHotspots()
           setupMobileLabels()
           window.panoramaReady = true
-          console.log('Panorama ready, hotspots positioned')
           startViewLoop()
         })
       })
@@ -612,6 +617,37 @@ useEffect(() => {
       if (mobileObserver) mobileObserver.disconnect()
     }
   }, [router])
+const handleSkipIntro = () => {
+  setIntroSkipped(true)
+  setShowSkipButton(false)
+
+  // Stop all intro videos and audio
+  const player1 = document.getElementById('intro-video-player-1') as HTMLVideoElement
+  const player2 = document.getElementById('intro-video-player-2') as HTMLVideoElement
+  const audio1 = document.getElementById('audio-intro-1') as HTMLAudioElement
+  const audio2 = document.getElementById('audio-intro-2') as HTMLAudioElement
+  const introVideo1 = document.getElementById('intro-video-1') as HTMLElement
+  const introVideo2 = document.getElementById('intro-video-2') as HTMLElement
+  const introScreen = document.getElementById('intro-screen') as HTMLElement
+
+  if (player1) { player1.pause(); player1.currentTime = 0 }
+  if (player2) { player2.pause(); player2.currentTime = 0 }
+  if (audio1) { audio1.pause(); audio1.currentTime = 0 }
+  if (audio2) { audio2.pause(); audio2.currentTime = 0 }
+  if (introVideo1) introVideo1.style.display = 'none'
+  if (introVideo2) introVideo2.style.display = 'none'
+  if (introScreen) { introScreen.style.opacity = '0'; introScreen.style.pointerEvents = 'none' }
+
+  // Jump directly to panorama
+  if (typeof window.finalizePanorama === 'function') {
+    window.finalizePanorama()
+  } else {
+    // Fallback: just show main content
+    const mainContent = document.getElementById('main-content')
+    if (mainContent) { mainContent.style.display = 'block'; mainContent.style.opacity = '1' }
+  }
+}
+
 const handleNavigate = (sectionId: string) => {
   const section = sections.find(s => s.id === sectionId)
   
@@ -698,13 +734,13 @@ const handleNavigate = (sectionId: string) => {
         </div>
       </div>
 
-      <div className="hotspot" data-percent-x="26.34" data-percent-y="58.00" data-label="LIFT" onClick={() => console.log('LIFT')}>
+      <div className="hotspot" data-percent-x="26.34" data-percent-y="58.00" data-label="LIFT" onClick={() => {}}>
         <div className="hotspot-dot"></div>
       </div>
       <div className="hotspot" data-percent-x="77.58" data-percent-y="58.43" data-label="CARGO BAY" onClick={() => window.openSection?.('cargo')}>
         <div className="hotspot-dot"></div>
       </div>
-<div className="hotspot" data-percent-x="91.79" data-percent-y="54.95" data-label="JOIN THE CLUB" onClick={() => console.log('JOIN THE CLUB')}>
+<div className="hotspot" data-percent-x="91.79" data-percent-y="54.95" data-label="JOIN THE CLUB" onClick={() => {}}>
   <div className="hotspot-dot"></div>
 <div className="hotspot-label" style={{ textAlign: 'center' }}>
   <div style={{ lineHeight: '1' }}>JOIN</div>
@@ -855,6 +891,18 @@ const handleNavigate = (sectionId: string) => {
           </div>
         </div>
       </div>
+
+      {/* Skip Intro Button */}
+      {showSkipButton && !introSkipped && (
+        <button
+          onClick={handleSkipIntro}
+          className="fixed bottom-8 right-8 z-[9999] flex items-center gap-2 px-5 py-3 bg-black/70 backdrop-blur-sm border border-[#00d4ff]/40 text-[#e8e8ec] text-sm font-mono tracking-wider hover:bg-[#00d4ff]/20 hover:border-[#00d4ff] transition-all duration-300 cursor-pointer"
+          style={{ animation: 'fadeIn 0.5s ease-in-out' }}
+        >
+          SKIP
+          <span className="text-[#00d4ff]">▶</span>
+        </button>
+      )}
 
       <GyroToggle 
         onOrientationChange={handleGyroChange}

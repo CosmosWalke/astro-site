@@ -134,7 +134,7 @@ export function WorldSection() {
       case 'HOSTILE':
         return '#ff006e'
       default:
-        return '#6b6b7b'
+        return '#8b8b9b'
     }
   }
 
@@ -143,7 +143,7 @@ export function WorldSection() {
       case 1: return '#00d4ff'
       case 2: return '#ff006e'
       case 3: return '#9d4edd'
-      default: return '#6b6b7b'
+      default: return '#8b8b9b'
     }
   }
 
@@ -173,7 +173,7 @@ export function WorldSection() {
           <span className="text-[#e8e8ec]">The </span>
           <span className="text-[#00d4ff] text-glow-cyan" style={{ textShadow: '0 0 20px #00d4ff, 0 0 40px #00d4ff' }}>Network</span>
         </h2>
-        <p className="text-center text-[#6b6b7b] max-w-2xl mx-auto font-mono text-sm">
+        <p className="text-center text-[#8b8b9b] max-w-2xl mx-auto font-mono text-sm">
           <span className="text-[#00d4ff]">{'>'}</span> ACCESSING PROTOCOL NODES <span className="text-[#ff006e]">_</span>
         </p>
       </div>
@@ -305,15 +305,15 @@ export function WorldSection() {
             <div className="absolute bottom-4 left-4 bg-black/70 backdrop-blur-sm rounded p-2 text-[10px] font-mono border border-[#00d4ff]/30 z-30">
               <div className="flex items-center gap-3 mb-1">
                 <div className="w-2 h-2 rounded-full bg-[#00d4ff]" />
-                <span className="text-[#6b6b7b]">CORE_NODE</span>
+                <span className="text-[#8b8b9b]">CORE_NODE</span>
               </div>
               <div className="flex items-center gap-3 mb-1">
                 <div className="w-2 h-2 rounded-full bg-[#ff006e]" />
-                <span className="text-[#6b6b7b]">SECONDARY_NODE</span>
+                <span className="text-[#8b8b9b]">SECONDARY_NODE</span>
               </div>
               <div className="flex items-center gap-3">
                 <div className="w-2 h-2 rounded-full bg-[#9d4edd]" />
-                <span className="text-[#6b6b7b]">EDGE_NODE</span>
+                <span className="text-[#8b8b9b]">EDGE_NODE</span>
               </div>
             </div>
 
@@ -354,18 +354,18 @@ export function WorldSection() {
                 <h3 className="text-xl font-bold text-[#e8e8ec] mb-2 font-mono">
                   <span className="text-[#00d4ff]">{'>'}</span> {activeLocationData.name}
                 </h3>
-                <p className="text-sm text-[#6b6b7b] mb-4">
+                <p className="text-sm text-[#8b8b9b] mb-4">
                   {activeLocationData.description}
                 </p>
                 <div className="pt-4 border-t border-[#00d4ff]/20">
                   <div className="flex justify-between text-[10px] font-mono">
-                    <span className="text-[#6b6b7b]">NODE_ID</span>
+                    <span className="text-[#8b8b9b]">NODE_ID</span>
                     <span className="text-[#00d4ff]">
                       {activeLocationData.id}
                     </span>
                   </div>
                   <div className="flex justify-between text-[10px] font-mono mt-1">
-                    <span className="text-[#6b6b7b]">COORDINATES</span>
+                    <span className="text-[#8b8b9b]">COORDINATES</span>
                     <span className="text-[#ff006e]">
                       {activeLocationData.coordinates.x},{activeLocationData.coordinates.y}
                     </span>
@@ -377,7 +377,7 @@ export function WorldSection() {
               </div>
             ) : (
               <div className="p-6 bg-black/80 backdrop-blur-md border border-[#1a1a24] text-center rounded-xl">
-                <div className="text-[#6b6b7b] text-xs font-mono mb-2">
+                <div className="text-[#8b8b9b] text-xs font-mono mb-2">
                   <span className="text-[#00d4ff]">{'>'}</span> AWAITING INPUT
                 </div>
                 <div className="font-mono text-[10px] text-[#ff006e] animate-pulse">
@@ -408,7 +408,7 @@ export function WorldSection() {
                     />
                     <span className="text-xs font-mono text-[#e8e8ec]">{location.name}</span>
                   </div>
-                  <span className="text-[9px] font-mono text-[#6b6b7b]">{location.id}</span>
+                  <span className="text-[9px] font-mono text-[#8b8b9b]">{location.id}</span>
                 </button>
               ))}
             </div>

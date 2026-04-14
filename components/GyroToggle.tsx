@@ -31,12 +31,10 @@ export function GyroToggle({ onOrientationChange, isActive, onToggle }: GyroTogg
   }, [isActive, onOrientationChange])
 
   const requestPermission = async () => {
-    console.log('Requesting DeviceOrientation permission...')
 
     if (typeof (DeviceOrientationEvent as any).requestPermission === 'function') {
       try {
         const permission = await (DeviceOrientationEvent as any).requestPermission()
-        console.log('Permission result:', permission)
         if (permission === 'granted') {
           onToggle()
         }

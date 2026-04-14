@@ -68,7 +68,7 @@ const getStatusColor = (status: string) => {
     case 'HOSTILE':
       return '#ff6b35'
     default:
-      return '#6b6b7b'
+      return '#8b8b9b'
   }
 }
 
@@ -146,7 +146,7 @@ export function MapSection() {
           <span className="text-[#e8e8ec]">The </span>
           <span className="text-[#00d4ff]">World</span>
         </h2>
-        <p className="text-center text-[#6b6b7b] text-sm mt-4 max-w-md mx-auto">
+        <p className="text-center text-[#8b8b9b] text-sm mt-4 max-w-md mx-auto">
           Explore the territories under the Protocol&apos;s protection
         </p>
       </div>
@@ -294,17 +294,17 @@ export function MapSection() {
                   </span>
                 </div>
                 <h3 className="text-lg md:text-xl font-bold text-[#e8e8ec] mb-2">{activeLocationData.name}</h3>
-                <p className="text-xs md:text-sm text-[#6b6b7b] mb-3">{activeLocationData.description}</p>
+                <p className="text-xs md:text-sm text-[#8b8b9b] mb-3">{activeLocationData.description}</p>
                 <div className="pt-3 border-t border-[#00d4ff]/20">
                   <div className="flex justify-between text-[10px] font-mono">
-                    <span className="text-[#6b6b7b]">COORDINATES</span>
+                    <span className="text-[#8b8b9b]">COORDINATES</span>
                     <span className="text-[#00d4ff]">{activeLocationData.coordinates.x}, {activeLocationData.coordinates.y}</span>
                   </div>
                 </div>
               </div>
             ) : (
               <div className="p-4 md:p-6 bg-black/80 backdrop-blur-md border border-[#1a1a24] text-center rounded-xl">
-                <div className="text-[#6b6b7b] text-xs mb-2">Select a location on the map</div>
+                <div className="text-[#8b8b9b] text-xs mb-2">Select a location on the map</div>
                 <div className="font-mono text-[10px] text-[#00d4ff]">{worldLocations.length} LOCATIONS AVAILABLE</div>
               </div>
             )}
@@ -326,7 +326,7 @@ export function MapSection() {
                       <div className="w-2 h-2 rounded-full" style={{ backgroundColor: getStatusColor(location.status) }} />
                       <span className="text-xs text-[#e8e8ec]">{location.name}</span>
                     </div>
-                    <span className="text-[9px] font-mono text-[#6b6b7b]">{location.id}</span>
+                    <span className="text-[9px] font-mono text-[#8b8b9b]">{location.id}</span>
                   </button>
                 ))}
               </div>

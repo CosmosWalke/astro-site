@@ -32,8 +32,8 @@ const CATEGORIES = [
 ];
 
 const RARITIES = [
-  { id: 'all', name: 'ALL RARITIES', color: '#6b6b7b' },
-  { id: 'common', name: 'COMMON', color: '#6b6b7b' },
+  { id: 'all', name: 'ALL RARITIES', color: '#8b8b9b' },
+  { id: 'common', name: 'COMMON', color: '#8b8b9b' },
   { id: 'rare', name: 'RARE', color: '#14f195' },
   { id: 'epic', name: 'EPIC', color: '#9945ff' },
   { id: 'legendary', name: 'LEGENDARY', color: '#ff6b35' },

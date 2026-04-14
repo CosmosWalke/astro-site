@@ -101,7 +101,7 @@ const ProductCard = memo(({
 
       {/* Информация о продукте */}
       <div className="w-full lg:w-1/2 space-y-4 sm:space-y-6">
-        <div className="font-mono text-[10px] sm:text-xs text-[#6b6b7b] tracking-wider">
+        <div className="font-mono text-[10px] sm:text-xs text-[#8b8b9b] tracking-wider">
           PROTOCOL / {project.id}
         </div>
         
@@ -109,7 +109,7 @@ const ProductCard = memo(({
           {project.title}
         </h3>
         
-        <p className="text-[#6b6b7b] text-sm sm:text-base md:text-lg leading-relaxed">
+        <p className="text-[#8b8b9b] text-sm sm:text-base md:text-lg leading-relaxed">
           {project.description}
         </p>
 
@@ -117,7 +117,7 @@ const ProductCard = memo(({
           {Object.entries(project.stats).map(([key, value]) => (
             <div key={key} className="text-center">
               <div className="text-lg sm:text-xl md:text-2xl font-bold text-[#00d4ff]">{value}</div>
-              <div className="text-[9px] sm:text-[10px] md:text-xs font-mono text-[#6b6b7b] uppercase">{key}</div>
+              <div className="text-[9px] sm:text-[10px] md:text-xs font-mono text-[#8b8b9b] uppercase">{key}</div>
             </div>
           ))}
         </div>
@@ -214,7 +214,7 @@ export function ProjectSection() {
           <span className="text-[#e8e8ec]">ASTRO </span>
           <span className="text-[#00d4ff]">PRODUCTS</span>
         </h2>
-        <p className="text-center text-[#6b6b7b] text-sm sm:text-base max-w-2xl mx-auto px-4">
+        <p className="text-center text-[#8b8b9b] text-sm sm:text-base max-w-2xl mx-auto px-4">
           Welcome to Astro Universe — where we take your experience to a whole new dimension. 
           Our premium cannabis products are crafted to launch your mind, body, and spirit into the cosmos. 
           Get ready to explore bold flavors, stellar highs, and an otherworldly vibe. The universe is vast, 

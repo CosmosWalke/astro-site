@@ -32,11 +32,9 @@ export function StoryFlipSection() {
     const back = backRef.current
     
     if (!section || !card || !cardInner || !front || !back) {
-      console.log('[v0] Missing refs')
       return
     }
 
-    console.log('[v0] StoryFlipSection mounted, setting up animations')
 
     const ctx = gsap.context(() => {
       // Set initial states
@@ -59,7 +57,6 @@ export function StoryFlipSection() {
           pin: true,
           anticipatePin: 1,
           onUpdate: (self) => {
-            console.log('[v0] ScrollTrigger progress:', self.progress.toFixed(2))
           }
         }
       })
@@ -158,7 +155,6 @@ export function StoryFlipSection() {
     }, section)
 
     return () => {
-      console.log('[v0] Cleaning up StoryFlipSection')
       ctx.revert()
     }
   }, [isFlipped])
@@ -204,7 +200,7 @@ export function StoryFlipSection() {
             
             {/* Card label */}
             <div className="absolute top-4 left-4 right-4 flex justify-between items-start">
-              <span className="text-[10px] text-[#6b6b7b] tracking-[0.25em] uppercase">Animus Character</span>
+              <span className="text-[10px] text-[#8b8b9b] tracking-[0.25em] uppercase">Animus Character</span>
             </div>
             
             {/* Card info bottom */}
@@ -273,7 +269,7 @@ export function StoryFlipSection() {
                   </div>
                   <span>LOADING... [47%]</span>
                 </div>
-                <div className="space-y-0.5 text-[#6b6b7b] text-[9px]">
+                <div className="space-y-0.5 text-[#8b8b9b] text-[9px]">
                   <div>LOCATION_DATA</div>
                   <div>CHARACTER_ATTRIBUTES</div>
                   <div>KLINK_TRANSMISSIONS</div>

@@ -202,7 +202,7 @@ export function MobileMenu({ sections, onNavigate }: MobileMenuProps) {
         
         {/* Цифры только на ПК */}
         {!isMobile && (
-          <span className="absolute -left-14 top-1/2 -translate-y-1/2 text-sm font-mono text-[#6b6b7b] group-hover:text-[#00d4ff] transition-colors duration-300">
+          <span className="absolute -left-14 top-1/2 -translate-y-1/2 text-sm font-mono text-[#8b8b9b] group-hover:text-[#00d4ff] transition-colors duration-300">
             0{index + 1}
           </span>
         )}
@@ -213,11 +213,11 @@ export function MobileMenu({ sections, onNavigate }: MobileMenuProps) {
 
             {/* Социальные ссылки */}
             <div 
-              className={`${isMobile ? 'flex flex-col items-start gap-3' : 'flex flex-wrap justify-start gap-6'} text-sm text-[#6b6b7b]`}
+              className={`${isMobile ? 'flex flex-col items-start gap-3' : 'flex flex-wrap justify-start gap-6'} text-sm text-[#8b8b9b]`}
               style={{ marginTop: isMobile ? '98px' : '48px' }}
             >
               <a 
-                href="https://instagram.com/ваш_аккаунт"
+                href="#"
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => setIsMenuOpen(false)}
@@ -230,7 +230,7 @@ export function MobileMenu({ sections, onNavigate }: MobileMenuProps) {
               </a>
               
               <a 
-                href="https://twitter.com/ваш_аккаунт"
+                href="#"
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => setIsMenuOpen(false)}
@@ -243,7 +243,7 @@ export function MobileMenu({ sections, onNavigate }: MobileMenuProps) {
               </a>
               
               <a 
-                href="https://youtube.com/@ваш_канал"
+                href="#"
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => setIsMenuOpen(false)}
@@ -258,7 +258,7 @@ export function MobileMenu({ sections, onNavigate }: MobileMenuProps) {
 
             {/* Нижний колонтитул - только на ПК */}
             {!isMobile && (
-              <div className="flex flex-col md:flex-row justify-start items-start gap-4 text-xs font-mono text-[#6b6b7b] mt-16">
+              <div className="flex flex-col md:flex-row justify-start items-start gap-4 text-xs font-mono text-[#8b8b9b] mt-16">
                 <div className="flex items-center gap-4">
                   <span>hello@astroverse.com</span>
                 </div>

@@ -1,8 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   typescript: {
-    // TODO: Set to false and fix type errors
-    ignoreBuildErrors: true,
+    ignoreBuildErrors: false,
   },
   images: {
     // Enable Next.js image optimization (WebP/AVIF auto-conversion)

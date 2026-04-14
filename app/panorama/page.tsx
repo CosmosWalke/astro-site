@@ -497,7 +497,6 @@ export default function PanoramaPage() {
         afterLayout(() => {
           initHotspots()
           window.panoramaReady = true
-          console.log('Panorama ready, hotspots positioned')
         })
       })
     }
@@ -553,10 +552,8 @@ export default function PanoramaPage() {
     const checkDoorHotspot = () => {
         const doorHotspot = document.querySelector('.hotspot-door');
         if (!doorHotspot) {
-            console.log('Door hotspot missing, checking again...');
             setTimeout(checkDoorHotspot, 100);
         } else {
-            console.log('Door hotspot present in DOM');
         }
     };
 
@@ -693,13 +690,13 @@ export default function PanoramaPage() {
                 <div className="hotspot" data-percent-x="50.09" data-percent-y="43.09" data-label="ABOUT" onClick={() => router.push('/')}>
                   <div className="hotspot-dot"></div>
                 </div>
-                <div className="hotspot" data-percent-x="26.34" data-percent-y="58.00" data-label="LIFT" onClick={() => console.log('LIFT')}>
+                <div className="hotspot" data-percent-x="26.34" data-percent-y="58.00" data-label="LIFT" onClick={() => {}}>
                   <div className="hotspot-dot"></div>
                 </div>
                 <div className="hotspot" data-percent-x="77.58" data-percent-y="58.43" data-label="CARGO BAY" onClick={() => window.openSection?.('cargo')}>
                   <div className="hotspot-dot"></div>
                 </div>
-                <div className="hotspot" data-percent-x="91.79" data-percent-y="54.95" data-label="JOIN THE CLUB" onClick={() => console.log('JOIN THE CLUB')}>
+                <div className="hotspot" data-percent-x="91.79" data-percent-y="54.95" data-label="JOIN THE CLUB" onClick={() => {}}>
                   <div className="hotspot-dot"></div>
                 </div>
               </div>

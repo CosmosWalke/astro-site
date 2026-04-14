@@ -239,13 +239,11 @@ function safeOnUpdate(self, originalLogic) {
 // ========== УЛУЧШЕННЫЙ СБРОС С ЗАЩИТОЙ ОТ ПОВТОРОВ ==========
 function forceResetAllTransitions(isReverse = false) {
     if (isResetting) {
-        console.log('⏭️ Skip reset - already in progress');
         return;
     }
     
     const scrollProgress = window.scrollY / (document.body.scrollHeight - window.innerHeight);
     if (isInTransitionZone(scrollProgress, isReverse ? -1 : 1)) {
-        console.log('⏭️ Skip reset - in transition zone');
         return;
     }
     
@@ -333,12 +331,10 @@ function forceResetAllTransitions(isReverse = false) {
     if (typeof triggerGlitchTimeShift === 'function') triggerGlitchTimeShift(false);
     if (typeof ScrollTrigger !== 'undefined') ScrollTrigger.refresh();
     setTimeout(() => { isResetting = false; }, 300);
-    console.log('✅ Reset complete');
 }
 
 // ========== ОСНОВНАЯ ИНИЦИАЛИЗАЦИЯ ==========
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('DOM loaded - about.js with transition zone protection');
     window.scrollTo(0, 0);
     
     initStoryAnimation();
@@ -389,7 +385,6 @@ document.addEventListener('DOMContentLoaded', () => {
 // ========== ИНИЦИАЛИЗАЦИЯ ВИДЕО КАРТ ==========
 function initVideoCards() {
     const videoCards = document.querySelectorAll('.video-card');
-    console.log('Initializing video cards, found:', videoCards.length);
     
     videoCards.forEach((card, index) => {
         const video = card.querySelector('.card-video');
@@ -409,7 +404,7 @@ function initVideoCards() {
             e.stopPropagation();
             if (video) {
                 video.currentTime = 0;
-                video.play().catch(err => console.log('Video play error:', err));
+                video.play().catch(() => {});
             }
         });
         
@@ -426,7 +421,7 @@ function initVideoCards() {
             e.preventDefault();
             if (video) {
                 if (video.paused) {
-                    video.play().catch(err => console.log('Video play error:', err));
+                    video.play().catch(() => {});
                 } else {
                     video.pause();
                     video.currentTime = 0;
@@ -434,7 +429,6 @@ function initVideoCards() {
             }
         });
         
-        console.log('Video card', index, 'initialized');
     });
 }
 
@@ -619,8 +613,8 @@ function initStoryAnimation() {
                 }
             }
         }),
-        onLeaveBack: () => { console.log('🔄 Story: onLeaveBack'); },
-        onEnterBack: () => { console.log('🔄 Story: onEnterBack'); }
+        onLeaveBack: () => {},
+        onEnterBack: () => {}
     });
 }
 
@@ -754,8 +748,8 @@ function initCardsTransition() {
                 gsap.set(cardsLeft, { x: -80, opacity: 0 });
             }
         }),
-        onLeaveBack: () => { console.log('🔄 Cards: onLeaveBack - no reset (transition zone protected)'); },
-        onEnterBack: () => { console.log('🔄 Cards: onEnterBack - no reset (transition zone protected)'); }
+        onLeaveBack: () => {},
+        onEnterBack: () => {}
     });
 }
 
@@ -1011,10 +1005,8 @@ function initCarouselTransition() {
             }
         }),
         onLeaveBack: () => { 
-            console.log('🔄 Carousel: onLeaveBack');
         },
         onEnterBack: () => { 
-            console.log('🔄 Carousel: onEnterBack');
         }
     });
 }
@@ -1051,7 +1043,6 @@ function initGlitchTimeShift() {
     window.addEventListener('resize', resize);
     resize();
 
-    console.log('Glitch Time Shift initialized');
 }
 
 function startGlitchEffect(intensity = 1) {
@@ -1719,7 +1710,6 @@ function initEdgeScroll() {
         }
     });
     
-    console.log('Edge scroll initialized - SCROLL_SPEED =', SCROLL_SPEED);
 }
 
 // ========== АВТОМАТИЧЕСКОЕ ВОСПРОИЗВЕДЕНИЕ ВИДЕО ПРИ АКТИВНОЙ КАРТЕ В КАРУСЕЛИ ==========
@@ -1760,13 +1750,13 @@ function initEdgeScroll() {
         autoPlayTimeout = setTimeout(() => {
             if (video && video.readyState >= 2) {
                 video.currentTime = 0;
-                video.play().catch(err => console.log('Auto play error:', err));
+                video.play().catch(() => {});
                 currentActiveVideo = video;
             } else if (video) {
                 // Если видео ещё не загружено, ждём
                 video.addEventListener('loadeddata', function onLoaded() {
                     video.currentTime = 0;
-                    video.play().catch(err => console.log('Auto play error:', err));
+                    video.play().catch(() => {});
                     video.removeEventListener('loadeddata', onLoaded);
                 });
                 currentActiveVideo = video;
@@ -1862,7 +1852,5 @@ function initEdgeScroll() {
         }, 100);
     });
     
-    console.log('Auto-play video on active card initialized (scroll does NOT auto-scroll)');
 })();
 
-console.log('about.js fully loaded with transition zone protection');

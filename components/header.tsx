@@ -276,7 +276,7 @@ export function Header() {
                     className={`group relative px-6 py-2 text-sm font-medium transition-colors duration-300 ${
                       isActive 
                         ? 'text-[#00d4ff]' 
-                        : 'text-[#6b6b7b] hover:text-[#e8e8ec]'
+                        : 'text-[#8b8b9b] hover:text-[#e8e8ec]'
                     } ${isScrolling ? 'pointer-events-none opacity-50' : ''}`}
                   >
                     <span className="relative z-10">{item.label}</span>
@@ -297,7 +297,7 @@ export function Header() {
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#00d4ff] opacity-75" />
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-[#00d4ff]" />
                 </span>
-                <span className="text-xs font-mono text-[#6b6b7b]">
+                <span className="text-xs font-mono text-[#8b8b9b]">
                   {keeperCount.toLocaleString()} Keepers Live
                 </span>
               </div>
@@ -321,7 +321,7 @@ export function Header() {
 
         <div className={`border-t border-[#1a1a24] transition-all duration-500 overflow-hidden ${isScrolled ? 'h-0' : 'h-8'}`}>
           <div className="max-w-7xl mx-auto px-4 md:px-8 h-full flex items-center">
-            <div className="flex items-center gap-4 text-xs font-mono text-[#6b6b7b]">
+            <div className="flex items-center gap-4 text-xs font-mono text-[#8b8b9b]">
               <span className="text-[#00d4ff]">Encrypted Protocol</span>
               <span>yq24-43335020</span>
               <span className="hidden md:inline">|</span>
@@ -375,7 +375,7 @@ export function Header() {
                       />
                     )}
 
-                    <span className="absolute -left-8 top-1/2 -translate-y-1/2 text-sm font-mono text-[#6b6b7b] group-hover:text-[#00d4ff] transition-colors duration-300">
+                    <span className="absolute -left-8 top-1/2 -translate-y-1/2 text-sm font-mono text-[#8b8b9b] group-hover:text-[#00d4ff] transition-colors duration-300">
                       0{index + 1}
                     </span>
                     <span className="absolute -right-16 top-1/2 w-12 h-px bg-[#2a2a38] group-hover:bg-[#00d4ff] group-hover:w-24 transition-all duration-300" />
@@ -384,12 +384,10 @@ export function Header() {
               })}
             </nav>
 
-            <div className="flex flex-wrap justify-center gap-6 text-sm text-[#6b6b7b]">
+            <div className="flex flex-wrap justify-center gap-6 text-sm text-[#8b8b9b]">
               <a 
-                href="https://instagram.com/ваш_аккаунт"
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => setIsMenuOpen(false)}
+                href="#"
+                onClick={(e) => { e.preventDefault(); setIsMenuOpen(false) }}
                 className="hover:text-[#00d4ff] transition-colors duration-300 flex items-center gap-2"
               >
                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
@@ -399,10 +397,8 @@ export function Header() {
               </a>
               
               <a 
-                href="https://twitter.com/ваш_аккаунт"
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => setIsMenuOpen(false)}
+                href="#"
+                onClick={(e) => { e.preventDefault(); setIsMenuOpen(false) }}
                 className="hover:text-[#00d4ff] transition-colors duration-300 flex items-center gap-2"
               >
                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
@@ -412,10 +408,8 @@ export function Header() {
               </a>
               
               <a 
-                href="https://youtube.com/@ваш_канал"
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => setIsMenuOpen(false)}
+                href="#"
+                onClick={(e) => { e.preventDefault(); setIsMenuOpen(false) }}
                 className="hover:text-[#00d4ff] transition-colors duration-300 flex items-center gap-2"
               >
                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
@@ -425,7 +419,7 @@ export function Header() {
               </a>
             </div>
 
-            <div className="absolute bottom-8 left-8 right-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-mono text-[#6b6b7b]">
+            <div className="absolute bottom-8 left-8 right-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-mono text-[#8b8b9b]">
               <div className="flex items-center gap-4">
                 <span>hello@astroverse.com</span>
               </div>
