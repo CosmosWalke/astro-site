@@ -30,7 +30,7 @@ const sections = [
 ]
 
 // Социальные сети и контакты (обновленные иконки)
-const socialLinks = [
+{/*const socialLinks = [
   {
     name: 'INSTAGRAM',
     url: 'https://instagram.com/astrocommunity',
@@ -92,7 +92,7 @@ const socialLinks = [
     color: '#25D366'
   }
 ]
-
+*/}
 // Контактная информация
 const contactInfo = [
   { label: 'SUPPORT', value: 'support@astro.com', link: 'mailto:support@astro.com' },
@@ -217,7 +217,7 @@ export default function PanoramaPage() {
     hotspots.forEach((hotspot) => mobileObserver!.observe(hotspot))
   }
 
-  // Функции для открытия/закрытия модального окна COMMUNITY
+ {/*} // Функции для открытия/закрытия модального окна COMMUNITY
   window.openCommunityModal = () => {
     const modal = document.getElementById('modal-community')
     if (modal) modal.style.display = 'flex'
@@ -226,7 +226,7 @@ export default function PanoramaPage() {
   window.closeCommunityModal = () => {
     const modal = document.getElementById('modal-community')
     if (modal) modal.style.display = 'none'
-  }
+ }*/}
 
 // ====================== ФУНКЦИЯ ЗАГРУЗКИ ВСЕХ РЕСУРСОВ ======================
 const loadAllResources = async (onProgress: (progress: number) => void) => {
