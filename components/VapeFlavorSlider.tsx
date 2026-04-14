@@ -26,7 +26,7 @@ const flavors: VapeFlavor[] = [
     id: 'peach',
     name: 'PEACH',
     bgColor: 'from-orange-400 via-amber-500 to-red-500',
-    vapeImage: '/vapes/peach/vape.png',           // ← твой уникальный персиковый вейп
+    vapeImage: '/vapes/peach/vape.webp',
     fruits: [
       { src: '/vapes/peach/fruit1.png', size: 135, left: '10%', top: '20%', delay: 0 },
       { src: '/vapes/peach/fruit2.png', size: 95,  left: '78%', top: '25%', delay: 1.4 },
@@ -38,7 +38,7 @@ const flavors: VapeFlavor[] = [
     id: 'green-apple',
     name: 'GREEN APPLE',
     bgColor: 'from-emerald-400 via-green-500 to-lime-600',
-    vapeImage: '/vapes/green-apple/vape.png',     // ← твой уникальный зелёный вейп
+    vapeImage: '/vapes/green-apple/vape.webp',
     fruits: [
       { src: '/vapes/green-apple/fruit1.png', size: 130, left: '15%', top: '18%', delay: 0 },
       { src: '/vapes/green-apple/fruit2.png', size: 100, left: '75%', top: '30%', delay: 1.1 },
@@ -50,7 +50,7 @@ const flavors: VapeFlavor[] = [
     id: 'passion-fruit',
     name: 'PASSION FRUIT',
     bgColor: 'from-purple-500 via-violet-600 to-fuchsia-500',
-    vapeImage: '/vapes/passion-fruit/vape.png',   // ← уникальный вейп под маракуйю
+    vapeImage: '/vapes/passion-fruit/vape.webp',
     fruits: [
       { src: '/vapes/passion-fruit/fruit1.png', size: 125, left: '12%', top: '22%', delay: 0 },
       { src: '/vapes/passion-fruit/fruit2.png', size: 105, left: '80%', top: '28%', delay: 1.3 },
@@ -62,7 +62,7 @@ const flavors: VapeFlavor[] = [
     id: 'dragon-fruit',
     name: 'DRAGON FRUIT',
     bgColor: 'from-rose-500 via-pink-600 to-red-500',
-    vapeImage: '/vapes/dragon-fruit/vape.png',    // ← уникальный вейп под драгонфрут
+    vapeImage: '/vapes/dragon-fruit/vape.webp',
     fruits: [
       { src: '/vapes/dragon-fruit/fruit1.png', size: 130, left: '18%', top: '20%', delay: 0 },
       { src: '/vapes/dragon-fruit/fruit2.png', size: 95,  left: '75%', top: '25%', delay: 1.2 },
@@ -74,7 +74,7 @@ const flavors: VapeFlavor[] = [
     id: 'strawberry',
     name: 'STRAWBERRY',
     bgColor: 'from-red-500 via-rose-600 to-pink-500',
-    vapeImage: '/vapes/strawberry/vape.png',      // ← уникальный клубничный вейп
+    vapeImage: '/vapes/strawberry/vape.webp',
     fruits: [
       { src: '/vapes/strawberry/fruit1.png', size: 128, left: '13%', top: '19%', delay: 0 },
       { src: '/vapes/strawberry/fruit2.png', size: 98,  left: '77%', top: '27%', delay: 1.3 },

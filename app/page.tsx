@@ -859,7 +859,6 @@ const handleNavigate = (sectionId: string) => {
     <>    <MobileMenu sections={sections} onNavigate={handleNavigate} />
     
     <LoadingScreen progress={loadingProgress} isVisible={showLoading} />
-      <LoadingScreen progress={loadingProgress} isVisible={showLoading} />
       
       <Script src="/js/main.js" strategy="afterInteractive" />
 

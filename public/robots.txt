@@ -1,0 +1,4 @@
+User-Agent: *
+Allow: /
+
+Sitemap: https://astrouniverses.com/sitemap.xml
