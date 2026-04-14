@@ -1355,9 +1355,23 @@ useEffect(() => {
                   <div className="hotspot" data-percent-x="26.34" data-percent-y="58.00" data-label="LIFT" onClick={() => console.log('LIFT')}>
                     <div className="hotspot-dot"></div>
                   </div>
-                  <div className="hotspot" data-percent-x="77.58" data-percent-y="58.43" data-label="CARGO BAY" onClick={() => router.push('/cargobay')}>
-                    <div className="hotspot-dot"></div>
-                  </div>
+    <div className="hotspot" data-percent-x="77.58" data-percent-y="58.43" data-label="CARGO BAY">
+  <div className="hotspot-dot"></div>
+  <a 
+    href="/cargobay" 
+    style={{ 
+      position: 'absolute', 
+      inset: 0, 
+      opacity: 0, 
+      cursor: 'pointer',
+      zIndex: 10 
+    }}
+    onClick={(e) => {
+      e.preventDefault();
+      window.location.href = '/cargobay';
+    }}
+  />
+</div>
                   <div className="hotspot" data-percent-x="91.79" data-percent-y="54.95" data-label="JOIN THE CLUB" onClick={() => console.log('JOIN THE CLUB')}>
                     <div className="hotspot-dot"></div>
                     <div className="hotspot-label" style={{ textAlign: 'center' }}>
