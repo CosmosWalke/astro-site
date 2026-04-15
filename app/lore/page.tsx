@@ -402,7 +402,7 @@ export default function LorePage() {
               <p className="text-white/60 mb-8 max-w-2xl mx-auto">
                 The Echo awaits. Discover more stories, collectible cards, and the complete Astro experience.
               </p>
-              <Link href="/">
+              <Link href="/about">
                 <button className="px-8 py-4 bg-gradient-to-r from-[#00d4ff] to-[#00a0cc] text-black font-bold rounded-lg hover:shadow-[0_0_30px_rgba(0,212,255,0.5)] transition-all duration-300">
                   EXPLORE THE ASTROUNIVERSE
                 </button>
