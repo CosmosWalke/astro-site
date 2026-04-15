@@ -250,7 +250,7 @@ const handleNavigate = (sectionId: string, isPage?: boolean, href?: string) => {
               style={{ marginTop: isMobile ? '98px' : '48px' }}
             >
               <a 
-                href="https://instagram.com/ваш_аккаунт"
+                href="https://www.instagram.com/enter.astroverse"
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => setIsMenuOpen(false)}
@@ -263,7 +263,7 @@ const handleNavigate = (sectionId: string, isPage?: boolean, href?: string) => {
               </a>
               
               <a 
-                href="https://twitter.com/ваш_аккаунт"
+                href="https://x.com/EnterAstroverse"
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => setIsMenuOpen(false)}
@@ -276,7 +276,7 @@ const handleNavigate = (sectionId: string, isPage?: boolean, href?: string) => {
               </a>
               
               <a 
-                href="https://youtube.com/@ваш_канал"
+                href="hhttps://www.youtube.com/@enter.astroverse"
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => setIsMenuOpen(false)}

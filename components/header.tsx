@@ -386,7 +386,7 @@ export function Header() {
 
             <div className="flex flex-wrap justify-center gap-6 text-sm text-[#6b6b7b]">
               <a 
-                href="https://instagram.com/ваш_аккаунт"
+                href="https://www.instagram.com/enter.astroverse"
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => setIsMenuOpen(false)}
@@ -399,7 +399,7 @@ export function Header() {
               </a>
               
               <a 
-                href="https://twitter.com/ваш_аккаунт"
+                href="https://x.com/EnterAstroverse"
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => setIsMenuOpen(false)}
@@ -412,7 +412,7 @@ export function Header() {
               </a>
               
               <a 
-                href="https://youtube.com/@ваш_канал"
+                href="https://www.youtube.com/@enter.astroverse"
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => setIsMenuOpen(false)}
