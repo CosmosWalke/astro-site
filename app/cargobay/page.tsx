@@ -10,7 +10,6 @@ interface CargoItem {
   id: string;
   name: string;
   description: string;
-  price: string;
   image: string;
   video: string;
   slug: string;
@@ -32,7 +31,6 @@ const cargoItems: CargoItem[] = [
     id: 'VAPE-001',
     name: 'ASTRO VAPE',
     description: 'Our dual-tank inhale-activated system features a digital screen on the front panel to allow the customers to have a more simplified and smooth experience. Premium build quality with advanced temperature control and long-lasting battery life.',
-    price: '$49.99',
     image: '/image/vape.webp',
     video: '/video/vape.webm',
     slug: '/vape'
@@ -41,7 +39,6 @@ const cargoItems: CargoItem[] = [
     id: 'FLOWER-002',
     name: 'ASTRO FLOWERS',
     description: 'NEW ASTRO FUEL. EVERY UNIVERSAL RATION PACK IS EQUIPPED WITH A DARK MATTER QUAD INFUSED PREROLL. Premium selection of exotic strains with potent effects and rich terpene profiles.',
-    price: '$39.99',
     image: '/image/flowers.webp',
     video: '/video/flowers.webm',
     slug: '/flowers'
@@ -50,7 +47,6 @@ const cargoItems: CargoItem[] = [
     id: 'PREROLL-003',
     name: 'ASTRO PREROLLS',
     description: 'Quad Infuse Dark Matter Preroll Experience a supernova of flavor and potency, featuring a perfect fusion of premium flower strains. Each preroll is handcrafted for consistent burn and maximum enjoyment.',
-    price: '$29.99',
     image: '/image/prerolls.webp',
     video: '/video/prerolls.webm',
     slug: '/prerolls'
@@ -124,6 +120,7 @@ const CargoCard = ({ item, index }: { item: CargoItem; index: number }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isClient, setIsClient] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -132,26 +129,51 @@ const CargoCard = ({ item, index }: { item: CargoItem; index: number }) => {
     setIsClient(true);
   }, []);
 
+  const startVideo = () => {
+    if (videoRef.current) {
+      videoRef.current.currentTime = 0;
+      videoRef.current.play()
+        .then(() => {
+          setIsPlaying(true);
+          setIsHovered(true);
+        })
+        .catch(e => console.log('Video play failed:', e));
+    }
+  };
+
+  const stopVideo = () => {
+    if (videoRef.current && !videoRef.current.paused) {
+      videoRef.current.pause();
+      setIsPlaying(false);
+      setIsHovered(false);
+    }
+  };
+
   const handleMouseEnter = () => {
     if (hoverTimeoutRef.current) {
       clearTimeout(hoverTimeoutRef.current);
       hoverTimeoutRef.current = null;
     }
-    
-    setIsHovered(true);
-    if (videoRef.current) {
-      videoRef.current.currentTime = 0;
-      videoRef.current.play().catch(e => console.log('Video play failed:', e));
-    }
+    startVideo();
   };
 
   const handleMouseLeave = () => {
     hoverTimeoutRef.current = setTimeout(() => {
-      setIsHovered(false);
-      if (videoRef.current) {
-        videoRef.current.pause();
-      }
+      stopVideo();
     }, 100);
+  };
+
+  const handlePlayClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    startVideo();
+  };
+
+  const handleVideoClick = () => {
+    if (videoRef.current && !videoRef.current.paused) {
+      videoRef.current.pause();
+      setIsPlaying(false);
+      setIsHovered(false);
+    }
   };
 
   const handleFullscreen = async () => {
@@ -209,8 +231,9 @@ const CargoCard = ({ item, index }: { item: CargoItem; index: number }) => {
                   muted={!isFullscreen}
                   loop
                   playsInline
+                  onClick={handleVideoClick}
                   className={`absolute inset-0 w-full h-full object-cover z-10 transition-opacity duration-300 ${
-                    isHovered ? 'opacity-100' : 'opacity-0'
+                    isPlaying ? 'opacity-100' : 'opacity-0'
                   }`}
                 />
               )}
@@ -219,7 +242,7 @@ const CargoCard = ({ item, index }: { item: CargoItem; index: number }) => {
                 src={item.image}
                 alt={item.name}
                 className={`absolute inset-0 w-full h-full object-cover z-0 transition-opacity duration-300 ${
-                  isHovered ? 'opacity-0' : 'opacity-100'
+                  isPlaying ? 'opacity-0' : 'opacity-100'
                 }`}
               />
               
@@ -236,7 +259,19 @@ const CargoCard = ({ item, index }: { item: CargoItem; index: number }) => {
                 </div>
               </div>
               
-              {isClient && isHovered && (
+              {/* Значок Play в центре - ТОЛЬКО ДЛЯ МОБИЛЬНЫХ */}
+              {!isPlaying && (
+                <div 
+                  onClick={handlePlayClick}
+                  className="absolute inset-0 z-40 flex items-center justify-center lg:hidden cursor-pointer"
+                >
+                  <div className="bg-black/60 backdrop-blur-sm rounded-full p-4 border border-[#00d4ff]/50 transition-all duration-300 hover:scale-110 hover:border-[#00d4ff]">
+                    <Play className="w-8 h-8 text-[#00d4ff] ml-0.5" />
+                  </div>
+                </div>
+              )}
+              
+              {isClient && isPlaying && (
                 <button
                   onClick={handleFullscreen}
                   className="absolute bottom-4 right-4 z-40 lg:hidden bg-black/60 backdrop-blur-sm rounded-full p-2 border border-white/20"
