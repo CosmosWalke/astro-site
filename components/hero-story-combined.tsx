@@ -9,6 +9,7 @@ import { Play, ChevronLeft, ChevronRight } from 'lucide-react'
 import { TextScramble } from "@/components/ui/text-scramble"
 import { Starfield } from '@/components/ui/starfield-1'
 import SimpleGlobe from "@/components/ui/SimpleGlobe"
+import Link from 'next/link'
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger)
@@ -303,7 +304,6 @@ const loadAllResources = async (onProgress: (progress: number) => void) => {
   return true
 }
 
-
 export function HeroStoryCombined() {
   const containerRef = useRef<HTMLDivElement>(null)
   const stickyRef = useRef<HTMLDivElement>(null)
@@ -319,7 +319,6 @@ export function HeroStoryCombined() {
   const trailerCardRef = useRef<HTMLDivElement>(null)
   const thumbnailFrameRef = useRef<HTMLDivElement>(null)
   const leftContentRef = useRef<HTMLDivElement>(null)
-  
   
   // Flip card refs
   const flipCardContainerRef = useRef<HTMLDivElement>(null)
@@ -390,50 +389,47 @@ export function HeroStoryCombined() {
     return () => window.removeEventListener('resize', checkDevice)
   }, [])
 
-// Эффект загрузки - реальная загрузка ресурсов
-useEffect(() => {
-  let isMounted = true
-  
-  const startLoading = async () => {
-    // Загружаем все ресурсы с реальным прогрессом
-    await loadAllResources((progress) => {
-      if (isMounted) {
-        setLoadingProgress(progress)
-        
-        // Обновляем текст загрузки на основе прогресса
-        const statusIndex = Math.floor((progress / 100) * (statusMessages.length - 1))
-        setLoadingText(statusMessages[Math.min(statusIndex, statusMessages.length - 1)])
-      }
-    })
+  // Эффект загрузки - реальная загрузка ресурсов
+  useEffect(() => {
+    let isMounted = true
     
-    if (isMounted) {
-      setLoadingProgress(100)
-      setLoadingText(statusMessages[statusMessages.length - 1])
-      
-      // Плавно скрываем загрузочный экран
-      setTimeout(() => {
-        if (loadingContainerRef.current) {
-          gsap.to(loadingContainerRef.current, {
-            opacity: 0,
-            duration: 0.6,
-            ease: 'power2.inOut',
-            onComplete: () => {
-              if (isMounted) {
-                setIsLoading(false)
-              }
-            }
-          })
+    const startLoading = async () => {
+      await loadAllResources((progress) => {
+        if (isMounted) {
+          setLoadingProgress(progress)
+          const statusIndex = Math.floor((progress / 100) * (statusMessages.length - 1))
+          setLoadingText(statusMessages[Math.min(statusIndex, statusMessages.length - 1)])
         }
-      }, 500)
+      })
+      
+      if (isMounted) {
+        setLoadingProgress(100)
+        setLoadingText(statusMessages[statusMessages.length - 1])
+        
+        setTimeout(() => {
+          if (loadingContainerRef.current) {
+            gsap.to(loadingContainerRef.current, {
+              opacity: 0,
+              duration: 0.6,
+              ease: 'power2.inOut',
+              onComplete: () => {
+                if (isMounted) {
+                  setIsLoading(false)
+                }
+              }
+            })
+          }
+        }, 500)
+      }
     }
-  }
+    
+    startLoading()
+    
+    return () => {
+      isMounted = false
+    }
+  }, [])
   
-  startLoading()
-  
-  return () => {
-    isMounted = false
-  }
-}, [])
   useEffect(() => {
     const updatePositions = () => {
       if (thumbnailFrameRef.current && stickyRef.current) {
@@ -481,34 +477,199 @@ useEffect(() => {
     return () => document.documentElement.classList.remove('lenis')
   }, [])
 
- // === LENIS + SCROLLTRIGGER SYNC ===
+  // === LENIS + SCROLLTRIGGER SYNC ===
+  useEffect(() => {
+    if (typeof window === 'undefined' || isMobile) return
+
+    const lenis = new Lenis({
+      duration: 1.2,
+      easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      smoothWheel: true,
+      wheelMultiplier: 1,
+      touchMultiplier: 2,
+    })
+
+    lenis.on('scroll', ScrollTrigger.update)
+
+    gsap.ticker.add((time: number) => {
+      lenis.raf(time * 1000)
+    })
+
+    gsap.ticker.lagSmoothing(0)
+
+    return () => {
+      lenis.destroy()
+      gsap.ticker.remove((time: number) => lenis.raf(time * 1000))
+    }
+  }, [isMobile])
+
+  // Управление видимостью кнопки при скролле (десктоп)
+  useEffect(() => {
+    const buttonContainerDesktop = document.querySelector('.explore-lore-button-container');
+    
+    if (!isMobile && buttonContainerDesktop) {
+      gsap.set(buttonContainerDesktop, { opacity: 0, y: 20, pointerEvents: 'none' });
+      
+      const trigger = ScrollTrigger.create({
+        trigger: headingRef.current,
+        start: 'top 70%',
+        end: 'bottom 30%',
+        onEnter: () => {
+          gsap.to(buttonContainerDesktop, {
+            opacity: 1,
+            y: 0,
+            duration: 0.4,
+            ease: 'power2.out',
+            pointerEvents: 'auto'
+          });
+        },
+        onLeave: () => {
+          gsap.to(buttonContainerDesktop, {
+            opacity: 0,
+            y: 20,
+            duration: 0.3,
+            ease: 'power2.in',
+            pointerEvents: 'none'
+          });
+        },
+        onLeaveBack: () => {
+          gsap.to(buttonContainerDesktop, {
+            opacity: 0,
+            y: 20,
+            duration: 0.3,
+            ease: 'power2.in',
+            pointerEvents: 'none'
+          });
+        },
+        onEnterBack: () => {
+          gsap.to(buttonContainerDesktop, {
+            opacity: 1,
+            y: 0,
+            duration: 0.4,
+            ease: 'power2.out',
+            pointerEvents: 'auto'
+          });
+        }
+      });
+      
+      return () => trigger.kill();
+    }
+  }, [isMobile]);
+
+
+// Динамическое создание мобильной кнопки - появляется ТОЛЬКО после скролла
 useEffect(() => {
-  // Включаем Lenis ТОЛЬКО на десктопе
-  if (typeof window === 'undefined' || isMobile) return
-
-  const lenis = new Lenis({
-    duration: 1.2,
-    easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-    smoothWheel: true,
-    wheelMultiplier: 1,
-    touchMultiplier: 2,
-  })
-
-  lenis.on('scroll', ScrollTrigger.update)
-
-  gsap.ticker.add((time: number) => {
-    lenis.raf(time * 1000)
-  })
-
-  gsap.ticker.lagSmoothing(0)
-
+  if (!isMobile) return;
+  
+  let buttonContainer: HTMLDivElement | null = null;
+  let isCreated = false;
+  
+  // Функция создания кнопки
+  const createButton = () => {
+    if (isCreated) return;
+    
+    // Находим контейнер, куда нужно вставить кнопку (перед trailerCardRef)
+    const trailerParent = trailerCardRef.current?.parentElement;
+    if (!trailerParent) return;
+    
+    // Создаем контейнер кнопки
+    buttonContainer = document.createElement('div');
+    buttonContainer.className = 'mb-4 px-3';
+    buttonContainer.style.cssText = 'opacity: 0; transform: translateY(20px); pointer-events: none; display: block; margin-left: 17px; width: 80%;';
+    
+    // Создаем ссылку
+    const link = document.createElement('a');
+    link.href = '/lore';
+    link.style.width = '40vh';
+    link.style.display = 'block';
+    
+    // Создаем кнопку
+    const button = document.createElement('button');
+    button.className = 'w-full group relative px-3 py-2 bg-transparent border border-[#00d4ff] text-[#00d4ff] font-mono text-[10px] tracking-wider rounded-md overflow-hidden transition-all duration-300 hover:bg-[#00d4ff] hover:text-black hover:shadow-[0_0_10px_rgba(0,212,255,0.3)]';
+    button.innerHTML = `
+      <span class="relative z-10 flex items-center justify-center gap-1.5">
+        EXPLORE LORE
+        <svg class="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+        </svg>
+      </span>
+      <span class="absolute inset-0 bg-[#00d4ff] scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
+    `;
+    
+    link.appendChild(button);
+    buttonContainer.appendChild(link);
+    
+    // Вставляем перед trailerCardRef
+    trailerParent.insertBefore(buttonContainer, trailerCardRef.current);
+    isCreated = true;
+    
+    return buttonContainer;
+  };
+  
+  // Функция показа кнопки
+  const showButton = () => {
+    if (buttonContainer) {
+      gsap.to(buttonContainer, {
+        opacity: 1,
+        y: 0,
+        duration: 0.5,
+        ease: 'back.out(0.6)',
+        pointerEvents: 'auto'
+      });
+    }
+  };
+  
+  // Функция скрытия кнопки
+  const hideButton = () => {
+    if (buttonContainer) {
+      gsap.to(buttonContainer, {
+        opacity: 0,
+        y: 20,
+        duration: 0.1,
+        ease: 'power2.in',
+        pointerEvents: 'none'
+      });
+    }
+  };
+  
+  // Удаление кнопки
+  const removeButton = () => {
+    if (buttonContainer && buttonContainer.parentNode) {
+      buttonContainer.parentNode.removeChild(buttonContainer);
+      buttonContainer = null;
+      isCreated = false;
+    }
+  };
+  
+  // Обработчик скролла
+  const handleScroll = () => {
+    const scrollY = window.scrollY;
+    const windowHeight = window.innerHeight;
+    
+    // После прохождения 90% первого экрана
+    if (scrollY > windowHeight * 0.4) {
+      if (!isCreated) {
+        createButton();
+      }
+      showButton();
+    } else {
+      if (isCreated) {
+        hideButton();
+      }
+    }
+  };
+  
+  window.addEventListener('scroll', handleScroll);
+  // Вызываем сразу для проверки начального состояния
+  handleScroll();
+  
   return () => {
-    lenis.destroy()
-    gsap.ticker.remove((time: number) => lenis.raf(time * 1000))
-  }
-}, [isMobile])
+    window.removeEventListener('scroll', handleScroll);
+    removeButton();
+  };
+}, [isMobile, trailerCardRef]);
 
-  // Функция обновления прогресса панорамы - на мобильных скрываем лишние слои
+  // Функция обновления прогресса панорамы
   const updatePanoramaProgress = (progress: number) => {
     const moveDistance = isMobile ? 40 : 80
     const moveUp = -progress * moveDistance
@@ -535,7 +696,6 @@ useEffect(() => {
       })
     }
     
-    // НА МОБИЛЬНЫХ СКРЫВАЕМ СЛОИ 2-5
     if (isMobile) {
       if (img2WrapperRef.current) {
         gsap.set(img2WrapperRef.current, { opacity: 0, display: 'none' })
@@ -549,10 +709,9 @@ useEffect(() => {
       if (img5WrapperRef.current) {
         gsap.set(img5WrapperRef.current, { opacity: 0, display: 'none' })
       }
-      return // Выходим, остальная логика не нужна на мобильных
+      return
     }
     
-    // ДЕСКТОПНАЯ ЛОГИКА
     const mobileScale = isLowEnd ? 1.15 : 1.30
     const desktopScale = 1.1
     
@@ -631,277 +790,255 @@ useEffect(() => {
     }
   }
 
-  const nextMobileCard = () => {
-    setMobileCardIndex((prev) => (prev + 1) % cardColors.length)
-    setActiveCardIndex(mobileCardIndex + 1)
-  }
-
-  const prevMobileCard = () => {
-    setMobileCardIndex((prev) => (prev - 1 + cardColors.length) % cardColors.length)
-    setActiveCardIndex(mobileCardIndex - 1)
-  }
-
   // ОСНОВНОЙ GSAP useEffect с masterTl
-useEffect(() => {
-  const ctx = gsap.context(() => {
-    if (!containerRef.current || !heroImageRef.current || !flipCardWrapperRef.current) return
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      if (!containerRef.current || !heroImageRef.current || !flipCardWrapperRef.current) return
 
-    const startDelay = isMobile ? 0.1 : 0.05
+      const startDelay = isMobile ? 0.1 : 0.05
 
-    gsap.set(headingRef.current, { opacity: 0, y: 60 })
-    gsap.set(leftContentRef.current, { opacity: 0, y: 40 })
-    gsap.set(flipCardContainerRef.current, { opacity: 0, scale: 0.8 })
-    gsap.set(trailerCardRef.current, { opacity: 0, x: 100 })
-    gsap.set(panoramaRef.current, { opacity: 0, visibility: 'hidden' })
-    gsap.set(maskContainerRef.current, { opacity: 1 })
-    gsap.set(heroImageRef.current, { opacity: 1 }) 
-    
-    if (isMobile) {
-      gsap.set(maskContainerRef.current, { display: 'none' })
-    }
-    
-    gsap.set(text1Ref.current, { opacity: 0, y: 80 })
-    gsap.set(text2Ref.current, { opacity: 0, y: 80 })
-    gsap.set(uiPanelRef.current, { opacity: 0, x: 50 })
-    gsap.set(keeperSymbolRef.current, { opacity: 0, scale: 0.3 })
-    gsap.set(cardsSectionRef.current, { opacity: 0, pointerEvents: 'none' })
-    gsap.set(gradient1Ref.current, { opacity: 0 })
-    gsap.set(gradient2Ref.current, { opacity: 0 })
-    
-// В useEffect с masterTl
-const masterTl = gsap.timeline({
-  scrollTrigger: {
-    trigger: containerRef.current,
-    start: "top top",
-    end: () => `+=${window.innerHeight * (isMobile ? 2.85 : 12)}`,// меняем здесь для плавности панорамы
-    scrub: isMobile ? 1.65 : 2.15,
-    pin: stickyRef.current,
-    anticipatePin: 1,
-    fastScrollEnd: true,
-    preventOverlaps: true,
-    invalidateOnRefresh: true,
-  }
-});
-
-    masterTl.to(heroTextRef.current, { opacity: 0, scale: 0.95, duration: 0.02 }, 0 + startDelay)
-    masterTl.to(headingRef.current, { opacity: 1, y: 0, duration: 0.02 }, 0.01 + startDelay)
-    masterTl.to(leftContentRef.current, { opacity: 1, y: 0, duration: 0.02 }, 0.02 + startDelay)
-    
-    // ВСЕ ЭЛЕМЕНТЫ ПОЯВЛЯЮТСЯ ОДНОВРЕМЕННО на 0.02 + startDelay
-    masterTl.to(trailerCardRef.current, { opacity: 1, x: 0, duration: 0.02 }, 0.02 + startDelay)
-    masterTl.to(flipCardContainerRef.current, { opacity: 1, scale: 1, duration: 0.02 }, 0.02 + startDelay)
-
-    // Анимация сжатия hero ТОЛЬКО ДЛЯ ДЕСКТОПА
-    if (!isMobile) {
-      masterTl.to(heroImageRef.current, {
-        width: framePos.width,
-        height: framePos.height,
-        left: framePos.x,
-        top: framePos.y,
-        borderRadius: 12,
-        duration: 0.04,
-        ease: 'power2.inOut'
-      }, 0.01 + startDelay)
-    }
-    
-    // НА МОБИЛЬНЫХ НЕ СКРЫВАЕМ trailerCardRef
-    if (!isMobile) {
-      masterTl.to([heroImageRef.current, headingRef.current, leftContentRef.current, trailerCardRef.current], {
-        opacity: 0,
-        duration: 0.02
-      }, 0.08 + startDelay)
-    } else {
-      // На мобильных скрываем только heroImageRef, headingRef, leftContentRef
-      masterTl.to([heroImageRef.current, headingRef.current, leftContentRef.current], {
-        opacity: 0,
-        duration: 0.15
-      }, 0.08 + startDelay)
-      // trailerCardRef остается видимым
-    }
-
-    if (isMobile) {
+      gsap.set(headingRef.current, { opacity: 0, y: 60 })
+      gsap.set(leftContentRef.current, { opacity: 0, y: 40 })
+      gsap.set(flipCardContainerRef.current, { opacity: 0, scale: 0.8 })
+      gsap.set(trailerCardRef.current, { opacity: 0, x: 100 })
       gsap.set(panoramaRef.current, { opacity: 0, visibility: 'hidden' })
-      gsap.set(flipCardWrapperRef.current, { width: 140, height: 200 })
+      gsap.set(maskContainerRef.current, { opacity: 1 })
+      gsap.set(heroImageRef.current, { opacity: 1 }) 
       
-      masterTl.to([trailerCardRef.current], {
-        opacity: 0,
-        duration: 0.01,
-        ease: 'none'
-      }, 0.07 + startDelay)
-
-      masterTl.to(flipCardWrapperRef.current, {
-        scale: 2.5,
-        duration: 0.18,
-        ease: 'power2.inOut'
-      }, 0.09 + startDelay)
-
-      masterTl.to(flipCardRef.current, { 
-        rotateY: 180, 
-        duration: 0.22,
-        ease: 'power2.inOut'
-      }, 0.13 + startDelay)
-      
-      masterTl.to(panoramaRef.current, { 
-        opacity: 1, 
-        visibility: 'visible',
-        duration: 0.03,
-        onComplete: () => {
-          requestAnimationFrame(() => {
-            updatePanoramaProgress(0)
-          })
-        }
-      }, 0.22 + startDelay)
-      
-      masterTl.set(contentLayerRef.current, { opacity: 0 }, 0.14 + startDelay)
-
-      masterTl.to(flipCardWrapperRef.current, { 
-        opacity: 0,
-        duration: 0.04,
-        ease: 'power2.out'
-      }, 0.26 + startDelay)
-      
-      masterTl.to(flipCardContainerRef.current, { 
-        opacity: 0, 
-        duration: 0.02 
-      }, 0.28 + startDelay)
-    } else {
-      // ДЕСКТОП - без изменений
-      gsap.set(panoramaRef.current, { opacity: 0, visibility: 'hidden' })
-      gsap.set(flipCardWrapperRef.current, { width: 220, height: 320 })
-      
-      masterTl.to([], {
-        opacity: 0,
-        duration: 0.01,
-        ease: 'none'
-      }, 0.07 + startDelay)
-
-      masterTl.to(flipCardWrapperRef.current, {
-        scale: 2.5,
-        duration: 0.04,
-        ease: 'power2.inOut'
-      }, 0.09 + startDelay)
-
-      masterTl.to(flipCardRef.current, { 
-        rotateY: 180, 
-        duration: 0.05,
-        ease: 'power2.inOut'
-      }, 0.13 + startDelay)
-      
-      masterTl.to(panoramaRef.current, { 
-        opacity: 1, 
-        visibility: 'visible',
-        duration: 0.02
-      }, 0.161 + startDelay)
-      
-      masterTl.set(contentLayerRef.current, { opacity: 0 }, 0.14 + startDelay)
-
-      masterTl.to(flipCardWrapperRef.current, { 
-        opacity: 0,
-        duration: 0.03,
-        ease: 'power2.out'
-      }, 0.18 + startDelay)
-      
-      masterTl.to(flipCardContainerRef.current, { 
-        opacity: 0, 
-        duration: 0.01 
-      }, 0.18 + startDelay)
-    }
-    
-    // ВСЁ ОСТАЛЬНОЕ БЕЗ ИЗМЕНЕНИЙ
-    masterTl.to(text1Ref.current, { opacity: 1, y: 0, duration: 0.02 }, 0.15 + startDelay)
-    
-    // Второй текст появляется с левой стороны
-masterTl.set(text2Ref.current, { 
-  left: isMobile ? '55px' : '55px', // Прижимаем к левому краю
-  right: 'auto',
-  textAlign: 'left',
-  maxWidth: isMobile ? '90%' : '600px'
-}, 0.18 + startDelay)
-    if (!isMobile) {
-      masterTl.to(uiPanelRef.current, { opacity: 1, x: 0, duration: 0.02 }, 0.21 + startDelay)
-    }
-
-    masterTl.to(panoramaInnerRef.current, { 
-      y: panoramaMoveValue, 
-      duration: isMobile ? 0.15 : 0.3,
-      ease: 'none' 
-    }, isMobile ? 0.35 + startDelay : 0.22 + startDelay)
-
-    masterTl.eventCallback('onUpdate', () => {
-      const totalProgress = masterTl.progress()
-      const startPanProgress = isMobile ? 0.35 : 0.22
-      const endPanProgress = isMobile ? 0.71 : 0.58
-      
-      if (totalProgress >= (startPanProgress + startDelay) && totalProgress <= (endPanProgress + startDelay)) {
-        const divider = endPanProgress - startPanProgress
-        const panoramaProgress = (totalProgress - (startPanProgress + startDelay)) / divider
-        updatePanoramaProgress(panoramaProgress)
+      if (isMobile) {
+        gsap.set(maskContainerRef.current, { display: 'none' })
       }
-    })
-
-    masterTl.to({}, { duration: 0.02 }, 0.62 + startDelay)
-    masterTl.to(keeperSymbolRef.current, { opacity: 1, scale: 1, duration: 0.12, ease: 'back.out(0.8)', clearProps: 'all' }, 0.58 + startDelay)
-    masterTl.to(keeperSymbolRef.current, { opacity: 1, duration: 0.02 }, 0.60 + startDelay)
-    
-    const clipInset = isMobile ? 'calc(50% - 100px)' : 'calc(50% - 260px)'
-    
-    masterTl.fromTo(panoramaRef.current, {
-      clipPath: 'inset(0% 0% 0% 0% round 0px)',
-      rotateY: 0,
-      rotateX: 0,
-      rotateZ: 0,
-    }, {
-      clipPath: `inset(${clipInset} ${clipInset} ${clipInset} ${clipInset} round ${isMobile ? '8px' : '16px'})`,
-      rotateY: isMobile ? -15 : -35,
-      rotateX: isMobile ? 3 : 8,
-      rotateZ: isMobile ? -2 : -4,
-      duration: isMobile ? 0.04 : 0.04,
-      ease: 'power2.inOut'
-    }, 0.63 + startDelay)
-    
-    masterTl.to(panoramaRef.current, { rotateY: -90, duration: 0.02, ease: 'power2.in' }, 0.65 + startDelay)
-    masterTl.to(panoramaRef.current, { opacity: 0, duration: 0.01 }, 0.67 + startDelay)
-
-   // УБИРАЕМ лишнюю задержку и СРАЗУ показываем Map секцию
-masterTl.call(() => {
-  const mapSection = document.getElementById('world')
-  if (mapSection) {
-    mapSection.style.opacity = '1'
-    mapSection.style.visibility = 'visible'
-    mapSection.style.transform = 'scale(1)'
-  }
-}, [], 0.35 + startDelay)  // СРАЗУ после панорамы
-
-   // masterTl.set(cardsSectionRef.current, { opacity: 1, pointerEvents: 'auto' }, 0.89 + startDelay)
-   // masterTl.to([gradient1Ref.current, gradient2Ref.current], { opacity: 0, duration: 0.04 }, 0.90 + startDelay)
-
-    if (!isMobile) {
-      const cardRanges = [
-        { start: 1.03, end: 1.105 },
-        { start: 1.105, end: 1.18 },
-        { start: 1.18, end: 1.255 },
-        { start: 1.255, end: 1.33 }
-      ]
       
-      cardRanges.forEach((range, i) => {
+      gsap.set(text1Ref.current, { opacity: 0, y: 80 })
+      gsap.set(text2Ref.current, { opacity: 0, y: 80 })
+      gsap.set(uiPanelRef.current, { opacity: 0, x: 50 })
+      gsap.set(keeperSymbolRef.current, { opacity: 0, scale: 0.3 })
+      gsap.set(cardsSectionRef.current, { opacity: 0, pointerEvents: 'none' })
+      gsap.set(gradient1Ref.current, { opacity: 0 })
+      gsap.set(gradient2Ref.current, { opacity: 0 })
+      
+      const masterTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: containerRef.current,
+          start: "top top",
+          end: () => `+=${window.innerHeight * (isMobile ? 2.85 : 12)}`,
+          scrub: isMobile ? 1.65 : 2.15,
+          pin: stickyRef.current,
+          anticipatePin: 1,
+          fastScrollEnd: true,
+          preventOverlaps: true,
+          invalidateOnRefresh: true,
+        }
+      });
+
+      masterTl.to(heroTextRef.current, { opacity: 0, scale: 0.95, duration: 0.02 }, 0 + startDelay)
+      masterTl.to(headingRef.current, { opacity: 1, y: 0, duration: 0.02 }, 0.01 + startDelay)
+      masterTl.to(leftContentRef.current, { opacity: 1, y: 0, duration: 0.02 }, 0.02 + startDelay)
+      
+      masterTl.to(trailerCardRef.current, { opacity: 1, x: 0, duration: 0.02 }, 0.02 + startDelay)
+      masterTl.to(flipCardContainerRef.current, { opacity: 1, scale: 1, duration: 0.02 }, 0.02 + startDelay)
+
+      if (!isMobile) {
+        masterTl.to(heroImageRef.current, {
+          width: framePos.width,
+          height: framePos.height,
+          left: framePos.x,
+          top: framePos.y,
+          borderRadius: 12,
+          duration: 0.04,
+          ease: 'power2.inOut'
+        }, 0.01 + startDelay)
+      }
+      
+      if (!isMobile) {
+        masterTl.to([heroImageRef.current, headingRef.current, leftContentRef.current, trailerCardRef.current], {
+          opacity: 0,
+          duration: 0.02
+        }, 0.08 + startDelay)
+      } else {
+        masterTl.to([heroImageRef.current, headingRef.current, leftContentRef.current], {
+          opacity: 0,
+          duration: 0.15
+        }, 0.08 + startDelay)
+      }
+
+      if (isMobile) {
+        gsap.set(panoramaRef.current, { opacity: 0, visibility: 'hidden' })
+        gsap.set(flipCardWrapperRef.current, { width: 140, height: 200 })
+        
+        masterTl.to([trailerCardRef.current], {
+          opacity: 0,
+          duration: 0.01,
+          ease: 'none'
+        }, 0.07 + startDelay)
+
+        masterTl.to(flipCardWrapperRef.current, {
+          scale: 2.5,
+          duration: 0.18,
+          ease: 'power2.inOut'
+        }, 0.09 + startDelay)
+
+        masterTl.to(flipCardRef.current, { 
+          rotateY: 180, 
+          duration: 0.22,
+          ease: 'power2.inOut'
+        }, 0.13 + startDelay)
+        
+        masterTl.to(panoramaRef.current, { 
+          opacity: 1, 
+          visibility: 'visible',
+          duration: 0.03,
+          onComplete: () => {
+            requestAnimationFrame(() => {
+              updatePanoramaProgress(0)
+            })
+          }
+        }, 0.22 + startDelay)
+        
+        masterTl.set(contentLayerRef.current, { opacity: 0 }, 0.14 + startDelay)
+
+        masterTl.to(flipCardWrapperRef.current, { 
+          opacity: 0,
+          duration: 0.04,
+          ease: 'power2.out'
+        }, 0.26 + startDelay)
+        
+        masterTl.to(flipCardContainerRef.current, { 
+          opacity: 0, 
+          duration: 0.02 
+        }, 0.28 + startDelay)
+      } else {
+        gsap.set(panoramaRef.current, { opacity: 0, visibility: 'hidden' })
+        gsap.set(flipCardWrapperRef.current, { width: 220, height: 320 })
+        
+        masterTl.to([], {
+          opacity: 0,
+          duration: 0.01,
+          ease: 'none'
+        }, 0.07 + startDelay)
+
+        masterTl.to(flipCardWrapperRef.current, {
+          scale: 2.5,
+          duration: 0.04,
+          ease: 'power2.inOut'
+        }, 0.09 + startDelay)
+
+        masterTl.to(flipCardRef.current, { 
+          rotateY: 180, 
+          duration: 0.05,
+          ease: 'power2.inOut'
+        }, 0.13 + startDelay)
+        
+        masterTl.to(panoramaRef.current, { 
+          opacity: 1, 
+          visibility: 'visible',
+          duration: 0.02
+        }, 0.161 + startDelay)
+        
+        masterTl.set(contentLayerRef.current, { opacity: 0 }, 0.14 + startDelay)
+
+        masterTl.to(flipCardWrapperRef.current, { 
+          opacity: 0,
+          duration: 0.03,
+          ease: 'power2.out'
+        }, 0.18 + startDelay)
+        
+        masterTl.to(flipCardContainerRef.current, { 
+          opacity: 0, 
+          duration: 0.01 
+        }, 0.18 + startDelay)
+      }
+      
+      masterTl.to(text1Ref.current, { opacity: 1, y: 0, duration: 0.02 }, 0.15 + startDelay)
+      
+      masterTl.set(text2Ref.current, { 
+        left: isMobile ? '55px' : '55px',
+        right: 'auto',
+        textAlign: 'left',
+        maxWidth: isMobile ? '90%' : '600px'
+      }, 0.18 + startDelay)
+      
+      if (!isMobile) {
+        masterTl.to(uiPanelRef.current, { opacity: 1, x: 0, duration: 0.02 }, 0.21 + startDelay)
+      }
+
+      masterTl.to(panoramaInnerRef.current, { 
+        y: panoramaMoveValue, 
+        duration: isMobile ? 0.15 : 0.3,
+        ease: 'none' 
+      }, isMobile ? 0.35 + startDelay : 0.22 + startDelay)
+
+      masterTl.eventCallback('onUpdate', () => {
+        const totalProgress = masterTl.progress()
+        const startPanProgress = isMobile ? 0.35 : 0.22
+        const endPanProgress = isMobile ? 0.71 : 0.58
+        
+        if (totalProgress >= (startPanProgress + startDelay) && totalProgress <= (endPanProgress + startDelay)) {
+          const divider = endPanProgress - startPanProgress
+          const panoramaProgress = (totalProgress - (startPanProgress + startDelay)) / divider
+          updatePanoramaProgress(panoramaProgress)
+        }
+      })
+
+      masterTl.to({}, { duration: 0.02 }, 0.62 + startDelay)
+      masterTl.to(keeperSymbolRef.current, { opacity: 1, scale: 1, duration: 0.12, ease: 'back.out(0.8)', clearProps: 'all' }, 0.58 + startDelay)
+      masterTl.to(keeperSymbolRef.current, { opacity: 1, duration: 0.02 }, 0.60 + startDelay)
+      
+      const clipInset = isMobile ? 'calc(50% - 100px)' : 'calc(50% - 260px)'
+      
+      masterTl.fromTo(panoramaRef.current, {
+        clipPath: 'inset(0% 0% 0% 0% round 0px)',
+        rotateY: 0,
+        rotateX: 0,
+        rotateZ: 0,
+      }, {
+        clipPath: `inset(${clipInset} ${clipInset} ${clipInset} ${clipInset} round ${isMobile ? '8px' : '16px'})`,
+        rotateY: isMobile ? -15 : -35,
+        rotateX: isMobile ? 3 : 8,
+        rotateZ: isMobile ? -2 : -4,
+        duration: isMobile ? 0.04 : 0.04,
+        ease: 'power2.inOut'
+      }, 0.63 + startDelay)
+      
+      masterTl.to(panoramaRef.current, { rotateY: -90, duration: 0.02, ease: 'power2.in' }, 0.65 + startDelay)
+      masterTl.to(panoramaRef.current, { opacity: 0, duration: 0.01 }, 0.67 + startDelay)
+
+      masterTl.call(() => {
+        const mapSection = document.getElementById('world')
+        if (mapSection) {
+          mapSection.style.opacity = '1'
+          mapSection.style.visibility = 'visible'
+          mapSection.style.transform = 'scale(1)'
+        }
+      }, [], 0.35 + startDelay)
+
+      if (!isMobile) {
+        const cardRanges = [
+          { start: 1.03, end: 1.105 },
+          { start: 1.105, end: 1.18 },
+          { start: 1.18, end: 1.255 },
+          { start: 1.255, end: 1.33 }
+        ]
+        
+        cardRanges.forEach((range, i) => {
+          masterTl.call(() => {
+            if (hoveredCard === null) {
+              setActiveCardIndex(i)
+            }
+          }, [], range.start + startDelay)
+        })
+        
         masterTl.call(() => {
           if (hoveredCard === null) {
-            setActiveCardIndex(i)
+            setActiveCardIndex(0)
           }
-        }, [], range.start + startDelay)
-      })
-      
-      masterTl.call(() => {
-        if (hoveredCard === null) {
-          setActiveCardIndex(0)
-        }
-      }, [], 1.02 + startDelay)
-    }
-ScrollTrigger.refresh();
-  }, containerRef)
+        }, [], 1.02 + startDelay)
+      }
+      ScrollTrigger.refresh();
+    }, containerRef)
 
-  return () => ctx.revert()
-}, [framePos, hoveredCard, isMobile, panoramaMoveValue])
+    return () => ctx.revert()
+  }, [framePos, hoveredCard, isMobile, panoramaMoveValue])
 
   useEffect(() => {
     const adjustOverlap = () => {
@@ -961,41 +1098,39 @@ ScrollTrigger.refresh();
   useEffect(() => {
     if (!panoramaInnerRef.current || !img1WrapperRef.current) return
 
-const calculateOptimalMove = () => {
-  const wrappers = [img1WrapperRef, img2WrapperRef, img3WrapperRef, img4WrapperRef, img5WrapperRef]
-  let totalHeight = 0
-  let totalOverlap = 0
-  
-  wrappers.forEach((wrapper, idx) => {
-    if (wrapper.current) {
-      const height = wrapper.current.offsetHeight
-      totalHeight += height
+    const calculateOptimalMove = () => {
+      const wrappers = [img1WrapperRef, img2WrapperRef, img3WrapperRef, img4WrapperRef, img5WrapperRef]
+      let totalHeight = 0
+      let totalOverlap = 0
       
-      if (idx > 0) {
-        const computedStyle = getComputedStyle(wrapper.current)
-        const marginTop = parseFloat(computedStyle.marginTop)
-        if (!isNaN(marginTop) && marginTop < 0) {
-          totalOverlap += Math.abs(marginTop)
+      wrappers.forEach((wrapper, idx) => {
+        if (wrapper.current) {
+          const height = wrapper.current.offsetHeight
+          totalHeight += height
+          
+          if (idx > 0) {
+            const computedStyle = getComputedStyle(wrapper.current)
+            const marginTop = parseFloat(computedStyle.marginTop)
+            if (!isNaN(marginTop) && marginTop < 0) {
+              totalOverlap += Math.abs(marginTop)
+            }
+          }
         }
-      }
+      })
+      
+      const actualHeight = totalHeight - totalOverlap
+      const viewportHeight = window.innerHeight
+      
+      let neededScroll = actualHeight - viewportHeight
+      const minScroll = isMobile ? viewportHeight * 0.8 : viewportHeight * 0.3
+      neededScroll = Math.max(neededScroll, minScroll)
+      
+      let moveInVh = (neededScroll / viewportHeight) * 100
+      const maxMove = isMobile ? 800 : 500
+      moveInVh = Math.min(Math.max(moveInVh, 30), maxMove)
+      
+      setPanoramaMoveValue(`-${Math.round(moveInVh)}vh`)
     }
-  })
-  
-  const actualHeight = totalHeight - totalOverlap
-  const viewportHeight = window.innerHeight
-  
-  let neededScroll = actualHeight - viewportHeight
-  // Для мобильных увеличиваем минимальный скролл
-  const minScroll = isMobile ? viewportHeight * 0.8 : viewportHeight * 0.3
-  neededScroll = Math.max(neededScroll, minScroll)
-  
-  let moveInVh = (neededScroll / viewportHeight) * 100
-  // Для мобильных увеличиваем максимальное значение
-  const maxMove = isMobile ? 800 : 500
-  moveInVh = Math.min(Math.max(moveInVh, 30), maxMove)
-  
-  setPanoramaMoveValue(`-${Math.round(moveInVh)}vh`)
-}
     
     const timer = setTimeout(calculateOptimalMove, 500)
     
@@ -1129,11 +1264,11 @@ const calculateOptimalMove = () => {
         </div>
       )}
 
-<div
-  ref={containerRef} 
-  className="relative bg-[#050508] min-h-screen"   // ← лучше так
-   style={{ height: isMobile ? '350vh' : '750vh' }}  // ← убери или закомментируй
->
+      <div
+        ref={containerRef} 
+        className="relative bg-[#050508] min-h-screen"
+        style={{ height: isMobile ? '350vh' : '750vh' }}
+      >
         <div 
           ref={stickyRef} 
           className="h-screen w-full overflow-hidden"
@@ -1191,7 +1326,6 @@ const calculateOptimalMove = () => {
                 />
               </div>
               
-              {/* Слой 2 - скрываем на мобильных */}
               <div 
                 ref={img2WrapperRef}
                 className="relative w-full will-change-transform"
@@ -1213,7 +1347,6 @@ const calculateOptimalMove = () => {
                 />
               </div>
               
-              {/* Слой 3 - скрываем на мобильных */}
               <div 
                 ref={img3WrapperRef}
                 className="relative w-full will-change-transform"
@@ -1235,7 +1368,6 @@ const calculateOptimalMove = () => {
                 />
               </div>
               
-              {/* Слой 4 - скрываем на мобильных */}
               <div 
                 ref={img4WrapperRef}
                 className="relative w-full will-change-transform"
@@ -1257,7 +1389,6 @@ const calculateOptimalMove = () => {
                 />
               </div>
               
-              {/* Слой 5 - скрываем на мобильных */}
               <div 
                 ref={img5WrapperRef}
                 className="relative w-full will-change-transform"
@@ -1319,20 +1450,20 @@ const calculateOptimalMove = () => {
               </div>
             </div>
 
-<div
-  ref={keeperSymbolRef}
-  className="absolute inset-0 flex items-center justify-center z-30 pointer-events-none"
->
-  <img 
-    src="/image/A1.png"
-    alt="Symbol"
-    className="opacity-80"
-    style={{
-      width: isMobile ? '80px' : '200px',
-      height: 'auto'
-    }}
-  />
-</div>
+            <div
+              ref={keeperSymbolRef}
+              className="absolute inset-0 flex items-center justify-center z-30 pointer-events-none"
+            >
+              <img 
+                src="/image/A1.png"
+                alt="Symbol"
+                className="opacity-80"
+                style={{
+                  width: isMobile ? '80px' : '200px',
+                  height: 'auto'
+                }}
+              />
+            </div>
           </div>
 
           {/* CONTENT LAYER */}
@@ -1349,8 +1480,23 @@ const calculateOptimalMove = () => {
                       </span>
                     </div>
                     <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-[#e8e8ec] leading-[1.05] max-w-5xl tracking-tight">
-                     IN THE SILENT VOID OF SPACE, THE GREAT ECHO STIRRED...
+                      IN THE SILENT VOID OF SPACE, THE GREAT ECHO STIRRED...
                     </h2>
+                    
+                    {/* Кнопка EXPLORE LORE для десктопа */}
+                    <div className="explore-lore-button-container mt-8">
+                      <Link href="/lore">
+                        <button className="group relative px-8 py-3 bg-transparent border-2 border-[#00d4ff] text-[#00d4ff] font-mono text-sm tracking-wider rounded-lg overflow-hidden transition-all duration-300 hover:bg-[#00d4ff] hover:text-black hover:shadow-[0_0_20px_rgba(0,212,255,0.5)]">
+                          <span className="relative z-10 flex items-center gap-2">
+                            EXPLORE LORE
+                            <svg className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                            </svg>
+                          </span>
+                          <span className="absolute inset-0 bg-[#00d4ff] scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
+                        </button>
+                      </Link>
+                    </div>
                   </div>
                 )}
 
@@ -1412,60 +1558,54 @@ const calculateOptimalMove = () => {
 
                   <div className="lg:col-span-4" />
 
-<div className="lg:col-span-5">
-  <div 
-    ref={trailerCardRef} 
-    className="relative"
-    style={{
-      marginTop: isMobile ? '60px' : '0',
-      paddingLeft: isMobile ? '10px' : '0',
-      paddingRight: isMobile ? '10px' : '0',
-      zIndex: 30,
-    }}
-  >
-    <div 
-      className="relative rounded-xl overflow-hidden bg-[#0a0a15] border border-[#2a2a3a] cursor-pointer group"
-      style={{
-        aspectRatio: '16/9',
-        width: isMobile ? 'calc(100% - 20px)' : '100%',
-        marginLeft: isMobile ? '10px' : '0',
-      }}
-      onClick={() => {
-        // Открыть видео в модальном окне или перейти по ссылке
-       // window.open('https://your-video-link.com', '_blank')
-      }}
-    >
-      {/* Миниатюра трейлера */}
-      <img 
-        src="/image/comingsoon.webp"
-        alt="Trailer thumbnail"
-        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-      />
-      
-      {/* Кнопка Play поверх изображения */}
-      <div className="absolute inset-0 flex items-center justify-center">
-        <div className="w-16 h-16 rounded-full bg-[#00d4ff]/80 flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
-          <Play className="w-6 h-6 text-black ml-1" />
-        </div>
-      </div>
-      
-      {/* Затемнение при наведении */}
-      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-    </div>
-                      
-    {!isMobile && (
-      <div className="flex gap-3 mt-4">
-        <button 
-         // onClick={() => window.open('https://your-video-link.com', '_blank')}
-          className="px-6 py-2.5 bg-[#00d4ff] hover:bg-[#00b8e0] text-[#050508] rounded-lg text-sm font-medium transition-colors"
-        >
-          Watch Now
-        </button>
-        <button className="px-6 py-2.5 border border-[#3a3a4a] hover:border-[#5a5a6a] text-[#e8e8ec] rounded-lg text-sm font-medium transition-colors">
-          Add to List
-        </button>
-      </div>
-    )}
+                  <div className="lg:col-span-5">
+
+                    
+                    <div 
+                      ref={trailerCardRef} 
+                      className="relative"
+                      style={{
+                        marginTop: isMobile ? '0' : '0',
+                        paddingLeft: isMobile ? '10px' : '0',
+                        paddingRight: isMobile ? '10px' : '0',
+                        zIndex: 30,
+                      }}
+                    >
+                      <div 
+                        className="relative rounded-xl overflow-hidden bg-[#0a0a15] border border-[#2a2a3a] cursor-pointer group"
+                        style={{
+                            height: isMobile ? '170px' : 'auto',
+                          width: isMobile ? 'calc(100% - 20px)' : '100%',
+                          marginLeft: isMobile ? '10px' : '0',
+                          marginTop: isMobile ? '-5px' : '0',  // Добавьте это чтобы поднять карту выше или убрать
+                        }}
+                        onClick={() => {}}
+                      >
+                        <img 
+                          src="/image/comingsoon.webp"
+                          alt="Trailer thumbnail"
+                          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                        />
+                        
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <div className="w-16 h-16 rounded-full bg-[#00d4ff]/80 flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
+                            <Play className="w-6 h-6 text-black ml-1" />
+                          </div>
+                        </div>
+                        
+                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                      </div>
+                                
+                      {!isMobile && (
+                        <div className="flex gap-3 mt-4">
+                          <button className="px-6 py-2.5 bg-[#00d4ff] hover:bg-[#00b8e0] text-[#050508] rounded-lg text-sm font-medium transition-colors">
+                            Watch Now
+                          </button>
+                          <button className="px-6 py-2.5 border border-[#3a3a4a] hover:border-[#5a5a6a] text-[#e8e8ec] rounded-lg text-sm font-medium transition-colors">
+                            Add to List
+                          </button>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
