@@ -141,8 +141,8 @@ const handleNavigate = (sectionId: string, isPage?: boolean, href?: string) => {
 
   // Процентное позиционирование текста относительно фонового изображения
   const textPosition = isMobile
-    ? { left: '27%', top: '20%' }
-    : { left: '35%', top: '18%' }
+    ? { left: '22%', top: '15%' }
+    : { left: '35%', top: '10%' }
 
   // Получаем URL фона
   const backgroundImageUrl = `/image/${isMobile ? 'menu-mobile.webp' : 'menu.webp'}`
@@ -168,7 +168,7 @@ const handleNavigate = (sectionId: string, isPage?: boolean, href?: string) => {
                 backgroundRepeat: 'no-repeat',
                 backgroundColor: 'transparent',
                 border: 'none',
-                cursor: `url('/images/handarrow.webp') 0 0, pointer`,
+                cursor: `url('/images/handarrow.png') 0 0, pointer`,
               }
             : {
                 top: isMobile ? '16px' : '24px',
@@ -182,7 +182,7 @@ const handleNavigate = (sectionId: string, isPage?: boolean, href?: string) => {
                 backgroundRepeat: 'no-repeat',
                 backgroundColor: 'transparent',
                 border: 'none',
-                cursor: 'pointer',
+               cursor: 'pointer',
               }
         }
       />
@@ -215,7 +215,7 @@ const handleNavigate = (sectionId: string, isPage?: boolean, href?: string) => {
               transition: 'opacity 0.3s ease-in-out',
             }}
           >
-            <nav className="flex flex-col items-start gap-2">
+            <nav className={`flex flex-col items-start ${isMobile ? 'gap-0' : 'gap-2'}`}>
               {sections.map((section, index) => {
                 return (
                   <a
@@ -226,7 +226,7 @@ const handleNavigate = (sectionId: string, isPage?: boolean, href?: string) => {
                       onNavigate(section.id)
                     }}
                     className={`menu-item group relative py-4 px-8 cursor-pointer ${isScrolling ? 'pointer-events-none opacity-50' : ''}`}
-                    style={{ cursor: `url('/images/handarrow.webp') 0 0, pointer` }}
+                    style={{ cursor: `url('/images/handarrow.png') 0 0, pointer` }}
                   >
                     <TextScramble 
                       text={section.label.toUpperCase()} 
@@ -247,7 +247,13 @@ const handleNavigate = (sectionId: string, isPage?: boolean, href?: string) => {
             {/* Социальные ссылки */}
             <div 
               className={`${isMobile ? 'flex flex-col items-start gap-3' : 'flex flex-wrap justify-start gap-6'} text-sm text-[#6b6b7b]`}
-              style={{ marginTop: isMobile ? '98px' : '48px' }}
+              style={{ 
+  marginTop: isMobile ? '0px' : '40px',
+  //marginLeft: isMobile ? '10px' : '0px',  // смещение вправо
+  // или
+  left: isMobile ? '10%' : '-50%',           // процентное смещение
+  position: 'relative'
+}}
             >
               <a 
                 href="https://www.instagram.com/enter.astroverse"
