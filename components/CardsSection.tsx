@@ -87,14 +87,26 @@ export function CardsSection() {
     router.push(`/cards?category=${category}`)
   }
 
-  useEffect(() => {
-    const checkDevice = () => {
-      setIsMobile(window.innerWidth < 768)
-    }
-    checkDevice()
-    window.addEventListener('resize', checkDevice)
-    return () => window.removeEventListener('resize', checkDevice)
-  }, [])
+useEffect(() => {
+  const checkDevice = () => {
+    // Используем физическую ширину экрана (не меняется при повороте)
+    const physicalWidth = window.screen.width;
+    const physicalHeight = window.screen.height;
+    const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 1;
+    
+    // Определяем мобильное устройство по физическим параметрам
+    const isMobileDevice = hasTouch && (physicalWidth < 1024 || physicalHeight < 1024);
+    
+    setIsMobile(isMobileDevice);
+  }
+  
+  checkDevice()
+  
+  // Слушаем только orientationchange
+  window.addEventListener('orientationchange', checkDevice)
+  
+  return () => window.removeEventListener('orientationchange', checkDevice)
+}, [])
 
   // Адаптивные x координаты для мобильных
   const adaptiveCardColors = cardColors.map((card, index) => ({

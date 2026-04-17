@@ -48,6 +48,7 @@ const CargoCard = ({ item, index }: { item: CargoItem; index: number }) => {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isClient, setIsClient] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -55,6 +56,21 @@ const CargoCard = ({ item, index }: { item: CargoItem; index: number }) => {
   useEffect(() => {
     setIsClient(true);
   }, []);
+
+  // Определение мобильного устройства
+  useEffect(() => {
+    const checkDevice = () => {
+      const physicalWidth = window.screen.width;
+      const physicalHeight = window.screen.height;
+      const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 1;
+      const isMobileDevice = hasTouch && (physicalWidth < 1024 || physicalHeight < 1024);
+      setIsMobile(isMobileDevice);
+    }
+    
+    checkDevice()
+    window.addEventListener('orientationchange', checkDevice)
+    return () => window.removeEventListener('orientationchange', checkDevice)
+  }, [])
 
   // Запуск видео
   const startVideo = () => {
@@ -80,17 +96,21 @@ const CargoCard = ({ item, index }: { item: CargoItem; index: number }) => {
 
   // Для десктопа: при наведении мыши
   const handleMouseEnter = () => {
-    if (hoverTimeoutRef.current) {
-      clearTimeout(hoverTimeoutRef.current);
-      hoverTimeoutRef.current = null;
+    if (!isMobile) {
+      if (hoverTimeoutRef.current) {
+        clearTimeout(hoverTimeoutRef.current);
+        hoverTimeoutRef.current = null;
+      }
+      startVideo();
     }
-    startVideo();
   };
 
   const handleMouseLeave = () => {
-    hoverTimeoutRef.current = setTimeout(() => {
-      stopVideo();
-    }, 100);
+    if (!isMobile) {
+      hoverTimeoutRef.current = setTimeout(() => {
+        stopVideo();
+      }, 100);
+    }
   };
 
   // Для мобильных: клик по значку Play

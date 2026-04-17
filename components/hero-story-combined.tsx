@@ -377,17 +377,28 @@ export function HeroStoryCombined() {
   const [loadingText, setLoadingText] = useState('// initializing')
   const loadingContainerRef = useRef<HTMLDivElement>(null)
 
-  useEffect(() => {
-    const checkDevice = () => {
-      const width = window.innerWidth
-      setIsMobile(width < 768)
-      setIsTablet(width >= 768 && width < 1024)
-      setIsLowEnd((navigator.hardwareConcurrency || 8) <= 4)
-    }
-    checkDevice()
-    window.addEventListener('resize', checkDevice)
-    return () => window.removeEventListener('resize', checkDevice)
-  }, [])
+useEffect(() => {
+  const checkDevice = () => {
+    // Используем физическую ширину экрана (не меняется при повороте)
+    const physicalWidth = window.screen.width;
+    const physicalHeight = window.screen.height;
+    const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 1;
+    
+    // Определяем мобильное устройство по физическим параметрам
+    const isMobileDevice = hasTouch && (physicalWidth < 1024 || physicalHeight < 1024);
+    
+    setIsMobile(isMobileDevice);
+    setIsTablet(!isMobileDevice && physicalWidth >= 768 && physicalWidth < 1024);
+    setIsLowEnd((navigator.hardwareConcurrency || 8) <= 4);
+  }
+  
+  checkDevice()
+  
+  // Слушаем только orientationchange, а не resize
+  window.addEventListener('orientationchange', checkDevice)
+  
+  return () => window.removeEventListener('orientationchange', checkDevice)
+}, [])
 
   // Эффект загрузки - реальная загрузка ресурсов
   useEffect(() => {

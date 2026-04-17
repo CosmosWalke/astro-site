@@ -17,8 +17,8 @@ interface SimpleGlobeProps {
 }
 
 export default function SimpleGlobe({ 
-  width = 120, 
-  height = 120, 
+  width: propWidth = 120, 
+  height: propHeight = 120, 
   className = "",
   color = "#00d4ff",
   satelliteColor = "#ff6b35",
@@ -30,12 +30,23 @@ export default function SimpleGlobe({
   glitchInterval = 5000
 }: SimpleGlobeProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
+  const containerRef = useRef<HTMLDivElement | null>(null)
   const globeRotationRef = useRef(0)
   const satelliteRotationRef = useRef(0)
   const animationRef = useRef<number | undefined>(undefined)
   const [isVisible, setIsVisible] = useState(false)
   const [glitchActive, setGlitchActive] = useState(false)
   const periodicGlitchRef = useRef<NodeJS.Timeout | null>(null)
+  const [isMobile, setIsMobile] = useState(false)
+  
+  // Храним размеры canvas в refs
+  const canvasWidthRef = useRef(0)
+  const canvasHeightRef = useRef(0)
+  const centerXRef = useRef(0)
+  const centerYRef = useRef(0)
+  const globeRadiusRef = useRef(0)
+  const satelliteOrbitRadiusRef = useRef(0)
+  const satelliteBaseRadiusRef = useRef(0)
   
   const satellitePointsRef = useRef<Array<{
     x: number,
@@ -43,6 +54,48 @@ export default function SimpleGlobe({
     opacity: number,
     targetOpacity: number
   }>>([])
+
+  // Определяем мобильное устройство (по физическим параметрам)
+  useEffect(() => {
+    const checkDevice = () => {
+      const physicalWidth = window.screen.width;
+      const physicalHeight = window.screen.height;
+      const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 1;
+      const isMobileDevice = hasTouch && (physicalWidth < 1024 || physicalHeight < 1024);
+      setIsMobile(isMobileDevice);
+    }
+    
+    checkDevice()
+    window.addEventListener('orientationchange', checkDevice)
+    return () => window.removeEventListener('orientationchange', checkDevice)
+  }, [])
+
+  // Функция расчета размера в зависимости от устройства и поворота
+  const getCurrentSize = () => {
+    if (!isMobile) {
+      // На ПК - исходный размер
+      return { width: propWidth, height: propHeight };
+    }
+    
+    // На мобильных - уменьшаем при повороте в зависимости от ширины экрана
+    const windowWidth = window.innerWidth;
+    let multiplier = 1;
+    
+    if (windowWidth < 480) {
+      multiplier = 0.9;
+    } else if (windowWidth < 640) {
+      multiplier = 0.6;
+    } else if (windowWidth < 768) {
+      multiplier = 0.5;
+    } else if (windowWidth < 1024) {
+      multiplier = 0.45;
+    } else {
+      multiplier = 0.4;
+    }
+    
+    const newSize = Math.max(40, Math.min(propWidth, propWidth * multiplier));
+    return { width: newSize, height: newSize };
+  }
 
   // Функция запуска глитча
   const startGlitch = () => {
@@ -79,32 +132,38 @@ export default function SimpleGlobe({
     const ctx = canvas.getContext('2d')
     if (!ctx) return
 
-    const isMobileForPadding = typeof window !== 'undefined' ? window.innerWidth < 768 : false
-    const padding = isMobileForPadding ? 54 : 80
-    const canvasWidth = width + padding
-    const canvasHeight = height + padding
+    // Функция обновления размеров canvas
+    const updateCanvasSize = () => {
+      const currentSize = getCurrentSize();
+      const padding = 20
+      canvasWidthRef.current = currentSize.width + padding
+      canvasHeightRef.current = currentSize.height + padding
+      
+      const dpr = window.devicePixelRatio || 1
+      canvas.width = canvasWidthRef.current * dpr
+      canvas.height = canvasHeightRef.current * dpr
+      canvas.style.width = `${canvasWidthRef.current}px`
+      canvas.style.height = `${canvasHeightRef.current}px`
+      ctx.scale(dpr, dpr)
+      
+      // Обновляем центры и радиусы
+      centerXRef.current = canvasWidthRef.current / 2
+      centerYRef.current = canvasHeightRef.current / 2
+      globeRadiusRef.current = Math.min(currentSize.width, currentSize.height) / 2 - 2
+      satelliteOrbitRadiusRef.current = globeRadiusRef.current + 12
+      satelliteBaseRadiusRef.current = globeRadiusRef.current * 0.28
+    }
     
-    const dpr = window.devicePixelRatio || 1
-    canvas.width = canvasWidth * dpr
-    canvas.height = canvasHeight * dpr
-    canvas.style.width = `${canvasWidth}px`
-    canvas.style.height = `${canvasHeight}px`
-    canvas.style.marginLeft = `-${padding/2}px`
-    canvas.style.marginTop = `-${padding/2}px`
-    ctx.scale(dpr, dpr)
-
-    const centerX = canvasWidth / 2
-    const centerY = canvasHeight / 2
-    const globeRadius = Math.min(width, height) / 2 - 4
-    const satelliteOrbitRadius = globeRadius + 20
-    const satelliteBaseRadius = globeRadius * 0.28
+    updateCanvasSize()
 
     const generateSatellitePoints = () => {
       const points: Array<{
         x: number, y: number, opacity: number, targetOpacity: number
       }> = []
-      for (let lon = -180; lon <= 180; lon += 12) {
-        for (let lat = -75; lat <= 75; lat += 12) {
+      const currentSize = getCurrentSize();
+      const step = currentSize.width < 70 ? 24 : currentSize.width < 90 ? 18 : 12
+      for (let lon = -180; lon <= 180; lon += step) {
+        for (let lat = -75; lat <= 75; lat += step) {
           points.push({ x: 0, y: 0, opacity: 1, targetOpacity: 1 })
         }
       }
@@ -115,7 +174,7 @@ export default function SimpleGlobe({
 
     const drawGlobe = (x: number, y: number, radius: number, baseColor: string, rotation: number) => {
       ctx.beginPath()
-      ctx.arc(x, y, radius + 2, 0, 2 * Math.PI)
+      ctx.arc(x, y, radius + 1, 0, 2 * Math.PI)
       ctx.fillStyle = `${baseColor}10`
       ctx.fill()
 
@@ -124,24 +183,26 @@ export default function SimpleGlobe({
       ctx.fillStyle = 'rgba(0, 0, 0, 0.4)'
       ctx.fill()
       ctx.strokeStyle = baseColor
-      ctx.lineWidth = 1.2
+      ctx.lineWidth = 1
       ctx.stroke()
 
-      for (let i = -60; i <= 60; i += 30) {
+      const latSteps = radius < 35 ? 3 : 5
+      for (let i = -60; i <= 60; i += (120 / latSteps)) {
         const lat = (i / 90) * Math.PI / 2
         const yOffset = Math.sin(lat) * radius
         const circleRadius = Math.cos(lat) * radius
         ctx.beginPath()
         ctx.ellipse(x, y + yOffset, circleRadius, circleRadius * 0.4, 0, 0, 2 * Math.PI)
         ctx.strokeStyle = `${baseColor}80`
-        ctx.lineWidth = 0.6
+        ctx.lineWidth = 0.5
         ctx.stroke()
       }
 
-      for (let i = -180; i <= 180; i += 45) {
+      const lonSteps = radius < 35 ? 4 : 8
+      for (let i = -180; i <= 180; i += (360 / lonSteps)) {
         const angle = (i + rotation) * Math.PI / 180
         ctx.beginPath()
-        for (let lat = -85; lat <= 85; lat += 5) {
+        for (let lat = -85; lat <= 85; lat += 10) {
           const phi = lat * Math.PI / 180
           const xPos = x + Math.cos(phi) * Math.cos(angle) * radius
           const yPos = y + Math.sin(phi) * radius
@@ -149,7 +210,7 @@ export default function SimpleGlobe({
           else ctx.lineTo(xPos, yPos)
         }
         ctx.strokeStyle = `${baseColor}80`
-        ctx.lineWidth = 0.6
+        ctx.lineWidth = 0.5
         ctx.stroke()
       }
     }
@@ -162,8 +223,10 @@ export default function SimpleGlobe({
       z: number
     ) => {
       let pointIndex = 0
-      for (let lon = -180; lon <= 180; lon += 12) {
-        for (let lat = -75; lat <= 75; lat += 12) {
+      const currentSize = getCurrentSize();
+      const step = currentSize.width < 70 ? 24 : currentSize.width < 90 ? 18 : 12
+      for (let lon = -180; lon <= 180; lon += step) {
+        for (let lat = -75; lat <= 75; lat += step) {
           if (pointIndex >= satellitePointsRef.current.length) continue
           const point = satellitePointsRef.current[pointIndex]
           const rotAngle = satRotation * Math.PI / 180
@@ -179,10 +242,10 @@ export default function SimpleGlobe({
           const y = satCenterY + rotatedY * satRadius
           point.x = x
           point.y = y
-          const dx = x - centerX
-          const dy = y - centerY
+          const dx = x - centerXRef.current
+          const dy = y - centerYRef.current
           const distanceSquared = dx * dx + dy * dy
-          const intersectsGlobe = distanceSquared < globeRadius * globeRadius
+          const intersectsGlobe = distanceSquared < globeRadiusRef.current * globeRadiusRef.current
           const isBehind = intersectsGlobe && z > 0
           point.targetOpacity = isBehind ? 0.2 : 1.0
           point.opacity = point.opacity * 0.88 + point.targetOpacity * 0.12
@@ -212,21 +275,23 @@ export default function SimpleGlobe({
       ctx.fill()
       ctx.restore()
 
-      for (let i = -60; i <= 60; i += 30) {
+      const latSteps = satRadius < 25 ? 3 : 5
+      for (let i = -60; i <= 60; i += (120 / latSteps)) {
         const lat = (i / 90) * Math.PI / 2
         const yOffset = Math.sin(lat) * satRadius
         const circleRadius = Math.cos(lat) * satRadius
         ctx.beginPath()
         ctx.ellipse(satCenterX, satCenterY + yOffset, circleRadius, circleRadius * 0.4, 0, 0, 2 * Math.PI)
         ctx.strokeStyle = `${baseColor}${Math.floor(128 * finalOpacity).toString(16).padStart(2, '0')}`
-        ctx.lineWidth = 0.6
+        ctx.lineWidth = 0.5
         ctx.stroke()
       }
 
-      for (let i = -180; i <= 180; i += 45) {
+      const lonSteps = satRadius < 25 ? 4 : 8
+      for (let i = -180; i <= 180; i += (360 / lonSteps)) {
         const angle = (i + satRotation) * Math.PI / 180
         ctx.beginPath()
-        for (let lat = -85; lat <= 85; lat += 5) {
+        for (let lat = -85; lat <= 85; lat += 10) {
           const phi = lat * Math.PI / 180
           const xPos = satCenterX + Math.cos(phi) * Math.cos(angle) * satRadius
           const yPos = satCenterY + Math.sin(phi) * satRadius
@@ -234,15 +299,17 @@ export default function SimpleGlobe({
           else ctx.lineTo(xPos, yPos)
         }
         ctx.strokeStyle = `${baseColor}${Math.floor(128 * finalOpacity).toString(16).padStart(2, '0')}`
-        ctx.lineWidth = 0.6
+        ctx.lineWidth = 0.5
         ctx.stroke()
       }
     }
 
     const drawSatellitePoints = (baseColor: string) => {
+      const currentSize = getCurrentSize();
+      const pointSize = currentSize.width < 70 ? 0.5 : 0.8
       for (const point of satellitePointsRef.current) {
         ctx.beginPath()
-        ctx.arc(point.x, point.y, 1.0, 0, 2 * Math.PI)
+        ctx.arc(point.x, point.y, pointSize, 0, 2 * Math.PI)
         ctx.fillStyle = baseColor
         ctx.globalAlpha = point.opacity
         ctx.fill()
@@ -250,31 +317,27 @@ export default function SimpleGlobe({
       ctx.globalAlpha = 1
     }
 
-    // Глитч-эффект ТОЛЬКО для глобуса и спутника
     const applyGlitchToGlobe = () => {
       if (!glitchActive) return
       
-      // Вычисляем область вокруг глобуса и спутника
-      const maxRadius = Math.max(globeRadius, satelliteOrbitRadius + 40)
+      const maxRadius = Math.max(globeRadiusRef.current, satelliteOrbitRadiusRef.current + 30)
       const globeBounds = {
-        x: centerX - maxRadius,
-        y: centerY - maxRadius,
+        x: centerXRef.current - maxRadius,
+        y: centerYRef.current - maxRadius,
         w: maxRadius * 2,
         h: maxRadius * 2
       }
       
-      // Ограничиваем область canvas
       const startX = Math.max(0, Math.floor(globeBounds.x))
       const startY = Math.max(0, Math.floor(globeBounds.y))
-      const endX = Math.min(canvasWidth, startX + globeBounds.w)
-      const endY = Math.min(canvasHeight, startY + globeBounds.h)
+      const endX = Math.min(canvasWidthRef.current, startX + globeBounds.w)
+      const endY = Math.min(canvasHeightRef.current, startY + globeBounds.h)
       
       if (endX <= startX || endY <= startY) return
       
       const imageData = ctx.getImageData(startX, startY, endX - startX, endY - startY)
       const data = imageData.data
       
-      // Смещение красного канала
       for (let y = 0; y < imageData.height; y++) {
         if (Math.random() > 0.6) {
           const shift = Math.floor(Math.random() * 6) + 2
@@ -290,17 +353,16 @@ export default function SimpleGlobe({
       
       ctx.putImageData(imageData, startX, startY)
       
-      // Белые полосы только в области глобуса
-      for (let i = 0; i < 5; i++) {
+      for (let i = 0; i < 3; i++) {
         const y = startY + Math.random() * (endY - startY)
         const height = Math.random() * 2 + 1
-        ctx.fillStyle = `rgba(255, 255, 255, ${Math.random() * 0.6})`
+        ctx.fillStyle = `rgba(255, 255, 255, ${Math.random() * 0.5})`
         ctx.fillRect(startX, y, endX - startX, height)
       }
     }
 
     const draw = () => {
-      ctx.clearRect(0, 0, canvasWidth, canvasHeight)
+      ctx.clearRect(0, 0, canvasWidthRef.current, canvasHeightRef.current)
       if (!isVisible) return
       
       const appearProgress = Math.min(1, (Date.now() - appearDelay) / 300)
@@ -308,7 +370,7 @@ export default function SimpleGlobe({
       
       if (satellite) {
         ctx.beginPath()
-        ctx.ellipse(centerX, centerY, satelliteOrbitRadius, satelliteOrbitRadius * 0.6, 0, 0, 2 * Math.PI)
+        ctx.ellipse(centerXRef.current, centerYRef.current, satelliteOrbitRadiusRef.current, satelliteOrbitRadiusRef.current * 0.6, 0, 0, 2 * Math.PI)
         ctx.strokeStyle = `${color}40`
         ctx.lineWidth = 0.5
         ctx.setLineDash([4, 6])
@@ -319,31 +381,28 @@ export default function SimpleGlobe({
       const angle = satelliteRotationRef.current
       const z = Math.sin(angle)
       const scale = 1 + (-z) * 0.4
-      const scaledRadius = satelliteBaseRadius * scale
-      const satelliteX = centerX + Math.cos(angle) * satelliteOrbitRadius
-      const satelliteY = centerY + Math.sin(angle) * satelliteOrbitRadius * 0.6
+      const scaledRadius = satelliteBaseRadiusRef.current * scale
+      const satelliteX = centerXRef.current + Math.cos(angle) * satelliteOrbitRadiusRef.current
+      const satelliteY = centerYRef.current + Math.sin(angle) * satelliteOrbitRadiusRef.current * 0.6
 
       updateSatellitePoints(satelliteX, satelliteY, scaledRadius, satelliteRotationRef.current * 2, z)
 
       ctx.save()
       
-      // Рисуем глобус и спутник
-      drawGlobe(centerX, centerY, globeRadius, color, globeRotationRef.current)
+      drawGlobe(centerXRef.current, centerYRef.current, globeRadiusRef.current, color, globeRotationRef.current)
       drawSatellite(satelliteX, satelliteY, scaledRadius, satelliteColor, satelliteRotationRef.current * 2, z)
       drawSatellitePoints(satelliteColor)
       
-      // Применяем глитч ТОЛЬКО к глобусу и спутнику
       applyGlitchToGlobe()
       
       ctx.restore()
       
-      // Свечение
       const avgOpacity = satellitePointsRef.current.reduce((sum, p) => sum + p.opacity, 0) / 
                          satellitePointsRef.current.length
       const glowIntensity = avgOpacity * (0.5 + (z + 1) * 0.25) * currentOpacity
       if (glowIntensity > 0.3) {
         ctx.beginPath()
-        ctx.arc(satelliteX, satelliteY, scaledRadius + 4, 0, 2 * Math.PI)
+        ctx.arc(satelliteX, satelliteY, scaledRadius + 3, 0, 2 * Math.PI)
         ctx.fillStyle = `${satelliteColor}${Math.floor(20 * glowIntensity).toString(16).padStart(2, '0')}`
         ctx.fill()
       }
@@ -358,19 +417,47 @@ export default function SimpleGlobe({
 
     animate()
 
+    const handleOrientationChange = () => {
+      updateCanvasSize()
+      satellitePointsRef.current = generateSatellitePoints()
+    }
+
+    window.addEventListener('orientationchange', handleOrientationChange)
+    window.addEventListener('resize', handleOrientationChange)
+
     return () => {
       if (animationRef.current) cancelAnimationFrame(animationRef.current)
+      window.removeEventListener('orientationchange', handleOrientationChange)
+      window.removeEventListener('resize', handleOrientationChange)
     }
-  }, [width, height, color, satelliteColor, autoRotate, globeSpeed, satellite, satelliteSpeed, isVisible, glitchActive, appearDelay])
+  }, [color, satelliteColor, autoRotate, globeSpeed, satellite, satelliteSpeed, isVisible, glitchActive, appearDelay, isMobile])
 
   return (
-    <canvas
-      ref={canvasRef}
-      className={className}
+    <div 
+      ref={containerRef}
       style={{
-        opacity: isVisible ? 1 : 0,
-        transition: 'opacity 0.3s ease-out'
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '100%',
+        height: '100%',
+        pointerEvents: 'none'
       }}
-    />
+    >
+      <canvas
+        ref={canvasRef}
+        className={className}
+        style={{
+          opacity: isVisible ? 1 : 0,
+          transition: 'opacity 0.3s ease-out',
+          display: 'block',
+          pointerEvents: 'auto'
+        }}
+      />
+    </div>
   )
 }

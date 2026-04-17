@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react' // Добавили useState
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { Header } from '@/components/header'
@@ -19,6 +19,20 @@ if (typeof window !== 'undefined') {
 
 export default function Home() {
   const mainRef = useRef<HTMLDivElement>(null)
+  const [isMobile, setIsMobile] = useState(false) // Добавили состояние
+
+  // Определяем мобильное устройство
+  useEffect(() => {
+    // Используем физическую ширину экрана (не меняется при повороте)
+    const physicalWidth = window.screen.width;
+    const physicalHeight = window.screen.height;
+    const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 1;
+    
+    // Если есть touch И физическая ширина меньше 1024px - это мобильное устройство
+    const isMobileDevice = hasTouch && (physicalWidth < 1024 || physicalHeight < 1024);
+    
+    setIsMobile(isMobileDevice);
+  }, []); // Пустой массив - определяем только один раз
 
   useEffect(() => {
     if (mainRef.current) {

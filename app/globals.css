@@ -928,3 +928,39 @@ html {
 .social-card:hover .social-icon {
   color: inherit;
 }
+/* Глобальные медиа-запросы для мобильных устройств (по физическому размеру) */
+@media (max-width: 768px) {
+  /* Стили для всех мобильных устройств */
+  .mobile-only {
+    display: block !important;
+  }
+  .desktop-only {
+    display: none !important;
+  }
+}
+
+@media (min-width: 769px) {
+  .mobile-only {
+    display: none !important;
+  }
+  .desktop-only {
+    display: block !important;
+  }
+}
+
+/* Для touch-устройств (все сенсорные экраны) */
+@media (hover: none) and (pointer: coarse) {
+  /* Стили для всех мобильных (даже в landscape) */
+  .mobile-touch {
+    /* твои стили */
+  }
+}
+
+/* Физическое определение мобильных устройств через aspect-ratio */
+@media (max-width: 1024px) and (orientation: portrait) {
+  /* Портретный режим */
+}
+
+@media (max-width: 1024px) and (orientation: landscape) {
+  /* Ландшафтный режим на мобильных */
+}

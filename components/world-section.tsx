@@ -72,8 +72,24 @@ export function WorldSection() {
   const [activeLocation, setActiveLocation] = useState<string | null>(null)
   const [hoveredLocation, setHoveredLocation] = useState<string | null>(null)
   const [glitchText, setGlitchText] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
   const sectionRef = useRef<HTMLElement>(null)
   const mapRef = useRef<HTMLDivElement>(null)
+
+  // Определение мобильного устройства
+  useEffect(() => {
+    const checkDevice = () => {
+      const physicalWidth = window.screen.width;
+      const physicalHeight = window.screen.height;
+      const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 1;
+      const isMobileDevice = hasTouch && (physicalWidth < 1024 || physicalHeight < 1024);
+      setIsMobile(isMobileDevice);
+    }
+    
+    checkDevice()
+    window.addEventListener('orientationchange', checkDevice)
+    return () => window.removeEventListener('orientationchange', checkDevice)
+  }, [])
 
   useEffect(() => {
     if (!mapRef.current) return
@@ -180,13 +196,13 @@ export function WorldSection() {
 
       {/* Interactive Map */}
       <div className="relative z-10 max-w-6xl mx-auto px-4 md:px-8">
-        <div className="flex flex-col lg:flex-row gap-8">
-          {/* Map с фоновым изображением - БЕЗ ВСЯКИХ СЕТОК И ФОНОВ */}
+        <div className={`flex ${isMobile ? 'flex-col' : 'flex-col lg:flex-row'} gap-8`}>
+          {/* Map с фоновым изображением */}
           <div 
             ref={mapRef}
             className="relative flex-1 aspect-square overflow-hidden rounded-xl shadow-[0_0_30px_rgba(0,212,255,0.2)]"
           >
-            {/* Фоновое изображение карты - ЕДИНСТВЕННЫЙ ФОН */}
+            {/* Фоновое изображение карты */}
             <div className="absolute inset-0 w-full h-full">
               <img 
                 src="/image/map.webp"
@@ -236,8 +252,14 @@ export function WorldSection() {
                   top: `${location.coordinates.y}%`
                 }}
                 onClick={() => setActiveLocation(activeLocation === location.id ? null : location.id)}
-                onMouseEnter={() => setHoveredLocation(location.id)}
-                onMouseLeave={() => setHoveredLocation(null)}
+                onMouseEnter={() => !isMobile && setHoveredLocation(location.id)}
+                onMouseLeave={() => !isMobile && setHoveredLocation(null)}
+                onTouchStart={() => {
+                  if (isMobile) {
+                    // На мобильных: показываем информацию без hover
+                    setActiveLocation(activeLocation === location.id ? null : location.id)
+                  }
+                }}
               >
                 {/* Pulse Ring */}
                 <div 
@@ -274,8 +296,8 @@ export function WorldSection() {
                   />
                 </div>
 
-                {/* Tooltip */}
-                {(hoveredLocation === location.id && activeLocation !== location.id) && (
+                {/* Tooltip - показываем только на десктопе при hover */}
+                {!isMobile && (hoveredLocation === location.id && activeLocation !== location.id) && (
                   <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 px-3 py-1.5 bg-black/90 backdrop-blur-sm border border-[#00d4ff] whitespace-nowrap z-10 rounded">
                     <div className="text-[#e8e8ec] font-mono text-xs">
                       <span className="text-[#00d4ff]">{'>'}</span> {location.name}
@@ -301,25 +323,27 @@ export function WorldSection() {
               </span>
             </div>
 
-            {/* Legend */}
-            <div className="absolute bottom-4 left-4 bg-black/70 backdrop-blur-sm rounded p-2 text-[10px] font-mono border border-[#00d4ff]/30 z-30">
-              <div className="flex items-center gap-3 mb-1">
-                <div className="w-2 h-2 rounded-full bg-[#00d4ff]" />
-                <span className="text-[#6b6b7b]">CORE_NODE</span>
+            {/* Legend - на мобильных скрываем или делаем компактнее */}
+            {!isMobile && (
+              <div className="absolute bottom-4 left-4 bg-black/70 backdrop-blur-sm rounded p-2 text-[10px] font-mono border border-[#00d4ff]/30 z-30">
+                <div className="flex items-center gap-3 mb-1">
+                  <div className="w-2 h-2 rounded-full bg-[#00d4ff]" />
+                  <span className="text-[#6b6b7b]">CORE_NODE</span>
+                </div>
+                <div className="flex items-center gap-3 mb-1">
+                  <div className="w-2 h-2 rounded-full bg-[#ff006e]" />
+                  <span className="text-[#6b6b7b]">SECONDARY_NODE</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-2 h-2 rounded-full bg-[#9d4edd]" />
+                  <span className="text-[#6b6b7b]">EDGE_NODE</span>
+                </div>
               </div>
-              <div className="flex items-center gap-3 mb-1">
-                <div className="w-2 h-2 rounded-full bg-[#ff006e]" />
-                <span className="text-[#6b6b7b]">SECONDARY_NODE</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="w-2 h-2 rounded-full bg-[#9d4edd]" />
-                <span className="text-[#6b6b7b]">EDGE_NODE</span>
-              </div>
-            </div>
+            )}
 
             {/* Coordinates Display */}
             <div className="absolute bottom-4 right-4 font-mono text-[8px] text-[#00d4ff] bg-black/70 px-2 py-0.5 rounded border border-[#00d4ff]/30 z-30">
-              {hoveredLocation ? (
+              {hoveredLocation && !isMobile ? (
                 <span>
                   NODE_{worldLocations.find(l => l.id === hoveredLocation)?.coordinates.x}_{worldLocations.find(l => l.id === hoveredLocation)?.coordinates.y}
                 </span>
@@ -330,7 +354,7 @@ export function WorldSection() {
           </div>
 
           {/* Location Info Panel */}
-          <div className="lg:w-80 space-y-4">
+          <div className={`${isMobile ? 'w-full' : 'lg:w-80'} space-y-4`}>
             {activeLocationData ? (
               <div className="p-6 bg-black/80 backdrop-blur-md border border-[#00d4ff]/40 rounded-xl shadow-[0_0_20px_rgba(0,212,255,0.2)]">
                 <div className="flex items-center justify-between mb-4">
@@ -386,31 +410,33 @@ export function WorldSection() {
               </div>
             )}
 
-            {/* Location List */}
-            <div className="space-y-2 max-h-96 overflow-y-auto pr-1 custom-scroll">
+            {/* Location List - на мобильных делаем горизонтальную прокрутку */}
+            <div className={`${isMobile ? 'overflow-x-auto pb-2' : 'space-y-2 max-h-96 overflow-y-auto pr-1 custom-scroll'}`}>
               <div className="text-[8px] font-mono text-[#00d4ff] mb-2 px-2">
                 {worldLocations.length} NODES_ACTIVE
               </div>
-              {worldLocations.map((location) => (
-                <button
-                  key={location.id}
-                  onClick={() => setActiveLocation(activeLocation === location.id ? null : location.id)}
-                  className={`w-full flex items-center justify-between p-3 border transition-all duration-300 rounded ${
-                    activeLocation === location.id
-                      ? 'bg-[#00d4ff]/10 border-[#00d4ff] shadow-[0_0_10px_rgba(0,212,255,0.2)]'
-                      : 'bg-black/40 border-[#1a1a24] hover:border-[#00d4ff]/50 hover:bg-[#00d4ff]/5'
-                  }`}
-                >
-                  <div className="flex items-center gap-3">
-                    <div 
-                      className="w-2 h-2 rounded-full"
-                      style={{ backgroundColor: getRingColor(location.coordinates.ring) }}
-                    />
-                    <span className="text-xs font-mono text-[#e8e8ec]">{location.name}</span>
-                  </div>
-                  <span className="text-[9px] font-mono text-[#6b6b7b]">{location.id}</span>
-                </button>
-              ))}
+              <div className={`${isMobile ? 'flex gap-2' : 'space-y-2'}`}>
+                {worldLocations.map((location) => (
+                  <button
+                    key={location.id}
+                    onClick={() => setActiveLocation(activeLocation === location.id ? null : location.id)}
+                    className={`${isMobile ? 'flex-shrink-0 w-32' : 'w-full'} flex items-center justify-between p-3 border transition-all duration-300 rounded ${
+                      activeLocation === location.id
+                        ? 'bg-[#00d4ff]/10 border-[#00d4ff] shadow-[0_0_10px_rgba(0,212,255,0.2)]'
+                        : 'bg-black/40 border-[#1a1a24] hover:border-[#00d4ff]/50 hover:bg-[#00d4ff]/5'
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div 
+                        className="w-2 h-2 rounded-full"
+                        style={{ backgroundColor: getRingColor(location.coordinates.ring) }}
+                      />
+                      <span className="text-xs font-mono text-[#e8e8ec]">{location.name}</span>
+                    </div>
+                    <span className="text-[9px] font-mono text-[#6b6b7b]">{location.id}</span>
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         </div>

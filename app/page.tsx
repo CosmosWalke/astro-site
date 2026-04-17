@@ -26,6 +26,7 @@ export default function PanoramaPage() {
   const [gyroActive, setGyroActive] = useState(false)
   const [showPanorama, setShowPanorama] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
+  const [isLandscape, setIsLandscape] = useState(false)
   
   let viewLoopId: number | null = null
   let currentTargetView = 0
@@ -41,15 +42,34 @@ export default function PanoramaPage() {
   let ringCurrentY = 0
   let mobileObserver: IntersectionObserver | null = null
 
-  // Определяем мобильное устройство
+  // Надежное определение мобильного устройства (не зависит от поворота)
   useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 768)
+    const checkIsMobile = () => {
+      const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 1
+      const ua = navigator.userAgent.toLowerCase()
+      const isMobileUA = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini|mobile/i.test(ua)
+      const isIPad = /macintosh/i.test(ua) && hasTouch && 'ontouchstart' in window
+      
+      return (hasTouch || isMobileUA || isIPad)
     }
-    checkMobile()
-    window.addEventListener('resize', checkMobile)
-    return () => window.removeEventListener('resize', checkMobile)
-  }, [])
+    
+    const handleOrientationChange = () => {
+      const newIsMobile = checkIsMobile()
+      if (newIsMobile !== isMobile) {
+        setIsMobile(newIsMobile)
+      }
+      setIsLandscape(window.innerWidth > window.innerHeight)
+    }
+
+    handleOrientationChange()
+    window.addEventListener('resize', handleOrientationChange)
+    window.addEventListener('orientationchange', handleOrientationChange)
+
+    return () => {
+      window.removeEventListener('resize', handleOrientationChange)
+      window.removeEventListener('orientationchange', handleOrientationChange)
+    }
+  }, [isMobile])
 
   // Инициализация window.currentView
   if (typeof window !== 'undefined' && window.currentView === undefined) {
@@ -206,9 +226,8 @@ export default function PanoramaPage() {
   const handleTouchMove = (e: TouchEvent) => {
     if (!isDragging) return
     
-    // ИНВЕРСИЯ: движение влево (+) → панорама вправо
     const deltaX = e.touches[0].clientX - dragStartX
-    let newView = dragStartView - (deltaX * 0.3) // МИНУС для инверсии
+    let newView = dragStartView - (deltaX * 0.3)
     newView = Math.max(-75, Math.min(75, newView))
     window.currentView = newView
   }
@@ -468,7 +487,7 @@ export default function PanoramaPage() {
         color: #0ff;
       }
 
-      @media (max-width: 768px) {
+      @media (max-width: 1024px) {
         .edge-zone {
           display: none !important;
         }
@@ -638,7 +657,7 @@ export default function PanoramaPage() {
         margin-bottom: 8px;
       }
       
-      @media (max-width: 768px) {
+      @media (max-width: 1024px) {
         #look-hint {
           display: none;
         }
@@ -647,61 +666,75 @@ export default function PanoramaPage() {
         }
       }
 
-.hotspot-label {
-  position: absolute;
-  top: -80px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: transparent;
-  color: #fff;
-  padding: 0;
-  border-radius: 0;
-  font-size: 28px;
-  font-weight: 900;
-  letter-spacing: 4px;
-  text-transform: uppercase;
-  white-space: nowrap;
-  font-family: 'CCUltimatum', monospace;
-  pointer-events: none;
-  opacity: 0;
-  visibility: hidden;
-  text-shadow: 0 0 30px rgba(0, 255, 255, 0.5), 0 0 60px rgba(0, 255, 255, 0.3);
-  transition: opacity 0.4s ease, transform 0.4s ease;
-  z-index: 110;
-  text-align: center;
-  line-height: 1.2;
-}
+      .hotspot-label {
+        position: absolute;
+        top: -80px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: transparent;
+        color: #fff;
+        padding: 0;
+        border-radius: 0;
+        font-size: 28px;
+        font-weight: 900;
+        letter-spacing: 4px;
+        text-transform: uppercase;
+        white-space: nowrap;
+        font-family: 'CCUltimatum', monospace;
+        pointer-events: none;
+        opacity: 0;
+        visibility: hidden;
+        text-shadow: 0 0 30px rgba(0, 255, 255, 0.5), 0 0 60px rgba(0, 255, 255, 0.3);
+        transition: opacity 0.4s ease, transform 0.4s ease;
+        z-index: 110;
+        text-align: center;
+        line-height: 1.2;
+      }
 
-.hotspot-label.show {
-  opacity: 1;
-  visibility: visible;
-  transform: translateX(-50%) translateY(-10px);
-}
+      .hotspot-label.show {
+        opacity: 1;
+        visibility: visible;
+        transform: translateX(-50%) translateY(-10px);
+      }
 
-@media (min-width: 769px) {
-  .hotspot-label {
-    display: none !important;
-  }
-}
+      @media (min-width: 1025px) {
+        .hotspot-label {
+          display: none !important;
+        }
+      }
 
-@media (max-width: 768px) {
-  .hotspot-label {
-    font-size: 44px;
-    top: -40px;
-    white-space: nowrap;
-    text-shadow: 0 0 30px #0ff, 0 0 60px #0ff, 0 0 90px #0ff;
-    letter-spacing: 8px;
-  }
-  
-  /* Для длинных надписей */
-  .hotspot-label[data-label="JOIN THE CLUB"] {
-    white-space: normal;
-    font-size: 64px;
-    min-width: 300px;
-    text-align: center;
-    line-height: 1.3;
-  }
-}
+      @media (max-width: 1024px) {
+        .hotspot-label {
+          font-size: 44px;
+          top: -40px;
+          white-space: nowrap;
+          text-shadow: 0 0 30px #0ff, 0 0 60px #0ff, 0 0 90px #0ff;
+          letter-spacing: 8px;
+        }
+        
+        /* Для длинных надписей */
+        .hotspot-label[data-label="JOIN THE CLUB"] {
+          white-space: normal;
+          font-size: 64px;
+          min-width: 300px;
+          text-align: center;
+          line-height: 1.3;
+        }
+      }
+
+      /* Горизонтальная ориентация на мобильных */
+      @media (max-width: 1024px) and (orientation: landscape) {
+        .hotspot-label {
+          font-size: 32px;
+          top: -30px;
+          letter-spacing: 4px;
+        }
+        .mobile-hint {
+          bottom: 10px;
+          font-size: 10px;
+        }
+      }
+
       /* ============================================
          КУРСОРЫ
          ============================================ */
@@ -731,8 +764,6 @@ export default function PanoramaPage() {
       body.dragging, .grabbing {
         cursor: url('/images/A.png') 8 8, grabbing !important;
       }
-
-      
     `
     document.head.appendChild(style)
     

@@ -638,16 +638,18 @@ export default function VapePage() {
   }, [activeIndex]);
 
   // Определяем мобильное устройство
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
+// В компоненте VapePage замени useEffect на этот:
+useEffect(() => {
+  // Используем физическую ширину экрана (не меняется при повороте)
+  const physicalWidth = window.screen.width;
+  const physicalHeight = window.screen.height;
+  const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 1;
+  
+  // Если есть touch И физическая ширина меньше 1024px - это мобильное устройство
+  const isMobileDevice = hasTouch && (physicalWidth < 1024 || physicalHeight < 1024);
+  
+  setIsMobile(isMobileDevice);
+}, []); // Пустой массив - определяем только один раз
 
   // Получаем текущие размеры и позиции для элемента (preroll, tube)
   const getElementStyles = (element: ExtraElement) => {
