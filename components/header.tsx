@@ -240,16 +240,11 @@ export function Header() {
                 }}
                 className="flex items-center gap-3"
               >
-                <div className="relative">
-                  <div className="w-10 h-10 border-2 border-[#00d4ff] flex items-center justify-center relative overflow-hidden group-hover:border-[#ff6b35] transition-colors duration-300">
-                    <span className="text-xl font-bold text-[#00d4ff] group-hover:text-[#ff6b35] transition-colors duration-300">A</span>
-                    <div className="absolute top-0 left-0 w-2 h-2 border-t-2 border-l-2 border-[#ff6b35] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                    <div className="absolute bottom-0 right-0 w-2 h-2 border-b-2 border-r-2 border-[#ff6b35] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  </div>
-                </div>
-                <span className="text-2xl font-bold tracking-[0.2em] text-[#e8e8ec] hidden md:block">
-                  ASTRO
-                </span>
+                <img 
+                  src="/astro-logo-horizontal.png" 
+                  alt="Astro Universe" 
+                  className="h-8 w-auto object-contain"
+                />
               </a>
             </div>
 
