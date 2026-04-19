@@ -198,6 +198,116 @@ const flavors: PrerollFlavor[] = [
   },
 ];
 
+// Функция для получения всех изображений, которые нужно предзагрузить
+const getAllImagesToPreload = (): string[] => {
+  const images: string[] = [];
+  
+  flavors.forEach(flavor => {
+    // Фоновые изображения
+    images.push(flavor.bgImage);
+    images.push(flavor.bgImageMobile);
+    // Изображения прероллов
+    images.push(flavor.prerollMainImage);
+    // Preroll и Tube
+    images.push(flavor.preroll.src);
+    images.push(flavor.tube.src);
+    // Фрукты
+    flavor.fruits.forEach(fruit => {
+      images.push(fruit.src);
+    });
+  });
+  
+  // Удаляем дубликаты
+  return [...new Set(images)];
+};
+
+// Компонент загрузочного экрана
+const LoadingScreen = ({ progress, isLoading }: { progress: number; isLoading: boolean }) => {
+  return (
+    <motion.div
+      initial={{ opacity: 1 }}
+      animate={{ opacity: isLoading ? 1 : 0 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.5, ease: "easeInOut" }}
+      className="fixed inset-0 z-[1000] flex flex-col items-center justify-center bg-gradient-to-br from-zinc-950 to-black"
+    >
+      {/* Фоновый эффект */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,212,255,0.1)_0%,transparent_70%)]" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-[#00d4ff]/5 blur-3xl" />
+      </div>
+      
+      {/* Логотип с анимацией (3D вращение) */}
+      <motion.div
+        animate={{ 
+          scale: [1, 1.05, 1],
+          rotateY: [0, 360],
+        }}
+        transition={{ 
+          scale: { duration: 1.5, repeat: Infinity, ease: "easeInOut" },
+          rotateY: { duration: 2, repeat: Infinity, ease: "linear" }
+        }}
+        className="relative w-24 h-24 md:w-32 md:h-32 mb-8"
+      >
+        <img 
+          src="/image/logo1.png" 
+          alt="ASTRO Logo" 
+          className="w-full h-full object-contain"
+        />
+      </motion.div>
+      
+      {/* Название */}
+      <motion.h1
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
+        className="text-2xl md:text-3xl font-bold tracking-[0.2em] text-white mb-4"
+      >
+        ASTRO PREROLLS
+      </motion.h1>
+      
+      {/* Прогресс-бар */}
+      <div className="w-64 md:w-80 mt-6">
+        <div className="h-[2px] bg-white/20 rounded-full overflow-hidden">
+          <motion.div
+            className="h-full bg-gradient-to-r from-[#00d4ff] to-[#ff6b35] rounded-full"
+            initial={{ width: 0 }}
+            animate={{ width: `${progress}%` }}
+            transition={{ duration: 0.3 }}
+          />
+        </div>
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="text-center text-xs text-white/50 mt-3 font-mono"
+        >
+          LOADING ASSETS... {Math.round(progress)}%
+        </motion.p>
+      </div>
+      
+      {/* Строка с точками */}
+      <div className="flex gap-2 mt-6">
+        {[0, 1, 2].map((i) => (
+          <motion.div
+            key={i}
+            animate={{ 
+              y: [0, -8, 0],
+              opacity: [0.3, 1, 0.3]
+            }}
+            transition={{ 
+              duration: 1,
+              repeat: Infinity,
+              delay: i * 0.2,
+              ease: "easeInOut"
+            }}
+            className="w-1.5 h-1.5 rounded-full bg-[#00d4ff]"
+          />
+        ))}
+      </div>
+    </motion.div>
+  );
+};
+
 export default function PrerollsPage() {
   const router = useRouter();
   const [activeIndex, setActiveIndex] = useState(0);
@@ -207,26 +317,74 @@ export default function PrerollsPage() {
   const [showFlavors, setShowFlavors] = useState(false);
   const [expandedFlavor, setExpandedFlavor] = useState<string | null>(null);
   const [selectedFeature, setSelectedFeature] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadProgress, setLoadProgress] = useState(0);
   const activeFlavor = flavors[activeIndex];
   const prevFlavor = flavors[prevIndex];
+
+  // Предзагрузка всех изображений
+  useEffect(() => {
+    const imagesToPreload = getAllImagesToPreload();
+    let loadedCount = 0;
+    let isMounted = true;
+
+    const updateProgress = () => {
+      if (!isMounted) return;
+      const progress = (loadedCount / imagesToPreload.length) * 100;
+      setLoadProgress(progress);
+      
+      if (loadedCount === imagesToPreload.length) {
+        // Даем небольшую задержку для плавного исчезновения
+        setTimeout(() => {
+          if (isMounted) setIsLoading(false);
+        }, 500);
+      }
+    };
+
+    const preloadImage = (src: string): Promise<void> => {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.src = src;
+        img.onload = () => {
+          loadedCount++;
+          updateProgress();
+          resolve();
+        };
+        img.onerror = () => {
+          console.warn(`Failed to load image: ${src}`);
+          loadedCount++;
+          updateProgress();
+          resolve();
+        };
+      });
+    };
+
+    const preloadAll = async () => {
+      // Загружаем все изображения параллельно
+      await Promise.all(imagesToPreload.map(preloadImage));
+    };
+
+    preloadAll();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   useEffect(() => {
     setPrevIndex(activeIndex);
   }, [activeIndex]);
 
   // Определяем мобильное устройство
-// В компоненте VapePage замени useEffect на этот:
-useEffect(() => {
-  // Используем физическую ширину экрана (не меняется при повороте)
-  const physicalWidth = window.screen.width;
-  const physicalHeight = window.screen.height;
-  const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 1;
-  
-  // Если есть touch И физическая ширина меньше 1024px - это мобильное устройство
-  const isMobileDevice = hasTouch && (physicalWidth < 1024 || physicalHeight < 1024);
-  
-  setIsMobile(isMobileDevice);
-}, []); // Пустой массив - определяем только один раз
+  useEffect(() => {
+    const physicalWidth = window.screen.width;
+    const physicalHeight = window.screen.height;
+    const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 1;
+    
+    const isMobileDevice = hasTouch && (physicalWidth < 1024 || physicalHeight < 1024);
+    
+    setIsMobile(isMobileDevice);
+  }, []);
 
   // Получаем текущие размеры и позиции для элемента (preroll, tube)
   const getElementStyles = (element: ExtraElement) => {
@@ -425,6 +583,11 @@ useEffect(() => {
       </div>
     );
   };
+
+  // Показываем загрузочный экран, пока грузятся изображения
+  if (isLoading) {
+    return <LoadingScreen progress={loadProgress} isLoading={isLoading} />;
+  }
 
   return (
     <main className="bg-zinc-950 text-white min-h-screen overflow-hidden">
