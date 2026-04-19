@@ -26,19 +26,18 @@ export function MobileMenu({ sections, onNavigate }: MobileMenuProps) {
   const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const menuRef = useRef<HTMLDivElement>(null)
 
-  // Определяем мобильное устройство
-// Определяем мобильное устройство (учитываем поворот)
-useEffect(() => {
-  // Используем физическую ширину экрана (не меняется при повороте)
-  const physicalWidth = window.screen.width;
-  const physicalHeight = window.screen.height;
-  const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 1;
-  
-  // Если есть touch И физическая ширина меньше 1024px - это мобильное устройство
-  const isMobileDevice = hasTouch && (physicalWidth < 1024 || physicalHeight < 1024);
-  
-  setIsMobile(isMobileDevice);
-}, []);
+  // Определяем мобильное устройство (учитываем поворот)
+  useEffect(() => {
+    // Используем физическую ширину экрана (не меняется при повороте)
+    const physicalWidth = window.screen.width;
+    const physicalHeight = window.screen.height;
+    const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 1;
+    
+    // Если есть touch И физическая ширина меньше 1024px - это мобильное устройство
+    const isMobileDevice = hasTouch && (physicalWidth < 1024 || physicalHeight < 1024);
+    
+    setIsMobile(isMobileDevice);
+  }, []);
 
   // Предзагрузка изображения при открытии меню
   useEffect(() => {
@@ -128,20 +127,20 @@ useEffect(() => {
   }, [])
 
   // Функция навигации
-const handleNavigate = (sectionId: string, isPage?: boolean, href?: string) => {
-  if (isPage && href) {
-    // Для страниц типа ABOUT и CARGO BAY
-    window.location.href = href
-    // или если используете Next.js router:
-    // router.push(href)
-  } else {
-    // Для обычных секций на странице
-    const element = document.getElementById(sectionId)
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' })
+  const handleNavigate = (sectionId: string, isPage?: boolean, href?: string) => {
+    if (isPage && href) {
+      // Для страниц типа ABOUT и CARGO BAY
+      window.location.href = href
+      // или если используете Next.js router:
+      // router.push(href)
+    } else {
+      // Для обычных секций на странице
+      const element = document.getElementById(sectionId)
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' })
+      }
     }
   }
-}
 
   // Процентное позиционирование текста относительно фонового изображения
   const textPosition = isMobile
@@ -186,7 +185,7 @@ const handleNavigate = (sectionId: string, isPage?: boolean, href?: string) => {
                 backgroundRepeat: 'no-repeat',
                 backgroundColor: 'transparent',
                 border: 'none',
-               cursor: 'pointer',
+                cursor: 'pointer',
               }
         }
       />
@@ -252,12 +251,10 @@ const handleNavigate = (sectionId: string, isPage?: boolean, href?: string) => {
             <div 
               className={`${isMobile ? 'flex flex-col items-start gap-3' : 'flex flex-wrap justify-start gap-6'} text-sm text-[#6b6b7b]`}
               style={{ 
-  marginTop: isMobile ? '0px' : '40px',
-  //marginLeft: isMobile ? '10px' : '0px',  // смещение вправо
-  // или
-  left: isMobile ? '10%' : '-50%',           // процентное смещение
-  position: 'relative'
-}}
+                marginTop: isMobile ? '0px' : '40px',
+                left: isMobile ? '10%' : '-50%',
+                position: 'relative'
+              }}
             >
               <a 
                 href="https://www.instagram.com/enter.astroverse"
@@ -273,29 +270,16 @@ const handleNavigate = (sectionId: string, isPage?: boolean, href?: string) => {
               </a>
               
               <a 
-                href="https://x.com/EnterAstroverse"
+                href="https://t.me/+MvRVE_AG7Iw2NjQx"
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => setIsMenuOpen(false)}
                 className="hover:text-[#00d4ff] transition-colors duration-300 flex items-center gap-2 text-black"
               >
                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                  <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.212-1.446 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.053-.334-.375-.12l-6.87 4.326-2.96-.924c-.64-.2-.652-.64.133-.954l11.566-4.458c.532-.19.996.128.804.938z"/>
                 </svg>
-                <span>X (Twitter)</span>
-              </a>
-              
-              <a 
-                href="hhttps://www.youtube.com/@enter.astroverse"
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => setIsMenuOpen(false)}
-                className="hover:text-[#00d4ff] transition-colors duration-300 flex items-center gap-2 text-black"
-              >
-                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-                </svg>
-                <span>YouTube</span>
+                <span>Telegram</span>
               </a>
             </div>
 
