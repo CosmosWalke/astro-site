@@ -3,7 +3,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, MapPin, Store, Building2, ShoppingBag, Play, Maximize, X } from 'lucide-react';
+import { ArrowLeft, Play, Maximize, X } from 'lucide-react';
 import Link from 'next/link';
 
 interface CargoItem {
@@ -13,17 +13,6 @@ interface CargoItem {
   image: string;
   video: string;
   slug: string;
-}
-
-interface Location {
-  id: string;
-  name: string;
-  address: string;
-  city: string;
-  type: 'dispensary' | 'store' | 'partner';
-  hours: string;
-  phone: string;
-  distance?: string;
 }
 
 const cargoItems: CargoItem[] = [
@@ -50,69 +39,6 @@ const cargoItems: CargoItem[] = [
     image: '/image/prerolls.webp',
     video: '/video/prerolls.webm',
     slug: '/prerolls'
-  }
-];
-
-const licensedLocations: Location[] = [
-  {
-    id: 'loc-1',
-    name: 'ASTRO HUB LOS ANGELES',
-    address: '742 S Broadway',
-    city: 'Los Angeles, CA 90014',
-    type: 'store',
-    hours: 'Mon-Sun: 10am - 8pm',
-    phone: '+1 (213) 555-0123',
-    distance: '0.5 mi'
-  },
-  {
-    id: 'loc-2',
-    name: 'GREEN MEDS SF',
-    address: '1234 Mission St',
-    city: 'San Francisco, CA 94103',
-    type: 'dispensary',
-    hours: 'Mon-Sat: 9am - 9pm, Sun: 10am - 6pm',
-    phone: '+1 (415) 555-0456',
-    distance: '1.2 mi'
-  },
-  {
-    id: 'loc-3',
-    name: 'COASTAL CANNABIS',
-    address: '567 Ocean Ave',
-    city: 'Santa Monica, CA 90401',
-    type: 'dispensary',
-    hours: 'Daily: 8am - 10pm',
-    phone: '+1 (310) 555-0789',
-    distance: '2.3 mi'
-  },
-  {
-    id: 'loc-4',
-    name: 'ASTRO CLUB LA',
-    address: '890 Sunset Blvd',
-    city: 'West Hollywood, CA 90069',
-    type: 'partner',
-    hours: 'Mon-Sun: 11am - 2am',
-    phone: '+1 (323) 555-0321',
-    distance: '3.1 mi'
-  },
-  {
-    id: 'loc-5',
-    name: 'PURE EXTRACT',
-    address: '4321 Melrose Ave',
-    city: 'Los Angeles, CA 90029',
-    type: 'store',
-    hours: 'Mon-Fri: 10am - 7pm, Sat-Sun: 11am - 6pm',
-    phone: '+1 (323) 555-0654',
-    distance: '4.0 mi'
-  },
-  {
-    id: 'loc-6',
-    name: 'THE HIGHER PATH',
-    address: '8765 Venice Blvd',
-    city: 'Culver City, CA 90232',
-    type: 'dispensary',
-    hours: 'Daily: 9am - 9pm',
-    phone: '+1 (310) 555-0987',
-    distance: '5.2 mi'
   }
 ];
 
@@ -335,98 +261,7 @@ const CargoCard = ({ item, index }: { item: CargoItem; index: number }) => {
   );
 };
 
-const LocationCard = ({ location, index }: { location: Location; index: number }) => {
-  const getTypeIcon = (type: string) => {
-    switch (type) {
-      case 'dispensary':
-        return <Store className="w-4 h-4 text-[#14f195]" />;
-      case 'store':
-        return <Building2 className="w-4 h-4 text-[#00d4ff]" />;
-      case 'partner':
-        return <ShoppingBag className="w-4 h-4 text-[#ff6b35]" />;
-      default:
-        return <MapPin className="w-4 h-4 text-[#00d4ff]" />;
-    }
-  };
-
-  const getTypeLabel = (type: string) => {
-    switch (type) {
-      case 'dispensary':
-        return 'DISPENSARY';
-      case 'store':
-        return 'FLAGSHIP STORE';
-      case 'partner':
-        return 'PARTNER LOUNGE';
-      default:
-        return 'LOCATION';
-    }
-  };
-
-  const getTypeColor = (type: string) => {
-    switch (type) {
-      case 'dispensary':
-        return 'text-[#14f195] border-[#14f195]/30 bg-[#14f195]/10';
-      case 'store':
-        return 'text-[#00d4ff] border-[#00d4ff]/30 bg-[#00d4ff]/10';
-      case 'partner':
-        return 'text-[#ff6b35] border-[#ff6b35]/30 bg-[#ff6b35]/10';
-      default:
-        return 'text-[#00d4ff] border-[#00d4ff]/30 bg-[#00d4ff]/10';
-    }
-  };
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay: index * 0.05 }}
-      className="group bg-black/40 backdrop-blur-sm border border-[#1a1a24] hover:border-[#00d4ff]/50 rounded-xl p-5 transition-all duration-300 hover:shadow-[0_0_20px_rgba(0,212,255,0.1)]"
-    >
-      <div className="flex items-start justify-between mb-3">
-        <div className="flex items-center gap-2">
-          {getTypeIcon(location.type)}
-          <span className={`text-[9px] font-mono px-2 py-0.5 rounded-full border ${getTypeColor(location.type)}`}>
-            {getTypeLabel(location.type)}
-          </span>
-        </div>
-        {location.distance && (
-          <span className="text-[10px] font-mono text-[#6b6b7b]">{location.distance}</span>
-        )}
-      </div>
-      
-      <h3 className="text-base font-bold text-white mb-2 group-hover:text-[#00d4ff] transition-colors">
-        {location.name}
-      </h3>
-      
-      <div className="space-y-1.5 mb-3">
-        <div className="flex items-start gap-2">
-          <MapPin className="w-3 h-3 text-[#6b6b7b] mt-0.5 flex-shrink-0" />
-          <div className="text-[11px] text-[#6b6b7b] leading-relaxed">
-            {location.address}<br />{location.city}
-          </div>
-        </div>
-        <div className="flex items-center gap-2 text-[11px] text-[#6b6b7b]">
-          <span>🕒</span>
-          <span>{location.hours}</span>
-        </div>
-        <div className="flex items-center gap-2 text-[11px] text-[#6b6b7b]">
-          <span>📞</span>
-          <span>{location.phone}</span>
-        </div>
-      </div>
-      
-      <button
-        onClick={() => window.open(`https://maps.google.com/?q=${encodeURIComponent(location.address + ', ' + location.city)}`, '_blank')}
-        className="w-full mt-2 py-2 rounded-lg text-[10px] font-mono font-bold uppercase tracking-wider transition-all duration-300 border border-[#1a1a24] hover:border-[#00d4ff] text-[#00d4ff] hover:bg-[#00d4ff]/10"
-      >
-        GET DIRECTIONS
-      </button>
-    </motion.div>
-  );
-};
-
 export default function CargoBayPage() {
-  const [activeFilter, setActiveFilter] = useState<string>('all');
   const [isDesktop, setIsDesktop] = useState<boolean>(true);
   const [isMounted, setIsMounted] = useState(false);
 
@@ -441,11 +276,6 @@ export default function CargoBayPage() {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
-
-  const filteredLocations = licensedLocations.filter(location => {
-    if (activeFilter === 'all') return true;
-    return location.type === activeFilter;
-  });
 
   const goToHome = () => {
     window.location.href = '/';
@@ -495,78 +325,6 @@ export default function CargoBayPage() {
           {cargoItems.map((item, index) => (
             <CargoCard key={item.id} item={item} index={index} />
           ))}
-        </div>
-      </div>
-
-      <div className="relative py-16 md:py-24 bg-gradient-to-b from-[#050508] to-[#0a0a10] border-t border-[#1a1a24] border-b border-[#1a1a24]">
-        <div className="max-w-7xl mx-auto px-4 md:px-8">
-          <div className="text-center mb-12">
-            <div className="flex items-center justify-center gap-2 mb-3">
-              <div className="h-px w-8 bg-gradient-to-r from-transparent to-[#00d4ff]/50" />
-              <Store className="w-5 h-5 text-[#00d4ff]" />
-              <div className="h-px w-8 bg-gradient-to-l from-transparent to-[#00d4ff]/50" />
-            </div>
-            <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">Licensed Retailers</h2>
-            <p className="text-[#6b6b7b] text-sm max-w-2xl mx-auto">
-              Find Astro products at these authorized locations. Each retailer is vetted and licensed.
-            </p>
-          </div>
-
-          <div className="flex flex-wrap justify-center gap-2 mb-8">
-            <button
-              onClick={() => setActiveFilter('all')}
-              className={`px-4 py-1.5 rounded-full text-[11px] font-mono transition-all duration-300 ${
-                activeFilter === 'all'
-                  ? 'bg-[#00d4ff] text-black'
-                  : 'bg-[#0a0a0f] text-[#6b6b7b] border border-[#1a1a24] hover:border-[#00d4ff]/50'
-              }`}
-            >
-              ALL LOCATIONS ({licensedLocations.length})
-            </button>
-            <button
-              onClick={() => setActiveFilter('store')}
-              className={`px-4 py-1.5 rounded-full text-[11px] font-mono transition-all duration-300 ${
-                activeFilter === 'store'
-                  ? 'bg-[#00d4ff] text-black'
-                  : 'bg-[#0a0a0f] text-[#6b6b7b] border border-[#1a1a24] hover:border-[#00d4ff]/50'
-              }`}
-            >
-              FLAGSHIP STORES
-            </button>
-            <button
-              onClick={() => setActiveFilter('dispensary')}
-              className={`px-4 py-1.5 rounded-full text-[11px] font-mono transition-all duration-300 ${
-                activeFilter === 'dispensary'
-                  ? 'bg-[#14f195] text-black'
-                  : 'bg-[#0a0a0f] text-[#6b6b7b] border border-[#1a1a24] hover:border-[#14f195]/50'
-              }`}
-            >
-              DISPENSARIES
-            </button>
-            <button
-              onClick={() => setActiveFilter('partner')}
-              className={`px-4 py-1.5 rounded-full text-[11px] font-mono transition-all duration-300 ${
-                activeFilter === 'partner'
-                  ? 'bg-[#ff6b35] text-black'
-                  : 'bg-[#0a0a0f] text-[#6b6b7b] border border-[#1a1a24] hover:border-[#ff6b35]/50'
-              }`}
-            >
-              PARTNER LOUNGES
-            </button>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {filteredLocations.map((location, index) => (
-              <LocationCard key={location.id} location={location} index={index} />
-            ))}
-          </div>
-
-          <div className="mt-8 text-center">
-            <p className="text-[10px] font-mono text-[#6b6b7b]">
-              All locations are fully licensed and compliant with local regulations. 
-              Age verification required at pickup.
-            </p>
-          </div>
         </div>
       </div>
 
