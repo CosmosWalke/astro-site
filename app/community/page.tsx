@@ -5,8 +5,8 @@ import { ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 
 const socialLinks = [
-  { name: 'INSTAGRAM', url: 'https://www.instagram.com/enter.astroverse', username: '@astrocommunity', color: '#E4405F' },
-  { name: 'TELEGRAM', url: 'https://t.me/astrocommunity', username: '@astrocommunity', color: '#26A5E4' }
+  { name: 'INSTAGRAM', url: 'https://www.instagram.com/enter.astroverse', username: '@enter.astroverse', color: '#E4405F' },
+  { name: 'TELEGRAM', url: 'https://t.me/+MvRVE_AG7Iw2NjQx', username: 'Astroverse🚀', color: '#26A5E4' }
 ]
 
 const contactInfo = [
