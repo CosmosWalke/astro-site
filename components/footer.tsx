@@ -18,12 +18,8 @@ const footerLinks = {
     { label: 'Media', href: '#media' },
   ],
   community: [
-     { label: 'Instagram', href: 'https://www.instagram.com/enter.astroverse', external: true },
+    { label: 'Instagram', href: 'https://www.instagram.com/enter.astroverse', external: true },
     { label: 'Telegram', href: 'https://t.me/+MvRVE_AG7Iw2NjQx', external: true },
-   
-    { label: 'X', href: 'https://x.com/EnterAstroverse', external: true },
-    { label: 'YouTube', href: 'https://www.youtube.com/@enter.astroverse', external: true },
-    
   ],
   legal: [
     { label: 'Privacy Policy', href: '#privacy' },

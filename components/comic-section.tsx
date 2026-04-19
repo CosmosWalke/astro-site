@@ -17,12 +17,12 @@ export function ComicSection() {
   const comicUrl = "https://heyzine.com/flip-book/d2e1bcc5d9.html#page/1"
 
   const panels = [
-    { title: 'Chapter 1: The Void', img: '/image/comi1.png', large: true },
-    { title: 'Chapter 2: The Awakening', img: '/image/comi2.png', large: true },
-    { title: 'Chapter 3: The Journey', img: '/image/comi3.png' },
-    { title: 'Chapter 4: The Battle', img: '/image/comi4.png' },
-    { title: 'Chapter 5: The Revelation', img: '/image/comi5.png' },
-    { title: 'Chapter 6: The New Dawn', img: '/image/comi6.png' },
+    { title: 'Page 1: The Void', img: '/image/comi1.png', large: true },
+    { title: 'Page 2: The Awakening', img: '/image/comi2.png', large: true },
+    { title: 'Page 3: The Journey', img: '/image/comi3.png' },
+    { title: 'Page 4: The Battle', img: '/image/comi4.png' },
+    { title: 'Page 5: The Revelation', img: '/image/comi5.png' },
+    { title: 'Page 6: The New Dawn', img: '/image/comi6.png' },
   ]
 
   useEffect(() => {
