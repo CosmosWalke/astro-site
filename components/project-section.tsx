@@ -290,6 +290,14 @@ export function ProjectSection() {
       id="products"
       className="relative py-16 sm:py-24 lg:py-32 bg-[#050508] overflow-hidden"
     >
+      {/* Плавный переход сверху (от ComicSection) */}
+      <div 
+        className="absolute top-0 left-0 right-0 h-32 pointer-events-none z-20"
+        style={{
+          background: 'linear-gradient(to bottom, #050508 0%, rgba(5,5,8,0.8) 30%, rgba(5,5,8,0) 100%)'
+        }}
+      />
+
       {/* Фоновые эффекты */}
       <div className="absolute inset-0">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(0,212,255,0.05)_0%,transparent_50%)]" />

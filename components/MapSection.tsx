@@ -143,11 +143,11 @@ export function MapSection() {
           <div className="h-px w-16 bg-gradient-to-l from-transparent to-[#00d4ff]/50" />
         </div>
         <h2 className="text-4xl md:text-6xl font-bold text-center">
-          <span className="text-[#e8e8ec]">The </span>
-          <span className="text-[#00d4ff]">World</span>
+          <span className="text-[#e8e8ec]">ASTROUNIVERSE </span>
+          <span className="text-[#00d4ff]">MAP</span>
         </h2>
         <p className="text-center text-[#6b6b7b] text-sm mt-4 max-w-md mx-auto">
-          Explore the territories under the Protocol&apos;s protection
+          Explore the open and explored territories of ASTROUNIVERSE
         </p>
       </div>
 
@@ -233,7 +233,7 @@ export function MapSection() {
             <div className="absolute bottom-4 right-4 w-8 h-8 border-b-2 border-r-2 border-[#00d4ff]/50" />
             
             <div className="absolute top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-[#050508]/80 rounded-full">
-              <span className="font-mono text-xs text-[#00d4ff]">PROTOCOL NETWORK MAP v2.4</span>
+              <span className="font-mono text-xs text-[#00d4ff]">ASTRO PROTOCOL NETWORK MAP v2.4</span>
             </div>
           </div>
 

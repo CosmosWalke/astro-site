@@ -414,7 +414,7 @@ export function Header() {
 
             <div className="absolute bottom-8 left-8 right-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-mono text-[#6b6b7b]">
               <div className="flex items-center gap-4">
-                <span>hello@astroverse.com</span>
+                
               </div>
               <div className="flex items-center gap-4">
                 <span>PRIVACY POLICY</span>

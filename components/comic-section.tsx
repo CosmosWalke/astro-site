@@ -13,7 +13,6 @@ export function ComicSection() {
   const flairLeftRef = useRef<HTMLImageElement>(null)
   const flairRightRef = useRef<HTMLImageElement>(null)
 
-  // Общая ссылка на комикс
   const comicUrl = "https://heyzine.com/flip-book/d2e1bcc5d9.html#page/1"
 
   const panels = [
@@ -29,12 +28,10 @@ export function ComicSection() {
     if (!containerRef.current) return
 
     const ctx = gsap.context(() => {
-      // Initial state - all starts hidden, flair off to sides
       gsap.set(mainContentRef.current, { y: 50, opacity: 0 })
       gsap.set(flairLeftRef.current, { x: -200, opacity: 0 })
       gsap.set(flairRightRef.current, { x: 200, opacity: 0 })
 
-      // Single timeline for synchronized animation
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: containerRef.current,
@@ -44,7 +41,6 @@ export function ComicSection() {
         }
       })
 
-      // Everything animates together
       tl.to(mainContentRef.current, {
         y: 0,
         opacity: 1,
@@ -76,9 +72,10 @@ export function ComicSection() {
       ref={containerRef} 
       id="comic"
       className="relative py-20 min-h-screen overflow-hidden"
+      style={{ backgroundColor: '#050508' }}
     >
-      {/* Фоновое изображение через Next.js Image */}
-      <div className="absolute inset-0 -z-10">
+      {/* Фоновое изображение с плавными переходами */}
+      <div className="absolute inset-0">
         <Image
           src="/image/comicsback.webp"
           alt="Comics background"
@@ -87,11 +84,21 @@ export function ComicSection() {
           priority
           sizes="100vw"
           quality={90}
+          style={{ 
+            maskImage: 'linear-gradient(to bottom, transparent 0%, black 12%, black 85%, transparent 100%)',
+            WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 12%, black 85%, transparent 100%)'
+          }}
         />
-        {/* Затемнение поверх фона */}
-        <div className="absolute inset-0 bg-black/50" />
         
-        {/* Дополнительный эффект винтажной зернистости */}
+        {/* Затемнение с градиентом - снизу плавно уходит в черный #050508 */}
+        <div 
+          className="absolute inset-0"
+          style={{
+            background: 'linear-gradient(to bottom, #050508 0%, rgba(5,5,8,0.8) 8%, rgba(0,0,0,0.2) 15%, rgba(0,0,0,0.1) 85%, #050508 100%)'
+          }}
+        />
+        
+        {/* Эффект винтажной зернистости */}
         <div 
           className="absolute inset-0 opacity-20 mix-blend-overlay pointer-events-none"
           style={{ 
@@ -133,7 +140,6 @@ export function ComicSection() {
             border: '3px solid hsl(188, 9%, 17%)'
           }}
         >
-          {/* Pattern overlay */}
           <div 
             className="absolute inset-0 opacity-25 z-[1] pointer-events-none"
             style={{
@@ -141,7 +147,6 @@ export function ComicSection() {
             }}
           />
           
-          {/* Logo banner */}
           <img 
             src="/image/comiheader.webp" 
             alt="We Read Comics" 
@@ -149,7 +154,6 @@ export function ComicSection() {
             style={{ width: '100%', height: 'auto', objectFit: 'cover' }}
           />
           
-          {/* Issue number */}
           <div className="absolute right-4 top-4 z-[3]">
             <div 
               className="w-12 h-12 rounded-full flex items-center justify-center"
@@ -202,7 +206,7 @@ export function ComicSection() {
           </div>
         </nav>
 
-        {/* Comic panels grid - каждая панель обернута в ссылку */}
+        {/* Comic panels grid */}
         <div 
           className="grid gap-3 p-4"
           style={{ 
@@ -226,7 +230,6 @@ export function ComicSection() {
               }}
             >
               <div className="relative">
-                {/* Panel title */}
                 <div 
                   className="absolute top-2 left-2 z-10 px-2 py-1"
                   style={{ 
@@ -242,7 +245,6 @@ export function ComicSection() {
                   <span className="block text-[10px] italic">(Click to Read More)</span>
                 </div>
                 
-                {/* Panel image */}
                 <img 
                   src={panel.img} 
                   alt={panel.title}
@@ -253,7 +255,6 @@ export function ComicSection() {
                   }}
                 />
                 
-                {/* Halftone overlay on hover */}
                 <div 
                   className="absolute inset-0 opacity-0 group-hover:opacity-30 transition-opacity duration-300 pointer-events-none"
                   style={{
