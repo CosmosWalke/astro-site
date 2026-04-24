@@ -284,8 +284,10 @@ const FlipCard = ({ card, onCardClick }: { card: Card; onCardClick: (card: Card)
   );
 };
 
-// --- МОДАЛЬНОЕ ОКНО ---
+// --- МОДАЛЬНОЕ ОКНО С ВРАЩЕНИЕМ КАРТЫ ---
 const EnlargedModal = ({ card, onClose }: { card: Card | null; onClose: () => void }) => {
+  const [isFlipped, setIsFlipped] = useState(false);
+  
   if (!card) return null;
 
   const getRarityBorder = (rarity: string) => {
@@ -295,6 +297,21 @@ const EnlargedModal = ({ card, onClose }: { card: Card | null; onClose: () => vo
       case 'rare': return 'border-blue-500';
       default: return 'border-gray-600';
     }
+  };
+
+  const getRarityStyles = (rarity: string) => {
+    switch (rarity) {
+      case 'legendary': return { bg: 'from-yellow-800 to-orange-900', border: 'border-yellow-500', text: 'text-yellow-400' };
+      case 'epic': return { bg: 'from-purple-800 to-purple-900', border: 'border-purple-500', text: 'text-purple-400' };
+      case 'rare': return { bg: 'from-blue-800 to-blue-900', border: 'border-blue-500', text: 'text-blue-400' };
+      default: return { bg: 'from-gray-800 to-gray-900', border: 'border-gray-600', text: 'text-gray-400' };
+    }
+  };
+
+  const styles = getRarityStyles(card.rarity);
+
+  const handleCardClick = () => {
+    setIsFlipped(!isFlipped);
   };
 
   return (
@@ -309,33 +326,65 @@ const EnlargedModal = ({ card, onClose }: { card: Card | null; onClose: () => vo
         initial={{ scale: 0.9, y: 50 }}
         animate={{ scale: 1, y: 0 }}
         exit={{ scale: 0.9, y: 50 }}
-        className={`relative max-w-3xl w-full bg-gradient-to-br from-gray-900 to-black rounded-2xl border-2 ${getRarityBorder(card.rarity)} overflow-hidden`}
+        className="relative max-w-4xl w-full bg-gradient-to-br from-gray-900 to-black rounded-2xl border-2 border-white/20 overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 z-10 p-2 rounded-full bg-black/50 hover:bg-black/70 transition-colors"
+          className="absolute top-4 right-4 z-20 p-2 rounded-full bg-black/50 hover:bg-black/70 transition-colors backdrop-blur-sm"
         >
           <X className="w-5 h-5 text-white" />
         </button>
         
         <div className="flex flex-col md:flex-row">
-          <div className="md:w-1/2 aspect-[3/4]">
-            {card.vid ? (
-              <video src={card.vid} autoPlay muted loop playsInline className="w-full h-full object-cover" />
-            ) : (
-              <img src={card.img} alt={card.name} className="w-full h-full object-cover" />
-            )}
+          {/* Карточка с 3D вращением */}
+          <div 
+            className="md:w-1/2 flex items-center justify-center cursor-pointer perspective-1000 p-6"
+            onClick={handleCardClick}
+          >
+            <div className={`relative transition-all duration-700 transform-3d preserve-3d w-full max-w-[320px] ${isFlipped ? 'rotate-y-180' : ''}`}>
+              
+              {/* ЛИЦЕВАЯ СТОРОНА */}
+              <div className={`backface-hidden w-full rounded-xl overflow-hidden bg-gradient-to-b ${styles.bg} border-2 ${styles.border}`}>
+                {card.vid ? (
+                  <video
+                    src={card.vid}
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    className="w-full h-auto block"
+                  />
+                ) : (
+                  <img 
+                    src={card.img} 
+                    alt={card.name}
+                    className="w-full h-auto block"
+                  />
+                )}
+              </div>
+
+              {/* ОБРАТНАЯ СТОРОНА */}
+              <div className={`absolute inset-0 backface-hidden w-full rounded-xl overflow-hidden bg-gradient-to-br from-gray-900 to-black border-2 ${styles.border} rotate-y-180`}>
+                <img 
+                  src={card.imgh} 
+                  alt={`${card.name} back`}
+                  className="w-full h-auto block"
+                />
+              </div>
+              
+            </div>
           </div>
           
+          {/* Детали карты справа */}
           <div className="md:w-1/2 p-6">
-            <div className="flex items-center gap-2 mb-2">
+            <div className="flex items-center gap-2 mb-3">
               <span className="text-xs font-mono px-2 py-1 rounded-full bg-white/10">{card.category}</span>
               <span className={`text-xs font-mono px-2 py-1 rounded-full bg-white/10 ${getRarityBorder(card.rarity)}`}>
                 {card.rarity.toUpperCase()}
               </span>
             </div>
-            <h2 className="text-2xl font-bold text-white mb-2">{card.name}</h2>
+            <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">{card.name}</h2>
             <div className="flex gap-4 mb-4">
               <span className="text-sm text-white/60">⚡ Power: {card.power}</span>
               <span className="text-sm text-white/60">❤️ Health: {card.cost}</span>
@@ -343,6 +392,11 @@ const EnlargedModal = ({ card, onClose }: { card: Card | null; onClose: () => vo
             <p className="text-white/80 text-sm leading-relaxed mb-4">{card.description}</p>
             <div className="pt-4 border-t border-white/10">
               <p className="text-[10px] font-mono text-white/40">Card ID: #{card.id}</p>
+            </div>
+            
+            {/* Подсказка для вращения */}
+            <div className="mt-6 text-center text-[10px] font-mono text-white/30">
+              Click on the card to flip it
             </div>
           </div>
         </div>
