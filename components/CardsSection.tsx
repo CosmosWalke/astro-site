@@ -30,7 +30,7 @@ const cardColors: CardColor[] = [
     title: 'The Nexus Walker',
     subtitle: 'ASTRONAUTS',
     id: 'NW-001', 
-    video: '/video/cards/1.webm',
+    video: '/video/cards/astro.webm',
     image: '/image/cards/Astranauts.webp',
     category: 'ASTRONAUTS'  // Категория для фильтра
   },
@@ -41,7 +41,7 @@ const cardColors: CardColor[] = [
     title: 'Crystal Guardian',
     subtitle: 'ALIENS',
     id: 'CG-002', 
-    video: '/video/cards/2.webm',
+    video: '/video/cards/aliens.webm',
     image: '/image/cards/aliens.webp',
     category: 'ALIENS'  // Категория для фильтра
   },
@@ -52,7 +52,7 @@ const cardColors: CardColor[] = [
     title: 'Flame Keeper',
     subtitle: 'SHIPS',
     id: 'FK-003', 
-    video: '/video/cards/3.webm',
+    video: '/video/cards/ships.webm',
     image: '/image/cards/ship.webp',
     category: 'SHIPS'  // Категория для фильтра
   },
@@ -63,7 +63,7 @@ const cardColors: CardColor[] = [
     title: 'Shadow Weaver',
     subtitle: 'PLANETS',
     id: 'SW-004', 
-    video: '/video/cards/4.webm',
+    video: '/video/cards/planets.webm',
     image: '/image/cards/planet.webp',
     category: 'PLANETS'  // Категория для фильтра
   }

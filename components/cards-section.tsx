@@ -26,7 +26,7 @@ const cardColors: CardColor[] = [
     x: -480, 
     title: 'The Nexus Walker', 
     id: 'NW-001', 
-    video: '/video/cards/1.webm',
+    video: '/video/cards/astro.webm',
     image: '/image/cards/Astranauts.webp'
   },
   { 
@@ -35,7 +35,7 @@ const cardColors: CardColor[] = [
     x: -160, 
     title: 'Crystal Guardian', 
     id: 'CG-002', 
-    video: '/video/cards/2.webm',
+    video: '/video/cards/aliens.webm',
     image: '/image/cards/aliens.webp'
   },
   { 
@@ -44,7 +44,7 @@ const cardColors: CardColor[] = [
     x: 160, 
     title: 'Flame Keeper', 
     id: 'FK-003', 
-    video: '/video/cards/3.webm',
+    video: '/video/cards/ships.webm',
     image: '/image/cards/FlameKeeper.webp'
   },
   { 
@@ -53,7 +53,7 @@ const cardColors: CardColor[] = [
     x: 480, 
     title: 'Shadow Weaver', 
     id: 'SW-004', 
-    video: '/video/cards/4.webm',
+    video: '/video/cards/planets.webm',
     image: '/image/cards/ShadowWeaver.webp'
   }
 ]
