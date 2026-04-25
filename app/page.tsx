@@ -943,7 +943,7 @@ export default function PanoramaPage() {
       <div id="location-name">BRIDGE</div>
       
       <div id="look-hint">
-        <div className="look-arrows">⟵ LOOK AROUND ⟶</div>
+        <div className="look-arrows">⟵ LOOK AROUND! ⟶</div>
         <div className="look-text">DRAG or MOVE TO EDGE</div>
         <div className="look-subtext">Explore the spaceship</div>
       </div>
