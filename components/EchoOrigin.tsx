@@ -80,14 +80,10 @@ export function EchoOrigin() {
 
       {/* Текст и кнопка - на десктопе вверху слева, на мобильных по центру внизу */}
       <div className="absolute z-10 w-full md:w-auto text-center md:text-left md:top-32 md:left-16 bottom-8 left-0 right-0 md:bottom-auto md:left-16 md:right-auto px-4">
-        <h2 ref={titleRef} className="text-2xl md:text-5xl lg:text-6xl font-bold text-white mb-2 md:mb-4 tracking-tight">
-          BEGINING. THE <span className="text-[#00d4ff] md:whitespace-nowrap">ECHO AWAKENING</span>
-        </h2>
+
 
         <p ref={textRef} className="text-sm md:text-base lg:text-lg text-[#ffffff] leading-relaxed bg-black/30 backdrop-blur-sm p-3 md:p-4 rounded-xl mb-4 md:mb-6 max-w-2xl mx-auto md:mx-0">
-          From the heart of Nexus Prime, a mysterious cosmic phenomenon awakens. 
-          The Great Echo spreads across galaxies, connecting minds and unlocking 
-          powers dormant for eons. This is where it all begins.
+         In the farthest reaches of the cosmos, where stardust weaves the fabric of fate, a galaxy stands on the edge of revelation. Ancient civilizations, cloaked for eons in cosmic mystery, stir from their slumber, their secrets echoing across time and space. From the depths of the abyss, the black void awakens an unstoppable force threatening to devour all light, all life. As darkness rises, so too do champions. Astronauts, alien dynasties, and starborn warriors from every corner of the universe unite under a single banner driven by prophecy, bound by destiny. Their quest: to unearth the lost truths of the stars… before the stars themselves are lost forever. This is the legend of Astro - a universe of endless wonder, ancient power, and cosmic peril… where every journey begins with a spark, and ends among the stars.
         </p>
 
         {/* Кнопка EXPLORE LORE */}

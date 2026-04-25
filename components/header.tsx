@@ -6,13 +6,13 @@ import { Menu, X } from 'lucide-react'
 import { TextScramble } from "@/components/ui/text-scramble"
 import { BackToShipButton } from "@/components/ui/back-to-ship-button";
 import AstraButton from "@/components/ui/astra-button";
+
 const navItems = [
   { label: 'Universe', href: '#universe' },
   { label: 'Map', href: '#world' },
   { label: 'Cards', href: '#cards' }, 
   { label: 'Comic', href: '#comic' },
   { label: 'Products', href: '#products' },
-  { label: 'Media', href: '#media' },
 ]
 
 export function Header() {
@@ -181,7 +181,6 @@ export function Header() {
         { id: 'cards', element: document.getElementById('cards') },
         { id: 'comic', element: document.getElementById('comic') },
         { id: 'products', element: document.getElementById('products') },
-        { id: 'media', element: document.getElementById('media') }
       ]
 
       const scrollPosition = window.scrollY + 200
@@ -253,12 +252,12 @@ export function Header() {
               </a>
             </div>
 
-<AstraButton 
-  label="BACK TO SHIP" 
-  onClick={() => {
-    window.location.href = "/";
-  }}
-/>
+            <AstraButton 
+              label="BACK TO SHIP" 
+              onClick={() => {
+                window.location.href = "/";
+              }}
+            />
 
             <nav className="hidden lg:flex items-center gap-1">
               {navItems.map((item, index) => {

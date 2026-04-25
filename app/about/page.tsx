@@ -11,7 +11,6 @@ import { ComicSection } from '@/components/comic-section'
 import { ProjectSection } from '@/components/project-section'
 import { CardsSection } from '@/components/CardsSection'
 import { MapSection } from '@/components/MapSection'
-import { GallerySection } from '@/components/gallery-section'
 import { Footer } from '@/components/footer'
 import { ScrollProgress } from '@/components/ScrollProgress'
 
@@ -74,11 +73,6 @@ const loadAllResources = async (onProgress: (progress: number) => void) => {
     '/image/card4.png',
     // MapSection
     '/image/map.webp',
-    // GallerySection
-    '/image/gallery1.webp',
-    '/image/gallery2.webp',
-    '/image/gallery3.webp',
-    '/image/gallery4.webp',
   ]
   
   // Список всех видео
@@ -332,11 +326,6 @@ export default function Home() {
           {/* Products Section */}
           <div id="products" className="relative">
             <ProjectSection />
-          </div>
-
-          {/* Media/Gallery Section */}
-          <div id="media" className="relative">
-            <GallerySection />
           </div>
         </div>
 

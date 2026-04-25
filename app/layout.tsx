@@ -18,9 +18,9 @@ const jetbrainsMono = JetBrains_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'ASTRO | The Keepers Protocol',
-  description: 'Enter the world of ASTRO - A dystopian universe where Keepers protect the last remnants of humanity.',
-  keywords: ['ASTRO', 'Keepers', 'Protocol', 'NFT', 'Web3', 'Dystopian', 'Universe'],
+  title: 'ASTRO | An epic cosmic saga',
+  description: 'Enter the Astroverse - An epic cosmic saga',
+  keywords: ['ASTRO', 'Astroverse', 'Cosmos', 'NFT', 'Web3', 'Dystopian', 'Universe'],
 }
 
 export const viewport: Viewport = {

@@ -15,7 +15,6 @@ const footerLinks = {
     { label: 'Cards', href: '#cards' }, 
     { label: 'Comic', href: '#comic' },
     { label: 'Products', href: '#products' },
-    { label: 'Media', href: '#media' },
   ],
   community: [
     { label: 'Instagram', href: 'https://www.instagram.com/enter.astroverse', external: true },
